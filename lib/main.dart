@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naylors_client/login.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,7 +9,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appTitle,
-      home: NaylorsHomePage(title: appTitle),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/': (context) => NaylorsHomePage(title: appTitle),
+      },
     );
   }
 }
@@ -38,12 +43,12 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
       key: _scaffoldKey,
       appBar: AppBar(title: Text(title), actions: <Widget>[
         IconButton(
-            onPressed: _openEndDrawer,
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Colors.white,
-            ),
+          onPressed: _openEndDrawer,
+          icon: Icon(
+            Icons.shopping_cart,
+            color: Colors.white,
           ),
+        ),
       ]),
       body: Center(child: Text('In Development')),
       drawer: Drawer(
@@ -55,7 +60,18 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
                 image: DecorationImage(
                     image: AssetImage('old_naylors.jpg'), fit: BoxFit.cover),
               ),
-              child: Text('Navigation'),
+              child: Align( // TODO: Ensure that the email used is taken from the SharedPreferences email key
+                alignment: FractionalOffset.bottomLeft,
+                child: Material(
+                  elevation: 1.0,
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Colors.white70,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
+                    child: Text("your@email.here"),
+                  ),
+                ),
+              ),
             ),
             ListTile(
               leading: Icon(Icons.store, color: Colors.blueGrey),
@@ -96,7 +112,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
               leading: Icon(Icons.exit_to_app, color: Colors.blueGrey),
               title: Text('Logout'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/login');
               },
             ),
           ],
