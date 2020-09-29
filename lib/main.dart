@@ -60,7 +60,8 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
                 image: DecorationImage(
                     image: AssetImage('old_naylors.jpg'), fit: BoxFit.cover),
               ),
-              child: Align( // TODO: Ensure that the email used is taken from the SharedPreferences email key
+              child: Align(
+                // TODO: Ensure that the email used is taken from the SharedPreferences email key
                 alignment: FractionalOffset.bottomLeft,
                 child: Material(
                   elevation: 1.0,

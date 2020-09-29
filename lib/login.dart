@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:naylors_client/api.dart';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -7,10 +9,22 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final email = TextEditingController();
+  final password = TextEditingController();
+  Future<AuthInfo> _futureAuth;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final emailField = TextField(
+      controller: email,
       obscureText: false,
       style: style,
       decoration: InputDecoration(
@@ -22,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
     final passField = TextField(
+      controller: password,
       obscureText: true,
       style: style,
       decoration: InputDecoration(
@@ -40,7 +55,9 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/');
+          setState(() {
+            _futureAuth = login(email.text, password.text);
+          });
         },
         child: Text(
           "Login",
@@ -72,32 +89,51 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Center(
         child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 205.0,
-                  child: Image.asset(
-                    "assets/logo.jpg",
-                    fit: BoxFit.contain,
+            color: Colors.white,
+            child: (_futureAuth == null)
+                ? Padding(
+                    padding: const EdgeInsets.all(36.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 205.0,
+                          child: Image.asset(
+                            "assets/logo.jpg",
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        SizedBox(height: 45.0),
+                        emailField,
+                        SizedBox(height: 25.0),
+                        passField,
+                        SizedBox(height: 35.0),
+                        loginButton,
+                        SizedBox(height: 15.0),
+                        registerButton
+                      ],
+                    ),
+                  )
+                : FutureBuilder<AuthInfo>(
+                    future: _futureAuth,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data.token);
+
+                        /*SharedPreferences prefs = await SharedPreferences.getInstance();
+                        setState(() => {
+                          prefs.setString('token', authValue.token)
+                        })
+                        Navigator.pushReplacementNamed(context, '/');*/
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+
+                      return CircularProgressIndicator();
+                    },
                   ),
                 ),
-                SizedBox(height: 45.0),
-                emailField,
-                SizedBox(height: 25.0),
-                passField,
-                SizedBox(height: 35.0),
-                loginButton,
-                SizedBox(height: 15.0),
-                registerButton
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
