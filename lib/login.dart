@@ -13,12 +13,40 @@ class _LoginPageState extends State<LoginPage> {
   final password = TextEditingController();
   Future<AuthInfo> _futureAuth;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  String _token;
+  String _email;
+  bool _isAdmin;
 
   @override
   void dispose() {
     email.dispose();
     password.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAuthInfo();
+    if (_token != null) Navigator.pushReplacementNamed(context, '/');
+  }
+
+  _loadAuthInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _token = (prefs.getString('token') ?? null);
+      _email = (prefs.getString('email') ?? null);
+      _isAdmin = (prefs.getBool('isAdmin') ?? false);
+    });
+  }
+
+  _setAuthInfo(String token, String email, bool isAdmin) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('token', token);
+      prefs.setString('email', email);
+      prefs.setBool('isAdmin', isAdmin);
+    });
   }
 
   @override
@@ -55,9 +83,7 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          setState(() {
-            _futureAuth = login(email.text, password.text);
-          });
+          _futureAuth = login(email.text, password.text);
         },
         child: Text(
           "Login",
@@ -85,55 +111,59 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+    final loginErrorSnackBar = SnackBar(
+      content: Text('Incorrect Username/Password.'),
+      action: SnackBarAction(
+        label: 'Dismiss',
+        onPressed: () {},
+      ),
+    );
 
     return Scaffold(
       body: Center(
         child: Container(
-            color: Colors.white,
-            child: (_futureAuth == null)
-                ? Padding(
-                    padding: const EdgeInsets.all(36.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 205.0,
-                          child: Image.asset(
-                            "assets/logo.jpg",
-                            fit: BoxFit.contain,
-                          ),
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: FutureBuilder<AuthInfo>(
+              future: _futureAuth,
+              builder: (context, snapshot) {
+                if (_futureAuth == null) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 205.0,
+                        child: Image.asset(
+                          "assets/logo.jpg",
+                          fit: BoxFit.contain,
                         ),
-                        SizedBox(height: 45.0),
-                        emailField,
-                        SizedBox(height: 25.0),
-                        passField,
-                        SizedBox(height: 35.0),
-                        loginButton,
-                        SizedBox(height: 15.0),
-                        registerButton
-                      ],
-                    ),
-                  )
-                : FutureBuilder<AuthInfo>(
-                    future: _futureAuth,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(snapshot.data.token);
+                      ),
+                      SizedBox(height: 45.0),
+                      emailField,
+                      SizedBox(height: 25.0),
+                      passField,
+                      SizedBox(height: 35.0),
+                      loginButton,
+                      SizedBox(height: 15.0),
+                      registerButton,
+                    ],
+                  );
+                }
+                if (snapshot.hasData) {
+                  //return Text(snapshot.data.token);
+                  Navigator.pushReplacementNamed(context, '/');
+                } else if (snapshot.hasError) {
+                  _futureAuth = null;
+                  Scaffold.of(context).showSnackBar(loginErrorSnackBar);
+                }
 
-                        /*SharedPreferences prefs = await SharedPreferences.getInstance();
-                        setState(() => {
-                          prefs.setString('token', authValue.token)
-                        })
-                        Navigator.pushReplacementNamed(context, '/');*/
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-
-                      return CircularProgressIndicator();
-                    },
-                  ),
-                ),
+                return CircularProgressIndicator();
+              },
+            ),
+          ),
+        ),
       ),
     );
   }

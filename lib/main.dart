@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:naylors_client/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final appTitle = 'Naylor\'s Farm and Ranch Supply';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,9 +31,32 @@ class NaylorsHomePage extends StatefulWidget {
 
 class _NaylorsHomePageState extends State<NaylorsHomePage> {
   final String title;
+  String _email;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   _NaylorsHomePageState(this.title);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAuthInfo();
+  }
+
+  _loadAuthInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _email = prefs.getString('email');
+    });
+  }
+
+  _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.remove('token');
+      prefs.remove('email');
+      prefs.remove('isAdmin');
+    });
+  }
 
   void _openEndDrawer() {
     _scaffoldKey.currentState.openEndDrawer();
@@ -61,7 +86,6 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
                     image: AssetImage('old_naylors.jpg'), fit: BoxFit.cover),
               ),
               child: Align(
-                // TODO: Ensure that the email used is taken from the SharedPreferences email key
                 alignment: FractionalOffset.bottomLeft,
                 child: Material(
                   elevation: 1.0,
@@ -69,7 +93,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
                   color: Colors.white70,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
-                    child: Text("your@email.here"),
+                    child: Text("${_email}"),
                   ),
                 ),
               ),
@@ -113,6 +137,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
               leading: Icon(Icons.exit_to_app, color: Colors.blueGrey),
               title: Text('Logout'),
               onTap: () {
+                _logout();
                 Navigator.pushReplacementNamed(context, '/login');
               },
             ),
