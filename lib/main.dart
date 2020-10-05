@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:naylors_client/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,7 +32,7 @@ class NaylorsHomePage extends StatefulWidget {
 
 class _NaylorsHomePageState extends State<NaylorsHomePage> {
   final String title;
-  String _email;
+  String _email = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   _NaylorsHomePageState(this.title);
@@ -55,6 +56,9 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
       prefs.remove('token');
       prefs.remove('email');
       prefs.remove('isAdmin');
+    });
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      Navigator.pushReplacementNamed(context, '/login');
     });
   }
 
@@ -93,7 +97,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
                   color: Colors.white70,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
-                    child: Text("${_email}"),
+                    child: Text((_email) ?? "Not Available"),
                   ),
                 ),
               ),
@@ -136,10 +140,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
             ListTile(
               leading: Icon(Icons.exit_to_app, color: Colors.blueGrey),
               title: Text('Logout'),
-              onTap: () {
-                _logout();
-                Navigator.pushReplacementNamed(context, '/login');
-              },
+              onTap: () { _logout(); },
             ),
           ],
         ),

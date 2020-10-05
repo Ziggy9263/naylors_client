@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -9,7 +8,7 @@ Future<AuthInfo> login(String email, String password) async {
   body['email'] = email;
   body['password'] = password;
   final response = await http.post(
-    'http://localhost:4040/api/auth/login',
+    'http://order.naylorsfeed.com/api/auth/login',
     body: body,
   );
 
