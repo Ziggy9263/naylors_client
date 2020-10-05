@@ -103,8 +103,9 @@ class _LoginPageState extends State<LoginPage> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, '/');
+        onPressed: () async {
+          var result = await Navigator.pushNamed(context, '/register');
+          _scaffoldKey.currentState.showSnackBar(result);
         },
         child: Text(
           "Register",

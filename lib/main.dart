@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:naylors_client/login.dart';
+import 'package:naylors_client/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final appTitle = 'Naylor\'s Farm and Ranch Supply';
+  final appTitle = 'Naylor\'s Online';
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginPage(),
+        '/register': (context) => RegisterPage(),
         '/': (context) => NaylorsHomePage(title: appTitle),
       },
     );

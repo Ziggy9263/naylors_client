@@ -28,6 +28,28 @@ Future<AuthInfo> login(String email, String password) async {
   }
 }
 
+Future<AuthInfo> register(String email, String password, String name, [String phone, String business, String address, String taxExempt]) async {
+  var body = new Map<String, dynamic>();
+  body['email'] = email;
+  body['password'] = password;
+  body['name'] = name;
+  final response = await http.post(
+    'http://order.naylorsfeed.com/api/users',
+    body: body,
+  );
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    var data = AuthInfo.fromJSON(json.decode(response.body));
+    return data;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to Create User');
+  }
+}
+
 class AuthInfo {
   final String token;
   final String email;
