@@ -19,6 +19,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final email = TextEditingController();
+  FocusNode emailFocus;
+  FocusNode passFocus;
   final password = TextEditingController();
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   String _token;
@@ -27,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     email.dispose();
     password.dispose();
+    emailFocus.dispose();
+    passFocus.dispose();
     super.dispose();
   }
 
@@ -35,6 +39,9 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     _loadAuthInfo();
     if (_token != null) Navigator.pushReplacementNamed(context, '/');
+
+    emailFocus = FocusNode();
+    passFocus = FocusNode();
   }
 
   _loadAuthInfo() async {
@@ -44,12 +51,26 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  _loginButtonFunction() async {
+    //_futureAuth = login(email.text, password.text);
+    var loginInfo = LoginInfo(email.text, password.text);
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginLoadingScreen(loginInfo: loginInfo),
+        ));
+    _scaffoldKey.currentState.showSnackBar(result);
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final emailField = TextField(
       controller: email,
       obscureText: false,
       style: style,
+      focusNode: emailFocus,
+      autofocus: true,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Email",
@@ -57,11 +78,14 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(32.0),
         ),
       ),
+      textInputAction: TextInputAction.next,
+      onSubmitted: (_) => passFocus.requestFocus(),
     );
     final passField = TextField(
       controller: password,
       obscureText: true,
       style: style,
+      focusNode: passFocus,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Password",
@@ -69,6 +93,10 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(32.0),
         ),
       ),
+      textInputAction: TextInputAction.send,
+      onSubmitted: (_) {
+        _loginButtonFunction();
+      },
     );
     final loginButton = Material(
       elevation: 5.0,
@@ -77,17 +105,7 @@ class _LoginPageState extends State<LoginPage> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          //_futureAuth = login(email.text, password.text);
-          var loginInfo = LoginInfo(email.text, password.text);
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginLoadingScreen(loginInfo: loginInfo),
-            )
-          );
-          _scaffoldKey.currentState.showSnackBar(result);
-        },
+        onPressed: _loginButtonFunction,
         child: Text(
           "Login",
           textAlign: TextAlign.center,
@@ -105,6 +123,7 @@ class _LoginPageState extends State<LoginPage> {
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
           var result = await Navigator.pushNamed(context, '/register');
+          _scaffoldKey.currentState.removeCurrentSnackBar();
           _scaffoldKey.currentState.showSnackBar(result);
         },
         child: Text(
@@ -123,27 +142,29 @@ class _LoginPageState extends State<LoginPage> {
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 205.0,
-                  child: Image.asset(
-                    "assets/logo.jpg",
-                    fit: BoxFit.contain,
+            child: FocusScope(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 205.0,
+                    child: Image.asset(
+                      "assets/logo.jpg",
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-                SizedBox(height: 45.0),
-                emailField,
-                SizedBox(height: 25.0),
-                passField,
-                SizedBox(height: 35.0),
-                loginButton,
-                SizedBox(height: 15.0),
-                registerButton,
-              ],
-            )
+                  SizedBox(height: 45.0),
+                  emailField,
+                  SizedBox(height: 25.0),
+                  passField,
+                  SizedBox(height: 35.0),
+                  loginButton,
+                  SizedBox(height: 15.0),
+                  registerButton,
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -156,9 +177,8 @@ class LoginLoadingScreen extends StatefulWidget {
 
   @override
   _LoginLoadingScreenState createState() => _LoginLoadingScreenState(loginInfo);
-  
-  LoginLoadingScreen({Key key, @required this.loginInfo}) : super(key: key);
 
+  LoginLoadingScreen({Key key, @required this.loginInfo}) : super(key: key);
 }
 
 class _LoginLoadingScreenState extends State<LoginLoadingScreen> {
@@ -166,7 +186,7 @@ class _LoginLoadingScreenState extends State<LoginLoadingScreen> {
   Future<AuthInfo> _futureAuth;
 
   _LoginLoadingScreenState(this.loginInfo);
-  
+
   void initState() {
     super.initState();
     setState(() {
@@ -188,7 +208,7 @@ class _LoginLoadingScreenState extends State<LoginLoadingScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           //return Text(snapshot.data.token);
-          
+
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             Navigator.pushReplacementNamed(context, '/');
           });
