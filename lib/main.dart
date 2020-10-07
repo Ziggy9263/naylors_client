@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:naylors_client/login.dart';
 import 'package:naylors_client/register.dart';
+import 'package:naylors_client/products.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
@@ -81,7 +82,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
           ),
         ),
       ]),
-      body: Center(child: Text('In Development')),
+      body: ProductsBody(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -142,7 +143,9 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
             ListTile(
               leading: Icon(Icons.exit_to_app, color: Colors.blueGrey),
               title: Text('Logout'),
-              onTap: () { _logout(); },
+              onTap: () {
+                _logout();
+              },
             ),
           ],
         ),

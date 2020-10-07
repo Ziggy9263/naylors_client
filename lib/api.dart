@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 Future<AuthInfo> login(String email, String password) async {
   var body = new Map<String, dynamic>();
@@ -57,12 +58,12 @@ Future<ProductList> getProducts() async {
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    var data = AuthInfo.fromJSON(json.decode(response.body));
+    var data = ProductList.fromJSON(response.body);
     return data;
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    throw Exception('Failed to Create User');
+    throw Exception('Failed to Get Products');
   }
 }
 
@@ -91,33 +92,43 @@ class ProductDetail {
   final List images;
   final bool taxExempt;
 
+  ProductDetail(
+      {this.tag,
+      this.name,
+      this.description,
+      this.category,
+      this.price,
+      this.images,
+      this.taxExempt});
 
-  ProductDetail({this.tag, this.name, this.description, this.category,
-    this.price, this.images, this.taxExempt});
-
-  factory ProductDetail.fromJSON(Map<String, dynamic> json) {
+  factory ProductDetail.fromJSON(String j) {
+    Map<String, dynamic> json = jsonDecode(j);
     return ProductDetail(
-      tag: json['tag'],
-      name: json['name'],
-      description: json['description'],
-      category: json['category'],
-      price: json['price'],
-      images: json['images'],
-      taxExempt: json['taxExempt']
-    )
+        tag: json['tag'],
+        name: json['name'],
+        description: json['description'],
+        category: json['category'],
+        price: json['price'],
+        images: json['images'],
+        taxExempt: json['taxExempt']);
   }
 }
 
 class ProductList {
-  final List<ProductDetail> productList;
+  final List<ProductDetail> list;
 
-  ProductList({this.productList});
+  ProductList({this.list});
 
-  factory ProductList.fromJSON(List<Map<String, dynamic>> json) {
-    return ProductList(
-      //productList: ProductDetail(json),
-// https://codingwithjoe.com/dart-fundamentals-working-with-json-in-dart-and-flutter/
-// The above article explains how to do this, I will be focusing on UI for a bit.
-    );
+  factory ProductList.fromJSON(String json) {
+    Map<String, dynamic> decodedMap = jsonDecode(json);
+    List<dynamic> dynamicList = decodedMap['products'];
+    List<ProductDetail> products = new List<ProductDetail>();
+    dynamicList.forEach((v) {
+      ProductDetail p = ProductDetail.fromJSON(v);
+      debugPrint("ProductDetail test: ${p.name}");
+      products.add(p);
+    });
+    debugPrint("products: $products");
+    return ProductList(list: products);
   }
 }
