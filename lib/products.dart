@@ -19,7 +19,9 @@ class _ProductsBodyState extends State<ProductsBody> {
   @override
   void initState() {
     super.initState();
-    products = getProductList();
+    setState(() {
+      products = getProductList();
+    });
   }
 
   @override
@@ -28,13 +30,15 @@ class _ProductsBodyState extends State<ProductsBody> {
       future: products,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<Widget> productListTextWidgets;
+          List<Widget> productListTextWidgets = List<Widget>();
           snapshot.data.list.forEach((v) {
             productListTextWidgets.add(Text(v.name));
           });
           return ListView(
             children: productListTextWidgets,
           );
+        } else if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
         }
 
         return Center(

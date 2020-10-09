@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
 
 Future<AuthInfo> login(String email, String password) async {
   var body = new Map<String, dynamic>();
@@ -88,7 +87,7 @@ class ProductDetail {
   final String name;
   final String description;
   final String category;
-  final double price;
+  final String price;
   final List images;
   final bool taxExempt;
 
@@ -101,34 +100,31 @@ class ProductDetail {
       this.images,
       this.taxExempt});
 
-  factory ProductDetail.fromJSON(String j) {
-    Map<String, dynamic> json = jsonDecode(j);
+  factory ProductDetail.fromJSON(Map<String, dynamic> json) {
     return ProductDetail(
-        tag: json['tag'],
-        name: json['name'],
-        description: json['description'],
-        category: json['category'],
-        price: json['price'],
+        tag: json['tag'].toString(),
+        name: json['name'] as String,
+        description: json['description'] as String,
+        category: json['category'] as String,
+        price: json['price'].toString(),
         images: json['images'],
-        taxExempt: json['taxExempt']);
+        taxExempt: json['taxExempt'] as bool);
   }
 }
 
 class ProductList {
-  final List<ProductDetail> list;
+  List<ProductDetail> list;
 
   ProductList({this.list});
 
-  factory ProductList.fromJSON(String json) {
-    Map<String, dynamic> decodedMap = jsonDecode(json);
-    List<dynamic> dynamicList = decodedMap['products'];
-    List<ProductDetail> products = new List<ProductDetail>();
-    dynamicList.forEach((v) {
-      ProductDetail p = ProductDetail.fromJSON(v);
-      debugPrint("ProductDetail test: ${p.name}");
+  factory ProductList.fromJSON(String j) {
+    Map<String, dynamic> json = jsonDecode(j);
+    List<dynamic> dynamicList = json['products'] as List;
+    List<ProductDetail> products = List<ProductDetail>();
+    dynamicList.forEach((f) {
+      ProductDetail p = ProductDetail.fromJSON(f);
       products.add(p);
     });
-    debugPrint("products: $products");
     return ProductList(list: products);
   }
 }
