@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:naylors_client/api.dart';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
+// TODO: Auto-login after registration.
 
 class RegisterInfo {
   final String email;

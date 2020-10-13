@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appTitle,
-      initialRoute: '/login',
+      initialRoute: '/', // Skipping login for now TODO: Don't forget to revert
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),

@@ -50,6 +50,8 @@ flutter:
   assets:
     - old_naylors.jpg
     - logo.jpg
+    - scratch.png
+    - no-image.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -87,7 +87,7 @@ class ProductDetail {
   final String name;
   final String description;
   final String category;
-  final String price;
+  final double price;
   final List images;
   final bool taxExempt;
 
@@ -106,7 +106,7 @@ class ProductDetail {
         name: json['name'] as String,
         description: json['description'] as String,
         category: json['category'] as String,
-        price: json['price'].toString(),
+        price: json['price'].toDouble(),
         images: json['images'],
         taxExempt: json['taxExempt'] as bool);
   }
