@@ -4,6 +4,7 @@ import 'package:naylors_client/login.dart';
 import 'package:naylors_client/register.dart';
 import 'package:naylors_client/products.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,6 +13,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return MaterialApp(
       title: appTitle,
       initialRoute: '/', // Skipping login for now TODO: Don't forget to revert
@@ -19,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/': (context) => NaylorsHomePage(title: appTitle),
+        '/product': (context) => ProductDetailScreen(),
       },
     );
   }

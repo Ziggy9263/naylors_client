@@ -44,83 +44,83 @@ class _ProductsBodyState extends State<ProductsBody> {
                   child: InkWell(
                     onTap: () {
                       // Open item detail, TODO: Write item detail screen
+                      Navigator.pushNamed(context, '/product',
+                          arguments: item);
                     },
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: LimitedBox(
-                        maxHeight: 64,
-                        child: Row(
-                          children: <Widget>[
+                          maxHeight: 64,
+                          child: Row(children: <Widget>[
                             AspectRatio(
-                              aspectRatio: 487 / 451,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.fitWidth,
-                                    alignment: FractionalOffset.center,
-                                    image: AssetImage((item.images.isNotEmpty) ? item.images[0] : 'no-image.png'),
-                                  )
-                                )
-                              )
-                            ),
+                                aspectRatio: 487 / 451,
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                  fit: BoxFit.fitWidth,
+                                  alignment: FractionalOffset.center,
+                                  image: AssetImage((item.images.isNotEmpty)
+                                      ? item.images[0]
+                                      : 'no-image.png'),
+                                )))),
                             SizedBox(width: 12),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(item.name, style: style.copyWith(fontWeight: FontWeight.w500)),
-                                  Expanded(
-                                    child: Align(
-                                      alignment: FractionalOffset.centerLeft,
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[400],
-                                          borderRadius: BorderRadius.circular(15.0),
-                                        ),
-                                        child: Text(
-                                          item.category,
-                                          style: style.copyWith(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.w300,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(item.name,
+                                        style: style.copyWith(
+                                            fontWeight: FontWeight.w500)),
+                                    Expanded(
+                                      child: Align(
+                                        alignment: FractionalOffset.centerLeft,
+                                        child: Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(8, 2, 8, 2),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[400],
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
                                           ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          softWrap: false,
+                                          child: Text(
+                                            item.category,
+                                            style: style.copyWith(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontStyle: FontStyle.italic,
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            softWrap: false,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ]
-                              ),
+                                  ]),
                             ),
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Text("\$${format(item.price)}",
-                                  style: style.copyWith(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 32,
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-                                  child: Text(
-                                    (item.taxExempt) ? '' : '+Tax',
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(
+                                    "\$${format(item.price)}",
                                     style: style.copyWith(
-                                      fontWeight: FontWeight.w200,
-                                      fontSize: 12,
-                                    )
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 32,
+                                    ),
                                   ),
-                                ),
-                              ]
-                            ),
-                          ]
-                        )
-                      ),
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                                    child: Text((item.taxExempt) ? '' : '+Tax',
+                                        style: style.copyWith(
+                                          fontWeight: FontWeight.w200,
+                                          fontSize: 12,
+                                        )),
+                                  ),
+                                ]),
+                          ])),
                     ),
                   ),
                 );
@@ -140,6 +140,84 @@ class _ProductsBodyState extends State<ProductsBody> {
           ],
         ));
       },
+    );
+  }
+}
+
+class ProductDetailScreen extends StatefulWidget {
+  @override
+  _ProductDetailScreenState createState() => _ProductDetailScreenState();
+
+  ProductDetailScreen({Key key}) : super(key: key);
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+
+  @override
+  Widget build(BuildContext context) {
+  final ProductDetail product = ModalRoute.of(context).settings.arguments;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 30.0, 0, 8.0),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  decoration: (product.images.isNotEmpty)
+                  ? BoxDecoration(
+                    color: Colors.blue,
+                    image: DecorationImage(
+                      fit: BoxFit.fitWidth,
+                      alignment: FractionalOffset.center,
+                      image: AssetImage(product.images[0]),
+                    ),
+                  )
+                  : BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Align(
+                        alignment: FractionalOffset.topLeft,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: FractionalOffset.center,
+                        child: Text(product.name,
+                          style: style.copyWith(
+                            fontSize: 42,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 12.0,
+                                color: Colors.black,
+                              ),
+                            ]
+                          ),
+                        ),
+                      ),
+                    ]
+                  )
+                ),
+              ),
+            ),
+            Text(product.description),
+          ],
+        ),
+      ),
     );
   }
 }
