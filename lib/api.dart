@@ -66,6 +66,17 @@ Future<ProductList> getProducts() async {
   }
 }
 
+Future<ProductDetail> getProduct(String tag) async {
+  final response = await http.get('http://order.naylorsfeed.com/api/products/$tag');
+
+  if (response.statusCode == 200) {
+    var data = ProductDetail.fromJSON(jsonDecode(response.body));
+    return data;
+  } else {
+    throw Exception('Failed to Get Product $tag');
+  }
+}
+
 class AuthInfo {
   final String token;
   final String email;

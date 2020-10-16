@@ -19,12 +19,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       initialRoute: '/', // Skipping login for now TODO: Don't forget to revert
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/register': (context) => RegisterPage(),
-        '/': (context) => NaylorsHomePage(title: appTitle),
-        '/product': (context) => ProductDetailScreen(),
-      },
+      onGenerateRoute: (RouteSettings settings) {
+        var routes = <String, WidgetBuilder>{
+          '/login': (context) => LoginPage(),
+          '/register': (context) => RegisterPage(),
+          '/': (context) => NaylorsHomePage(title: appTitle),
+          '/product': (context) => ProductDetailScreen(initProduct: settings.arguments),
+        };
+        WidgetBuilder builder = routes[settings.name];
+        return MaterialPageRoute(builder: (context) => builder(context));
+      }
     );
   }
 }

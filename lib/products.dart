@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:naylors_client/api.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ProductsBody extends StatefulWidget {
   @override
@@ -38,14 +41,13 @@ class _ProductsBodyState extends State<ProductsBody> {
           return ListView.builder(
               itemCount: snapshot.data.list.length,
               scrollDirection: Axis.vertical,
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 final item = snapshot.data.list[index];
                 return Card(
                   child: InkWell(
                     onTap: () {
-                      // Open item detail, TODO: Write item detail screen
-                      Navigator.pushNamed(context, '/product',
-                          arguments: item);
+                      Navigator.pushNamed(context, '/product', arguments: item);
                     },
                     child: Padding(
                       padding:
@@ -145,79 +147,233 @@ class _ProductsBodyState extends State<ProductsBody> {
 }
 
 class ProductDetailScreen extends StatefulWidget {
+  final ProductDetail initProduct;
   @override
-  _ProductDetailScreenState createState() => _ProductDetailScreenState();
+  _ProductDetailScreenState createState() =>
+      _ProductDetailScreenState(this.initProduct);
 
-  ProductDetailScreen({Key key}) : super(key: key);
+  ProductDetailScreen({Key key, this.initProduct}) : super(key: key);
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  final ProductDetail initProduct;
+  _ProductDetailScreenState(this.initProduct);
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  Future<ProductDetail> product;
+  final quantity = TextEditingController();
+
+  _runFuture(String tag) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      product = getProduct(tag);
+      setState(() {});
+    });
+  }
+
+  _incrementQuantity() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      var q = int.parse(quantity.text);
+      q++;
+      setState(() {
+        quantity.text = (q).toString();
+      });
+    });
+  }
+
+  _decrementQuantity() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      var q = int.parse(quantity.text);
+      if (q >= 2) q--;
+      setState(() {
+        quantity.text = (q).toString();
+      });
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    product = getProduct(initProduct.tag);
+    quantity.text = "1";
+    quantity.selection = TextSelection.collapsed(offset: quantity.text.length);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    quantity.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-  final ProductDetail product = ModalRoute.of(context).settings.arguments;
-    return Scaffold(
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 30.0, 0, 8.0),
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Container(
-                  decoration: (product.images.isNotEmpty)
-                  ? BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      fit: BoxFit.fitWidth,
-                      alignment: FractionalOffset.center,
-                      image: AssetImage(product.images[0]),
-                    ),
-                  )
-                  : BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Align(
-                        alignment: FractionalOffset.topLeft,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: FractionalOffset.center,
-                        child: Text(product.name,
-                          style: style.copyWith(
-                            fontSize: 42,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 12.0,
-                                color: Colors.black,
+    return FutureBuilder<ProductDetail>(
+      future: product,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (snapshot.hasData) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 30.0, 0, 0),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Container(
+                        decoration: (snapshot.data.images.isNotEmpty)
+                            ? BoxDecoration(
+                                color: Colors.blue,
+                                image: DecorationImage(
+                                  fit: BoxFit.fitWidth,
+                                  alignment: FractionalOffset.center,
+                                  image: AssetImage(snapshot.data.images[0]),
+                                ),
+                              )
+                            : BoxDecoration(
+                                color: Colors.blue,
                               ),
-                            ]
-                          ),
+                        child: Column(
+                          children: <Widget>[
+                            Align(
+                              alignment: FractionalOffset.topLeft,
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon:
+                                    Icon(Icons.arrow_back, color: Colors.white),
+                              ),
+                            ),
+                            Align(
+                              alignment: FractionalOffset.center,
+                              child: Text(
+                                snapshot.data.name,
+                                style: style.copyWith(
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 12.0,
+                                        color: Colors.black,
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ]
-                  )
-                ),
+                    ),
+                  ),
+                  Divider(
+                    height: 2,
+                    thickness: 2,
+                    color: Colors.blue[900],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(12, 12, 12, 12),
+                    child: SizedBox(
+                      height: 64,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              DropdownButton(
+                                items: [
+                                  /**
+                                   * TODO: Create a builder for product specific sizes with links to respective tag
+                                   * Requirements: API Sizes field on products in format of:
+                                   *    size: [ { "label": "50lbs", "tag": "36009" }, ... ]
+                                   */
+                                  DropdownMenuItem(
+                                      child: Text('50lbs.'), value: '36009'),
+                                  DropdownMenuItem(
+                                      child: Text('1 bag'), value: '12345'),
+                                ],
+                                onChanged: (_) {
+                                  _runFuture(_);
+                                },
+                              ),
+                              Text('Size'),
+                            ],
+                          ),
+                          VerticalDivider(),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.add_circle),
+                                    onPressed: _incrementQuantity,
+                                  ),
+                                  SizedBox(
+                                    width: 32,
+                                    child: TextField(
+                                      textAlign: TextAlign.center,
+                                      autofocus: false,
+                                      controller: quantity,
+                                      autocorrect: true,
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                        decimal: false,
+                                        signed: false,
+                                      ),
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.remove_circle),
+                                    onPressed: _decrementQuantity,
+                                  ),
+                                ],
+                              ),
+                              Text('Quantity'),
+                            ],
+                          ),
+                          VerticalDivider(),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
+                            child: Ink(
+                              decoration: const ShapeDecoration(
+                                color: Colors.lightGreen,
+                                shape: CircleBorder(),
+                              ),
+                              child: IconButton(
+                                icon: Icon(Icons.add_shopping_cart),
+                                color: Colors.white,
+                                onPressed: () {},
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Divider(thickness: 2),
+                  Expanded(
+                    // Tip: Use two /n/n for newlines in text.
+                    child: Markdown(data: snapshot.data.description),
+                  ),
+                ],
               ),
             ),
-            Text(product.description),
-          ],
-        ),
-      ),
+          );
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 }
