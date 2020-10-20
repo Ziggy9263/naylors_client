@@ -212,6 +212,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         if (snapshot.hasData) {
+          List<DropdownMenuItem<String>> dropdownItems = List<DropdownMenuItem<String>>();
+
+          snapshot.data.sizes.forEach((value) {
+            dropdownItems.add(DropdownMenuItem(
+              child: Text(value['size']),
+              value: value['tag'],
+            ));
+          });
+
           return Scaffold(
             body: Center(
               child: Column(
@@ -237,13 +246,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         child: Column(
                           children: <Widget>[
                             Align(
-                              alignment: FractionalOffset.topLeft,
+                              alignment: FractionalOffset(0.02, 0.0),
                               child: IconButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                icon:
-                                    Icon(Icons.arrow_back, color: Colors.white),
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  size: 32.0,
+                                  color: Colors.white),
                               ),
                             ),
                             Align(
@@ -284,7 +295,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               DropdownButton(
-                                items: [
+                                value: snapshot.data.tag,
+                                items: dropdownItems,
+                                /*[
                                   /**
                                    * TODO: Create a builder for product specific sizes with links to respective tag
                                    * Requirements: API Sizes field on products in format of:
@@ -294,7 +307,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       child: Text('50lbs.'), value: '36009'),
                                   DropdownMenuItem(
                                       child: Text('1 bag'), value: '12345'),
-                                ],
+                                ],*/
                                 onChanged: (_) {
                                   _runFuture(_);
                                 },
@@ -310,8 +323,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   IconButton(
-                                    icon: Icon(Icons.add_circle),
-                                    onPressed: _incrementQuantity,
+                                    icon: Icon(Icons.remove_circle),
+                                    onPressed: _decrementQuantity,
                                   ),
                                   SizedBox(
                                     width: 32,
@@ -331,8 +344,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.remove_circle),
-                                    onPressed: _decrementQuantity,
+                                    icon: Icon(Icons.add_circle),
+                                    onPressed: _incrementQuantity,
                                   ),
                                 ],
                               ),

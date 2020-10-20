@@ -67,7 +67,8 @@ Future<ProductList> getProducts() async {
 }
 
 Future<ProductDetail> getProduct(String tag) async {
-  final response = await http.get('http://order.naylorsfeed.com/api/products/$tag');
+  final response =
+      await http.get('http://order.naylorsfeed.com/api/products/$tag');
 
   if (response.statusCode == 200) {
     var data = ProductDetail.fromJSON(jsonDecode(response.body));
@@ -100,6 +101,7 @@ class ProductDetail {
   final String category;
   final double price;
   final List images;
+  final List sizes;
   final bool taxExempt;
 
   ProductDetail(
@@ -109,6 +111,7 @@ class ProductDetail {
       this.category,
       this.price,
       this.images,
+      this.sizes,
       this.taxExempt});
 
   factory ProductDetail.fromJSON(Map<String, dynamic> json) {
@@ -119,6 +122,7 @@ class ProductDetail {
         category: json['category'] as String,
         price: json['price'].toDouble(),
         images: json['images'],
+        sizes: json['sizes'],
         taxExempt: json['taxExempt'] as bool);
   }
 }
