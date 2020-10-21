@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:naylors_client/login.dart';
 import 'package:naylors_client/register.dart';
 import 'package:naylors_client/products.dart';
+import 'package:naylors_client/cart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
@@ -17,19 +18,20 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
     ]);
     return MaterialApp(
-      title: appTitle,
-      initialRoute: '/', // Skipping login for now TODO: Don't forget to revert
-      onGenerateRoute: (RouteSettings settings) {
-        var routes = <String, WidgetBuilder>{
-          '/login': (context) => LoginPage(),
-          '/register': (context) => RegisterPage(),
-          '/': (context) => NaylorsHomePage(title: appTitle),
-          '/product': (context) => ProductDetailScreen(initProduct: settings.arguments),
-        };
-        WidgetBuilder builder = routes[settings.name];
-        return MaterialPageRoute(builder: (context) => builder(context));
-      }
-    );
+        title: appTitle,
+        initialRoute:
+            '/', // Skipping login for now TODO: Don't forget to revert
+        onGenerateRoute: (RouteSettings settings) {
+          var routes = <String, WidgetBuilder>{
+            '/login': (context) => LoginPage(),
+            '/register': (context) => RegisterPage(),
+            '/': (context) => NaylorsHomePage(title: appTitle),
+            '/product': (context) =>
+                ProductDetailScreen(initProduct: settings.arguments),
+          };
+          WidgetBuilder builder = routes[settings.name];
+          return MaterialPageRoute(builder: (context) => builder(context));
+        });
   }
 }
 
@@ -159,9 +161,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
           ],
         ),
       ),
-      endDrawer: Drawer(
-        child: Text('Cart goes here'),
-      ),
+      endDrawer: CartBody(),
     );
   }
 }

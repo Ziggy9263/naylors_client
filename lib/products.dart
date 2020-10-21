@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:naylors_client/api.dart';
+import 'package:naylors_client/cart.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ProductsBody extends StatefulWidget {
@@ -38,6 +39,7 @@ class _ProductsBodyState extends State<ProductsBody> {
       future: products,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          // TODO: Turn this builder into a function I can use for both product and cart
           return ListView.builder(
               itemCount: snapshot.data.list.length,
               scrollDirection: Axis.vertical,
@@ -169,7 +171,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     });
   }
 
-  _incrementQuantity() {
+  @override
+  initState() {
+    super.initState();
+    product = getProduct(initProduct.tag);
+    quantity.text = "1";
+    quantity.selection = TextSelection.collapsed(offset: quantity.text.length);
+  }
+
+_incrementQuantity() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       var q = int.parse(quantity.text);
       q++;
@@ -190,14 +200,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   @override
-  initState() {
-    super.initState();
-    product = getProduct(initProduct.tag);
-    quantity.text = "1";
-    quantity.selection = TextSelection.collapsed(offset: quantity.text.length);
-  }
-
-  @override
   void dispose() {
     super.dispose();
     quantity.dispose();
@@ -212,7 +214,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         if (snapshot.hasData) {
-          List<DropdownMenuItem<String>> dropdownItems = List<DropdownMenuItem<String>>();
+          List<DropdownMenuItem<String>> dropdownItems =
+              List<DropdownMenuItem<String>>();
 
           snapshot.data.sizes.forEach((value) {
             dropdownItems.add(DropdownMenuItem(
@@ -251,10 +254,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                icon: Icon(
-                                  Icons.arrow_back,
-                                  size: 32.0,
-                                  color: Colors.white),
+                                icon: Icon(Icons.arrow_back,
+                                    size: 32.0, color: Colors.white),
                               ),
                             ),
                             Align(
@@ -324,7 +325,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 children: <Widget>[
                                   IconButton(
                                     icon: Icon(Icons.remove_circle),
-                                    onPressed: _decrementQuantity,
+                                    onPressed: _decrementQuantity
                                   ),
                                   SizedBox(
                                     width: 32,
@@ -333,14 +334,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       autofocus: false,
                                       controller: quantity,
                                       autocorrect: true,
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(
+                                      keyboardType: TextInputType.numberWithOptions(
                                         decimal: false,
                                         signed: false,
                                       ),
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                     ),
                                   ),
                                   IconButton(
@@ -363,7 +361,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               child: IconButton(
                                 icon: Icon(Icons.add_shopping_cart),
                                 color: Colors.white,
-                                onPressed: () {},
+                                onPressed: () {
+                                  var product = int.parse(snapshot.data.tag);
+                                  var _q = int.parse(quantity.text);
+                                  var cartItem =
+                                      CartItem(product: product, quantity: _q);
+                                  cartDetail.addItem(cartItem);
+                                },
                               ),
                             ),
                           ),
