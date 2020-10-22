@@ -6,6 +6,12 @@ import 'package:naylors_client/api.dart';
 import 'package:naylors_client/cart.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
+  /*
+    TODO: Double check cart and add "X items in cart" somewhere near the entries
+    and also on the product detail. Product detail quantity buttons could represent
+    and modify what is currently in the cart.
+  */
+
 class ProductsBody extends StatefulWidget {
   @override
   _ProductsBodyState createState() => _ProductsBodyState();
@@ -22,7 +28,7 @@ class _ProductsBodyState extends State<ProductsBody> {
   }
 
   String format(double n) {
-    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
+    return n.toStringAsFixed(n.truncateToDouble() == n ? 2 : 2);
   }
 
   @override
@@ -164,6 +170,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<ProductDetail> product;
   final quantity = TextEditingController();
 
+  String format(double n) {
+    return n.toStringAsFixed(n.truncateToDouble() == n ? 2 : 2);
+  }
+
   _runFuture(String tag) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       product = getProduct(tag);
@@ -246,7 +256,7 @@ _incrementQuantity() {
                             : BoxDecoration(
                                 color: Colors.blue,
                               ),
-                        child: Column(
+                        child: Stack(
                           children: <Widget>[
                             Align(
                               alignment: FractionalOffset(0.02, 0.0),
@@ -272,6 +282,49 @@ _incrementQuantity() {
                                         color: Colors.black,
                                       ),
                                     ]),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                alignment: Alignment.bottomRight,
+                                padding: EdgeInsets.fromLTRB(4, 4, 2, 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.white70,
+                                  border: Border(
+                                    left: BorderSide(
+                                      color: Colors.blue[900],
+                                      width: 2,
+                                    ),
+                                    top: BorderSide(
+                                      color: Colors.blue[900],
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    Text(
+                                      "\$${format(snapshot.data.price)}",
+                                      style: style.copyWith(
+                                        color: Colors.green[600],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 32,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                                      child: Text((snapshot.data.taxExempt) ? 'Tax Exempt' : '+Tax',
+                                          style: style.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                          )),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -365,7 +418,7 @@ _incrementQuantity() {
                                   var product = int.parse(snapshot.data.tag);
                                   var _q = int.parse(quantity.text);
                                   var cartItem =
-                                      CartItem(product: product, quantity: _q);
+                                      CartItem(product: product, quantity: _q, detail: snapshot.data);
                                   cartDetail.addItem(cartItem);
                                 },
                               ),
