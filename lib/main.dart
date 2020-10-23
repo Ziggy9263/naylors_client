@@ -4,6 +4,7 @@ import 'package:naylors_client/login.dart';
 import 'package:naylors_client/register.dart';
 import 'package:naylors_client/products.dart';
 import 'package:naylors_client/cart.dart';
+import 'package:naylors_client/checkout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
             '/': (context) => NaylorsHomePage(title: appTitle),
             '/product': (context) =>
                 ProductDetailScreen(initProduct: settings.arguments),
+            '/checkout': (context) => CheckoutPage(),
           };
           WidgetBuilder builder = routes[settings.name];
           return MaterialPageRoute(builder: (context) => builder(context));

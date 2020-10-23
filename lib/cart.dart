@@ -23,14 +23,14 @@ class CartDetail {
   // TODO: Use BLoC Pattern to make this easier
 
   void addItem(CartItem i) {
-    detail.add(i);
-    for (int index = 0; index < detail.length - 1; index++) {
-      if (detail[index].product == detail[index + 1].product) {
-        detail[index].quantity =
-            detail[index].quantity + detail[index + 1].quantity;
-        detail.removeAt(index + 1);
+    bool done = false;
+    for (int index = 0; index < detail.length; index++) {
+      if (detail[index].product == i.product) {
+        detail[index].quantity = detail[index].quantity + i.quantity;
+        done = true;
       }
     }
+    if (!done) detail.add(i);
   }
 
   void removeItem(CartItem i) {
@@ -79,264 +79,294 @@ class _CartBodyState extends State<CartBody> {
         child: (cartDetail.cart.isEmpty)
             ? Center(child: Text('Nothing in your cart yet.'))
             : Stack(
-              children: <Widget>[
-                ListView.builder(
-                  itemCount: cartDetail.cart.length,
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (context, index) {
-                    _deleteItemFromCart() {
-                      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                        setState(() {
-                          cartDetail.cart.removeAt(index);
-                        });
-                      });
-                    }
-
-                    _incrementQuantity() {
-                      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                        cartDetail.cart[index]._quantity =
-                            cartDetail.cart[index].quantity + 1;
-                        var q = cartDetail.cart[index].quantity;
-                        setState(() {
-                          quantityList[index].text = (q).toString();
-                        });
-                      });
-                    }
-
-                    _setQuantity(String value) {
-                      if (value != null) {
+                children: <Widget>[
+                  ListView.builder(
+                    itemCount: cartDetail.cart.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index) {
+                      _deleteItemFromCart() {
                         SchedulerBinding.instance
                             .addPostFrameCallback((timeStamp) {
                           setState(() {
-                            cartDetail.cart[index].quantity = int.parse(value);
+                            cartDetail.cart.removeAt(index);
                           });
                         });
-                      } else
-                        return;
-                    }
+                      }
 
-                    _decrementQuantity() {
-                      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                        if (cartDetail.cart[index].quantity >= 2)
+                      _incrementQuantity() {
+                        SchedulerBinding.instance
+                            .addPostFrameCallback((timeStamp) {
                           cartDetail.cart[index]._quantity =
-                              cartDetail.cart[index].quantity - 1;
-                        var q = cartDetail.cart[index].quantity;
-                        setState(() {
-                          quantityList[index].text = (q).toString();
+                              cartDetail.cart[index].quantity + 1;
+                          var q = cartDetail.cart[index].quantity;
+                          setState(() {
+                            quantityList[index].text = (q).toString();
+                          });
                         });
-                      });
-                    }
+                      }
 
-                    final item = cartDetail.cart[index];
-                    String size;
-                    item.detail.sizes.forEach((val) {
-                      if (val['tag'] == item.product.toString())
-                        size = val['size'];
-                    });
-                    return Card(
-                      child: Container(
-                        decoration: (item.detail.images.isNotEmpty)
-                            ? BoxDecoration(
-                                color: Colors.blue,
-                                image: DecorationImage(
-                                  colorFilter: ColorFilter.mode(
-                                      Colors.white24, BlendMode.lighten),
-                                  fit: BoxFit.fitWidth,
-                                  alignment: FractionalOffset.center,
-                                  image: AssetImage(item.detail.images[0]),
-                                ),
-                              )
-                            : BoxDecoration(
-                                color: Colors.blue[100],
-                              ),
-                        child: LimitedBox(
-                          maxHeight: 144,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              /** QUANTITY INCREMENT BUTTONS */
-                              Container(
-                                margin: EdgeInsets.fromLTRB(0, 0, 1, 0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Colors.white54,
-                                ),
-                                child: SizedBox(
-                                  width: 50,
-                                  child: Column(
-                                    verticalDirection: VerticalDirection.up,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.remove_circle),
-                                        onPressed: _decrementQuantity,
-                                      ),
-                                      SizedBox(
-                                        width: 32,
-                                        child: TextField(
-                                          textAlign: TextAlign.center,
-                                          autofocus: false,
-                                          controller: quantityList[index],
-                                          autocorrect: true,
-                                          onSubmitted: _setQuantity,
-                                          keyboardType:
-                                              TextInputType.numberWithOptions(
-                                            decimal: false,
-                                            signed: false,
-                                          ),
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.digitsOnly
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.add_circle),
-                                        onPressed: _incrementQuantity,
-                                      ),
-                                    ],
+                      _setQuantity(String value) {
+                        if (value != null) {
+                          SchedulerBinding.instance
+                              .addPostFrameCallback((timeStamp) {
+                            setState(() {
+                              cartDetail.cart[index].quantity =
+                                  int.parse(value);
+                            });
+                          });
+                        } else
+                          return;
+                      }
+
+                      _decrementQuantity() {
+                        SchedulerBinding.instance
+                            .addPostFrameCallback((timeStamp) {
+                          if (cartDetail.cart[index].quantity >= 2)
+                            cartDetail.cart[index]._quantity =
+                                cartDetail.cart[index].quantity - 1;
+                          var q = cartDetail.cart[index].quantity;
+                          setState(() {
+                            quantityList[index].text = (q).toString();
+                          });
+                        });
+                      }
+
+                      final item = cartDetail.cart[index];
+                      String size;
+                      item.detail.sizes.forEach((val) {
+                        if (val['tag'] == item.product.toString())
+                          size = val['size'];
+                      });
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            side: BorderSide(
+                                color: Colors.blue[900], width: 0.5)),
+                        child: Container(
+                          decoration: (item.detail.images.isNotEmpty)
+                              ? BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.blue,
+                                  image: DecorationImage(
+                                    colorFilter: ColorFilter.mode(
+                                        Colors.white24, BlendMode.lighten),
+                                    fit: BoxFit.fitWidth,
+                                    alignment: FractionalOffset.center,
+                                    image: AssetImage(item.detail.images[0]),
                                   ),
+                                )
+                              : BoxDecoration(
+                                  color: Colors.blue[100],
                                 ),
-                              ),
-                              /** PRODUCT DETAIL */
-                              Expanded(
-                                child: Container(
-                                  constraints: BoxConstraints.expand(),
-                                  margin: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                          child: LimitedBox(
+                            maxHeight: 144,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                /** QUANTITY INCREMENT BUTTONS */
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(0, 0, 1, 0),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4),
                                     color: Colors.white54,
                                   ),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(6, 6, 6, 2),
+                                  child: SizedBox(
+                                    width: 50,
                                     child: Column(
+                                      verticalDirection: VerticalDirection.up,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                        Expanded(
-                                          child:Text(
-                                            item.detail.name,
+                                        IconButton(
+                                          icon: Icon(Icons.remove_circle),
+                                          onPressed: _decrementQuantity,
+                                        ),
+                                        SizedBox(
+                                          width: 32,
+                                          child: TextField(
                                             textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            style: style.copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 24),
+                                            autofocus: false,
+                                            controller: quantityList[index],
+                                            autocorrect: true,
+                                            onSubmitted: _setQuantity,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                              decimal: false,
+                                              signed: false,
+                                            ),
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
                                           ),
                                         ),
-                                        Divider(thickness: 1),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text("Size: $size"),
-                                            Container(
-                                              alignment: Alignment.bottomRight,
-                                              width: 120,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white70,
-                                                borderRadius: BorderRadius.circular(4),
-                                                border: Border.all(width: 1, color: Colors.blue[900]),
-                                              ),
-                                              padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                                              margin: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                children: <Widget>[
-                                                  Text("\$${format(item.detail.price)}",
-                                                    style: style.copyWith(
-                                                      color: Colors.green,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 32,
+                                        IconButton(
+                                          icon: Icon(Icons.add_circle),
+                                          onPressed: _incrementQuantity,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                /** PRODUCT DETAIL */
+                                Expanded(
+                                  child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    margin: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: Colors.white54,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(6, 6, 6, 2),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(
+                                              item.detail.name,
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              style: style.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 24),
+                                            ),
+                                          ),
+                                          Divider(thickness: 1),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text("Size: $size"),
+                                              Container(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                width: 120,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white70,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.blue[900]),
+                                                ),
+                                                padding: EdgeInsets.fromLTRB(
+                                                    2, 2, 2, 2),
+                                                margin: EdgeInsets.fromLTRB(
+                                                    2, 2, 2, 2),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "\$${format(item.detail.price)}",
+                                                      style: style.copyWith(
+                                                        color: Colors.green,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 32,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Text((item.detail.taxExempt) ? 'Tax Exempt' : '+Tax',
-                                                    style: style.copyWith(
-                                                      fontWeight: FontWeight.w300,
-                                                      fontSize: 12,
-                                                    )),
+                                                    Text(
+                                                        (item.detail.taxExempt)
+                                                            ? 'Tax Exempt'
+                                                            : '+Tax',
+                                                        style: style.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w300,
+                                                          fontSize: 12,
+                                                        )),
                                                   ],
                                                 ),
                                               ),
                                             ],
                                           ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                /** VIEW AND DELETE ICONBUTTONS */
+                                SizedBox(
+                                  width: 36,
+                                  child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    margin: EdgeInsets.fromLTRB(1, 0, 0, 0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: Colors.white54,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        IconButton(
+                                          icon: Icon(Icons.visibility),
+                                          onPressed: () async {
+                                            Navigator.pushNamed(
+                                                    context, '/product',
+                                                    arguments: await getProduct(
+                                                        item.product
+                                                            .toString()))
+                                                .then((value) {
+                                              setState(() {
+                                                item.quantity = cartDetail
+                                                    .cart[index].quantity;
+                                              });
+                                            });
+                                          },
+                                        ),
+                                        const Divider(thickness: 1),
+                                        IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: _deleteItemFromCart,
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
-                              ),
-                              /** VIEW AND DELETE ICONBUTTONS */
-                              SizedBox(
-                                width: 36,
-                                child: Container(
-                                  constraints: BoxConstraints.expand(),
-                                  margin: EdgeInsets.fromLTRB(1, 0, 0, 0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: Colors.white54,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.visibility),
-                                        onPressed: () async {
-                                          Navigator.pushNamed(context, '/product',
-                                                  arguments: await getProduct(
-                                                      item.product.toString()))
-                                              .then((value) {
-                                            setState(() {
-                                              item.quantity =
-                                                  cartDetail.cart[index].quantity;
-                                            });
-                                          });
-                                        },
-                                      ),
-                                      const Divider(thickness: 1),
-                                      IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: _deleteItemFromCart,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
+                      );
+                    },
+                  ),
+                  /** CHECKOUT BUTTON */
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: 275,
+                      height: 64,
+                      margin: EdgeInsets.fromLTRB(0, 2, 0, 4),
+                      child: RaisedButton(
+                        child: Text("Checkout",
+                            style: style.copyWith(
+                              fontSize: 24,
+                              color: Colors.white,
+                            )),
+                        color: Colors.green,
+                        splashColor: Colors.lightGreenAccent,
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/checkout');
+                        },
                       ),
-                    );
-                  },
-                ),
-                /** CHECKOUT BUTTON */
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: 275,
-                    height: 64,
-                    margin: EdgeInsets.fromLTRB(0, 2, 0, 4),
-                    child: RaisedButton(
-                      child: Text(
-                        "Checkout",
-                        style: style.copyWith(
-                          fontSize: 24,
-                          color: Colors.white,
-                        )),
-                      color: Colors.green,
-                      splashColor: Colors.lightGreenAccent,
-                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      onPressed: () {},
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
       ),
     );
   }
