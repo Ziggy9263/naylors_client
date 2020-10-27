@@ -6,7 +6,7 @@ import 'package:naylors_client/api.dart';
 import 'package:naylors_client/cart.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-  /*
+/*
     TODO: Double check cart and add "X items in cart" somewhere near the entries
     and also on the product detail. Product detail quantity buttons could represent
     and modify what is currently in the cart.
@@ -22,6 +22,7 @@ class ProductsBody extends StatefulWidget {
 class _ProductsBodyState extends State<ProductsBody> {
   Future<ProductList> products;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<ProductList> getProductList() async {
     return await getProducts();
@@ -189,7 +190,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     quantity.selection = TextSelection.collapsed(offset: quantity.text.length);
   }
 
-_incrementQuantity() {
+  _incrementQuantity() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       var q = int.parse(quantity.text);
       q++;
@@ -269,10 +270,12 @@ _incrementQuantity() {
                               ),
                             ),
                             Align(
-                              alignment: FractionalOffset.center,
-                              child: Text(
-                                snapshot.data.name,
-                                style: style.copyWith(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                                child: Text(
+                                  snapshot.data.name,
+                                  textAlign: TextAlign.center,
+                                  style: style.copyWith(
                                     fontSize: 42,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
@@ -281,7 +284,9 @@ _incrementQuantity() {
                                         blurRadius: 12.0,
                                         color: Colors.black,
                                       ),
-                                    ]),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                             Positioned(
@@ -317,7 +322,10 @@ _incrementQuantity() {
                                     ),
                                     Container(
                                       padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                      child: Text((snapshot.data.taxExempt) ? 'Tax Exempt' : '+Tax',
+                                      child: Text(
+                                          (snapshot.data.taxExempt)
+                                              ? 'Tax Exempt'
+                                              : '+Tax',
                                           style: style.copyWith(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12,
@@ -377,9 +385,8 @@ _incrementQuantity() {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   IconButton(
-                                    icon: Icon(Icons.remove_circle),
-                                    onPressed: _decrementQuantity
-                                  ),
+                                      icon: Icon(Icons.remove_circle),
+                                      onPressed: _decrementQuantity),
                                   SizedBox(
                                     width: 32,
                                     child: TextField(
@@ -387,11 +394,14 @@ _incrementQuantity() {
                                       autofocus: false,
                                       controller: quantity,
                                       autocorrect: true,
-                                      keyboardType: TextInputType.numberWithOptions(
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
                                         decimal: false,
                                         signed: false,
                                       ),
-                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
                                     ),
                                   ),
                                   IconButton(
@@ -417,9 +427,12 @@ _incrementQuantity() {
                                 onPressed: () {
                                   var product = int.parse(snapshot.data.tag);
                                   var _q = int.parse(quantity.text);
-                                  var cartItem =
-                                      CartItem(product: product, quantity: _q, detail: snapshot.data);
+                                  var cartItem = CartItem(
+                                      product: product,
+                                      quantity: _q,
+                                      detail: snapshot.data);
                                   cartDetail.addItem(cartItem);
+                                  Navigator.pop(context);
                                 },
                               ),
                             ),
