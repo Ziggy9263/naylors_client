@@ -7,6 +7,7 @@ import 'package:naylors_client/cart.dart';
 import 'package:naylors_client/checkout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:badges/badges.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
         title: appTitle,
+        debugShowCheckedModeBanner: false,
         initialRoute:
             '/', // Skipping login for now TODO: Don't forget to revert
         onGenerateRoute: (RouteSettings settings) {
@@ -50,6 +52,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
   final String title;
   String _email = "";
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   _NaylorsHomePageState(this.title);
 
@@ -87,11 +90,20 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(title: Text(title), actions: <Widget>[
-        IconButton(
-          onPressed: _openEndDrawer,
-          icon: Icon(
-            Icons.shopping_cart,
-            color: Colors.white,
+        Badge(
+          badgeContent: Text(cartDetail.cart.length.toString(),
+            style: style.copyWith(color: Colors.white,
+                                  fontSize: 14),
+          ),
+          showBadge: (cartDetail.cart.length > 0) ? true : false,
+          position: BadgePosition.topEnd(top: 2, end: 2),
+          child: IconButton(
+            onPressed: _openEndDrawer,
+            icon: Icon(
+              Icons.shopping_cart,
+              size: 36,
+              color: Colors.white,
+            ),
           ),
         ),
       ]),

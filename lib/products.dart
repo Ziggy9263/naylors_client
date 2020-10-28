@@ -56,7 +56,9 @@ class _ProductsBodyState extends State<ProductsBody> {
                 return Card(
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/product', arguments: item);
+                      setState(() {
+                        Navigator.pushNamed(context, '/product', arguments: item);
+                      });
                     },
                     child: Padding(
                       padding:
@@ -431,8 +433,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       product: product,
                                       quantity: _q,
                                       detail: snapshot.data);
-                                  cartDetail.addItem(cartItem);
-                                  Navigator.pop(context);
+                                  setState(() {
+                                    cartDetail.addItem(cartItem);
+                                  });
                                 },
                               ),
                             ),

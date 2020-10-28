@@ -109,7 +109,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             Align(
               alignment: Alignment.topLeft,
               child: IconButton(
-                padding: EdgeInsets.fromLTRB(0, 36, 0, 0),
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 onPressed: () {
                   Navigator.pop(context);
                 },
