@@ -57,7 +57,8 @@ class _ProductsBodyState extends State<ProductsBody> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        Navigator.pushNamed(context, '/product', arguments: item);
+                        Navigator.pushNamed(context, '/product',
+                            arguments: item);
                       });
                     },
                     child: Padding(
@@ -190,6 +191,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     product = getProduct(initProduct.tag);
     quantity.text = "1";
     quantity.selection = TextSelection.collapsed(offset: quantity.text.length);
+    quantity.addListener(() {
+      final newText = quantity.text.toLowerCase();
+      quantity.value = quantity.value.copyWith(
+        text: newText,
+        selection: TextSelection(
+            baseOffset: newText.length, extentOffset: quantity.text.length),
+        composing: TextRange.empty,
+      );
+    });
   }
 
   _incrementQuantity() {
@@ -386,9 +396,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  IconButton(
-                                      icon: Icon(Icons.remove_circle),
-                                      onPressed: _decrementQuantity),
+                                  SizedBox(
+                                    width: 32,
+                                    child: Material(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.elliptical(32, 16),
+                                          bottomLeft: Radius.elliptical(32, 16),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: MaterialButton(
+                                        padding: EdgeInsets.zero,
+                                        color: Colors.red,
+                                        disabledColor: Colors.grey,
+                                        child: Icon(Icons.remove_circle,
+                                            color: Colors.white),
+                                        onPressed: _decrementQuantity,
+                                      ),
+                                    ),
+                                  ),
                                   SizedBox(
                                     width: 32,
                                     child: TextField(
@@ -396,6 +421,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       autofocus: false,
                                       controller: quantity,
                                       autocorrect: true,
+                                      style:
+                                          style.copyWith(color: Colors.black),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.grey[200],
+                                        contentPadding: EdgeInsets.all(0),
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                        ),
+                                      ),
                                       keyboardType:
                                           TextInputType.numberWithOptions(
                                         decimal: false,
@@ -406,9 +441,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       ],
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: Icon(Icons.add_circle),
-                                    onPressed: _incrementQuantity,
+                                  SizedBox(
+                                    width: 32,
+                                    child: Material(
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.elliptical(32, 16),
+                                          bottomRight: Radius.elliptical(32, 16),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: MaterialButton(
+                                        padding: EdgeInsets.zero,
+                                        color: Colors.green,
+                                        disabledColor: Colors.grey,
+                                        child: Icon(Icons.add_circle,
+                                            color: Colors.white),
+                                        onPressed: _incrementQuantity,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
