@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<AuthInfo> login(String email, String password) async {
-  va  r body = new Map<String, dynamic>();
+  var body = new Map<String, dynamic>();
   body['email'] = email;
   body['password'] = password;
   final response = await http.post(

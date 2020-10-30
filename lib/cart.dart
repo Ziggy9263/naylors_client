@@ -1,10 +1,8 @@
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
 
 import 'package:naylors_client/widgets/quantity_incremental_buttons.dart';
-import 'package:naylors_client/repositories/api.dart';
+import 'package:naylors_client/models/models.dart';
 
 class CartItem {
   int product; // Referenced by tag
@@ -181,15 +179,15 @@ class _CartBodyState extends State<CartBody> {
                                       onSubmitted: _setQuantity,
                                     ),
                                     Text("Quantity",
-                                      style: style.copyWith(fontSize: 12)),
+                                        style: style.copyWith(fontSize: 12)),
                                   ],
                                 ),
                                 Column(
                                   children: [
                                     Text("$size",
-                                      style: style.copyWith(fontSize: 20)),
+                                        style: style.copyWith(fontSize: 20)),
                                     Text("Size",
-                                      style: style.copyWith(fontSize: 12)),
+                                        style: style.copyWith(fontSize: 12)),
                                   ],
                                 ),
                                 Container(

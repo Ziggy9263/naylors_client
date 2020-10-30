@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:naylors_client/login.dart';
-import 'package:naylors_client/register.dart';
-import 'package:naylors_client/products.dart';
-import 'package:naylors_client/cart.dart';
-import 'package:naylors_client/checkout.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:badges/badges.dart';
+
+
+import 'package:naylors_client/login.dart';
+import 'package:naylors_client/register.dart';
+//import 'package:naylors_client/products.dart';
+//import 'package:naylors_client/cart.dart';
+//import 'package:naylors_client/checkout.dart';
+
 import 'package:naylors_client/simple_bloc_observer.dart';
 import 'package:bloc/bloc.dart';
 import 'package:naylors_client/repositories/repositories.dart';
 import 'package:naylors_client/blocs/blocs.dart';
-import 'package:http/http.dart' as http;
+import 'package:naylors_client/widgets/widgets.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
@@ -52,12 +56,12 @@ class MyApp extends StatelessWidget {
             '/register': (context) => RegisterPage(),
             '/': (context) => BlocProvider(
                   create: (context) =>
-                      ProductBloc(productRepository: productRepository),
+                      ProductListBloc(productRepository: productRepository),
                   child: NaylorsHomePage(title: appTitle),
                 ),
-            '/product': (context) =>
-                ProductDetailScreen(initProduct: settings.arguments),
-            '/checkout': (context) => CheckoutPage(),
+            //'/product': (context) =>
+            //    ProductDetailScreen(initProduct: settings.arguments),
+            //'/checkout': (context) => CheckoutPage(),
           };
           WidgetBuilder builder = routes[settings.name];
           return MaterialPageRoute(builder: (context) => builder(context));
@@ -117,11 +121,11 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
       key: _scaffoldKey,
       appBar: AppBar(title: Text(title), actions: <Widget>[
         Badge(
-          badgeContent: Text(
-            cartDetail.cart.length.toString(),
+          badgeContent: Text("0",
+            //cartDetail.cart.length.toString(),
             style: style.copyWith(color: Colors.white, fontSize: 14),
           ),
-          showBadge: (cartDetail.cart.length > 0) ? true : false,
+          //showBadge: (cartDetail.cart.length > 0) ? true : false,
           position: BadgePosition.topEnd(top: 2, end: 2),
           child: IconButton(
             onPressed: _openEndDrawer,
@@ -133,7 +137,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
           ),
         ),
       ]),
-      body: ProductsBody(),
+      body: ProductListBody(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -201,7 +205,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
           ],
         ),
       ),
-      endDrawer: CartBody(),
+      endDrawer: Text("Working on it"),//CartBody(),
     );
   }
 }
