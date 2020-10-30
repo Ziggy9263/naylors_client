@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 
-import 'package:naylors_client/products.dart';
-import 'package:naylors_client/api.dart';
+import 'package:naylors_client/widgets/quantity_incremental_buttons.dart';
+import 'package:naylors_client/repositories/api.dart';
 
 class CartItem {
   int product; // Referenced by tag
@@ -131,80 +131,22 @@ class _CartBodyState extends State<CartBody> {
               borderRadius: BorderRadius.circular(4),
               side: BorderSide(color: Colors.blue[900], width: 0.5)),
           child: Container(
-            decoration: (item.detail.images.isNotEmpty)
-                ? BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      colorFilter:
-                          ColorFilter.mode(Colors.white24, BlendMode.lighten),
-                      fit: BoxFit.fitWidth,
-                      alignment: FractionalOffset.center,
-                      image: AssetImage(item.detail.images[0]),
-                    ),
-                  )
-                : BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: Colors.blue[100],
-                  ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: Colors.white,
+            ),
             child: LimitedBox(
               maxHeight: 144,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  /** QUANTITY INCREMENT BUTTONS */
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 1, 0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: Colors.white54,
-                    ),
-                    child: SizedBox(
-                      width: 50,
-                      child: Column(
-                        verticalDirection: VerticalDirection.up,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.remove_circle),
-                            onPressed: _decrementQuantity,
-                          ),
-                          SizedBox(
-                            width: 32,
-                            child: TextField(
-                              textAlign: TextAlign.center,
-                              autofocus: false,
-                              controller: quantityList[index],
-                              autocorrect: true,
-                              onSubmitted: _setQuantity,
-                              keyboardType: TextInputType.numberWithOptions(
-                                decimal: false,
-                                signed: false,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.add_circle),
-                            onPressed: _incrementQuantity,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   /** PRODUCT DETAIL */
                   Expanded(
                     child: Container(
                       constraints: BoxConstraints.expand(),
-                      margin: EdgeInsets.fromLTRB(2, 0, 2, 0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: Colors.white54,
-                      ),
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(6, 6, 6, 2),
+                        padding: EdgeInsets.fromLTRB(6, 6, 0, 2),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
@@ -219,13 +161,37 @@ class _CartBodyState extends State<CartBody> {
                                     fontWeight: FontWeight.w500, fontSize: 24),
                               ),
                             ),
-                            Divider(thickness: 1),
+                            Divider(
+                              thickness: 1,
+                              endIndent: 0,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Text("Size: $size"),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    QuantityIncrementalButtons(
+                                      quantity: quantityList[index],
+                                      style: style,
+                                      onDecrement: _decrementQuantity,
+                                      onIncrement: _incrementQuantity,
+                                      onSubmitted: _setQuantity,
+                                    ),
+                                    Text("Quantity",
+                                      style: style.copyWith(fontSize: 12)),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Text("$size",
+                                      style: style.copyWith(fontSize: 20)),
+                                    Text("Size",
+                                      style: style.copyWith(fontSize: 12)),
+                                  ],
+                                ),
                                 Container(
                                   alignment: Alignment.bottomRight,
                                   width: 120,
@@ -236,7 +202,7 @@ class _CartBodyState extends State<CartBody> {
                                         width: 1, color: Colors.blue[900]),
                                   ),
                                   padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                                  margin: EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                  margin: EdgeInsets.fromLTRB(2, 2, 6, 2),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     mainAxisSize: MainAxisSize.max,
@@ -273,32 +239,51 @@ class _CartBodyState extends State<CartBody> {
                     width: 48,
                     child: Container(
                       constraints: BoxConstraints.expand(),
-                      margin: EdgeInsets.fromLTRB(1, 0, 0, 0),
+                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
                         color: Colors.white54,
                       ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.visibility),
-                            onPressed: () async {
-                              Navigator.pushNamed(context, '/product',
-                                      arguments: await getProduct(
-                                          item.product.toString()))
-                                  .then((value) {
-                                setState(() {
-                                  item.quantity =
-                                      cartDetail.cart[index].quantity;
-                                });
-                              });
-                            },
+                          Expanded(
+                            child: Material(
+                              clipBehavior: Clip.antiAlias,
+                              color: Colors.blue[600],
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.visibility,
+                                  size: 32,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(context, '/product',
+                                          arguments: await getProduct(
+                                              item.product.toString()))
+                                      .then((value) {
+                                    setState(() {
+                                      item.quantity =
+                                          cartDetail.cart[index].quantity;
+                                    });
+                                  });
+                                },
+                                color: Colors.black54,
+                              ),
+                            ),
                           ),
-                          const Divider(thickness: 1),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: _deleteItemFromCart,
+                          Expanded(
+                            child: Material(
+                              clipBehavior: Clip.antiAlias,
+                              color: Colors.red[600],
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  size: 32,
+                                ),
+                                onPressed: _deleteItemFromCart,
+                                color: Colors.black54,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -313,67 +298,69 @@ class _CartBodyState extends State<CartBody> {
     );
 
     return /*Drawer(
-      child:*/ Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-        child: (cartDetail.cart.isEmpty)
-            ? Center(child: Text('Nothing in your cart yet.'))
-            : Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.fromLTRB(0, 36, 0, 0),
-                    child: Stack(
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(Icons.arrow_back, size: 32.0, color: Colors.black),
-                        ),
-                        Align(
-                          heightFactor: 1.5,
-                          child: Text('Your Cart',
-                            style: style.copyWith(
-                              color: Colors.black,
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
+      child:*/
+        Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+      child: (cartDetail.cart.isEmpty)
+          ? Center(child: Text('Nothing in your cart yet.'))
+          : Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 36, 0, 0),
+                  child: Stack(
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.arrow_back,
+                            size: 32.0, color: Colors.black),
+                      ),
+                      Align(
+                        heightFactor: 1.5,
+                        child: Text(
+                          'Your Cart',
+                          style: style.copyWith(
+                            color: Colors.black,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Divider(),
-                  Expanded(child: cartDetailCards),
-
-
-                  /** CHECKOUT BUTTON */
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      width: 275,
-                      height: 64,
-                      margin: EdgeInsets.fromLTRB(0, 2, 0, 4),
-                      child: RaisedButton(
-                        child: Text("Checkout",
-                            style: style.copyWith(
-                              fontSize: 24,
-                              color: Colors.white,
-                            )),
-                        color: Colors.green,
-                        splashColor: Colors.lightGreenAccent,
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/checkout').then((val) {
-                            setState(() {});
-                          });
-                        },
                       ),
+                    ],
+                  ),
+                ),
+                Divider(),
+                Expanded(child: cartDetailCards),
+
+                /** CHECKOUT BUTTON */
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: 275,
+                    height: 64,
+                    margin: EdgeInsets.fromLTRB(0, 2, 0, 4),
+                    child: RaisedButton(
+                      child: Text("Checkout",
+                          style: style.copyWith(
+                            fontSize: 24,
+                            color: Colors.white,
+                          )),
+                      color: Colors.green,
+                      splashColor: Colors.lightGreenAccent,
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/checkout').then((val) {
+                          setState(() {});
+                        });
+                      },
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
       //),
     );
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:naylors_client/api.dart';
-import 'package:naylors_client/cart.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'dart:async';
+
+import 'package:naylors_client/repositories/api.dart';
+import 'package:naylors_client/cart.dart';
+import 'package:naylors_client/widgets/quantity_incremental_buttons.dart';
 
 /*
     TODO: Double check cart and add "X items in cart" somewhere near the entries
@@ -393,73 +395,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 32,
-                                    child: Material(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.elliptical(32, 16),
-                                          bottomLeft: Radius.elliptical(32, 16),
-                                      ),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: MaterialButton(
-                                        padding: EdgeInsets.zero,
-                                        color: Colors.red,
-                                        disabledColor: Colors.grey,
-                                        child: Icon(Icons.remove_circle,
-                                            color: Colors.white),
-                                        onPressed: _decrementQuantity,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 32,
-                                    child: TextField(
-                                      textAlign: TextAlign.center,
-                                      autofocus: false,
-                                      controller: quantity,
-                                      autocorrect: true,
-                                      style:
-                                          style.copyWith(color: Colors.black),
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: Colors.grey[200],
-                                        contentPadding: EdgeInsets.all(0),
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                        ),
-                                      ),
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(
-                                        decimal: false,
-                                        signed: false,
-                                      ),
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 32,
-                                    child: Material(
-                                      borderRadius: BorderRadius.only(
-                                          topRight: Radius.elliptical(32, 16),
-                                          bottomRight: Radius.elliptical(32, 16),
-                                      ),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: MaterialButton(
-                                        padding: EdgeInsets.zero,
-                                        color: Colors.green,
-                                        disabledColor: Colors.grey,
-                                        child: Icon(Icons.add_circle,
-                                            color: Colors.white),
-                                        onPressed: _incrementQuantity,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              QuantityIncrementalButtons(
+                                quantity: quantity,
+                                style: style,
+                                onDecrement: _decrementQuantity,
+                                onIncrement: _incrementQuantity,
+                                onSubmitted: (_) => {},
                               ),
                               Text('Quantity'),
                             ],

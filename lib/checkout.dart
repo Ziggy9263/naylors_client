@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:naylors_client/api.dart';
+import 'package:naylors_client/repositories/api.dart';
 import 'package:naylors_client/cart.dart';
 import 'package:naylors_client/products.dart';
 
@@ -226,7 +226,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 constraints: BoxConstraints.expand(),
                                 margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 decoration: BoxDecoration(
-                                  color: Colors.white70,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white70,
+                                      Colors.white,
+                                    ]
+                                  ),
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -354,7 +359,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 ),
                                 gradient: LinearGradient(
                                   colors: <Color>[
-                                    Colors.red[100],
+                                    Colors.red[400],
                                     Colors.red[600],
                                   ],
                                   begin: Alignment.centerLeft,
@@ -364,10 +369,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               ),
                               child: SizedBox(
                                 height: 70,
-                                child: Center(
+                                child: Material(
+                                  type: MaterialType.transparency,
                                   child: IconButton(
-                                    color: Colors.black87,
-                                    icon: Icon(Icons.delete),
+                                    color: Colors.black54,
+                                    icon: Icon(
+                                      Icons.delete,
+                                      size: 32,
+                                    ),
                                     onPressed: _deleteItemFromCart,
                                   ),
                                 ),
