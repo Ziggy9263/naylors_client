@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:naylors_client/models/product.dart';
+import 'package:naylors_client/models/models.dart';
 
 class ProductApiClient {
   static const baseUrl = 'http://order.naylorsfeed.com';

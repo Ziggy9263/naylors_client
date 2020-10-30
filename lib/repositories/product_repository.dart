@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
-import 'package:naylors_client/repositories/product_api_client.dart';
-import 'package:naylors_client/models/product.dart';
+import 'package:naylors_client/repositories/repositories.dart';
+import 'package:naylors_client/models/models.dart';
 
 class ProductRepository {
   final ProductApiClient productApiClient;

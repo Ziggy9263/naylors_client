@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naylors_client/login.dart';
 import 'package:naylors_client/register.dart';
 import 'package:naylors_client/products.dart';
@@ -8,10 +9,31 @@ import 'package:naylors_client/checkout.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:badges/badges.dart';
+import 'package:naylors_client/simple_bloc_observer.dart';
+import 'package:bloc/bloc.dart';
+import 'package:naylors_client/repositories/repositories.dart';
+import 'package:naylors_client/blocs/blocs.dart';
+import 'package:http/http.dart' as http;
 
-void main() => runApp(MyApp());
+void main() {
+  Bloc.observer = SimpleBlocObserver();
+
+  final ProductRepository productRepository = ProductRepository(
+    productApiClient: ProductApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  runApp(MyApp(productRepository: productRepository));
+}
 
 class MyApp extends StatelessWidget {
+  final ProductRepository productRepository;
+
+  MyApp({Key key, @required this.productRepository})
+      : assert(productRepository != null),
+        super(key: key);
+
   final appTitle = 'Naylor\'s Online';
 
   @override
@@ -28,7 +50,11 @@ class MyApp extends StatelessWidget {
           var routes = <String, WidgetBuilder>{
             '/login': (context) => LoginPage(),
             '/register': (context) => RegisterPage(),
-            '/': (context) => NaylorsHomePage(title: appTitle),
+            '/': (context) => BlocProvider(
+                  create: (context) =>
+                      ProductBloc(productRepository: productRepository),
+                  child: NaylorsHomePage(title: appTitle),
+                ),
             '/product': (context) =>
                 ProductDetailScreen(initProduct: settings.arguments),
             '/checkout': (context) => CheckoutPage(),
@@ -91,9 +117,9 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
       key: _scaffoldKey,
       appBar: AppBar(title: Text(title), actions: <Widget>[
         Badge(
-          badgeContent: Text(cartDetail.cart.length.toString(),
-            style: style.copyWith(color: Colors.white,
-                                  fontSize: 14),
+          badgeContent: Text(
+            cartDetail.cart.length.toString(),
+            style: style.copyWith(color: Colors.white, fontSize: 14),
           ),
           showBadge: (cartDetail.cart.length > 0) ? true : false,
           position: BadgePosition.topEnd(top: 2, end: 2),

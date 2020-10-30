@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 
-class ProductDetail {
+class ProductDetail extends Equatable {
   final String tag;
   final String name;
   final String description;
@@ -19,6 +21,10 @@ class ProductDetail {
       this.images,
       this.sizes,
       this.taxExempt});
+
+  @override
+  List<Object> get props =>
+      [tag, name, description, category, price, images, sizes, taxExempt];
 
   factory ProductDetail.fromJSON(Map<String, dynamic> json) {
     return ProductDetail(
