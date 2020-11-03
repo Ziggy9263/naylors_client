@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:naylors_client/blocs/blocs.dart';
+import 'package:naylors_client/widgets/widgets.dart';
 
 class ProductListBody extends StatelessWidget {
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
@@ -34,7 +34,7 @@ class ProductListBody extends StatelessWidget {
             return Card(
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/product', arguments: item);
+                  Navigator.of(context).pushNamed('/product', arguments: item);
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

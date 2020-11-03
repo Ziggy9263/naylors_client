@@ -6,12 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:badges/badges.dart';
 
-
 import 'package:naylors_client/login.dart';
 import 'package:naylors_client/register.dart';
 //import 'package:naylors_client/products.dart';
 //import 'package:naylors_client/cart.dart';
 //import 'package:naylors_client/checkout.dart';
+import 'package:naylors_client/models/models.dart';
 
 import 'package:naylors_client/simple_bloc_observer.dart';
 import 'package:bloc/bloc.dart';
@@ -28,14 +28,22 @@ void main() {
     ),
   );
 
-  runApp(MyApp(productRepository: productRepository));
+  final CartRepository cartRepository = CartRepository(
+    detail: List<CartItem>(),
+  );
+
+  runApp(MyApp(productRepository: productRepository, cartRepository: cartRepository));
 }
 
 class MyApp extends StatelessWidget {
   final ProductRepository productRepository;
+  final CartRepository cartRepository;
 
-  MyApp({Key key, @required this.productRepository})
-      : assert(productRepository != null),
+  MyApp({
+    Key key,
+    @required this.productRepository,
+    @required this.cartRepository
+  })  : assert(productRepository != null),
         super(key: key);
 
   final appTitle = 'Naylor\'s Online';
@@ -46,26 +54,41 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
     ]);
     return MaterialApp(
-        title: appTitle,
-        debugShowCheckedModeBanner: false,
-        initialRoute:
-            '/', // Skipping login for now TODO: Don't forget to revert
-        onGenerateRoute: (RouteSettings settings) {
-          var routes = <String, WidgetBuilder>{
-            '/login': (context) => LoginPage(),
-            '/register': (context) => RegisterPage(),
-            '/': (context) => BlocProvider(
-                  create: (context) =>
+      title: appTitle,
+      debugShowCheckedModeBanner: false,
+      initialRoute:
+          '/', // Skipping login for now TODO: Don't forget to revert
+      onGenerateRoute: (RouteSettings settings) {
+        var routes = <String, WidgetBuilder>{
+          '/login': (context) => LoginPage(),
+          '/register': (context) => RegisterPage(),
+          '/': (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<ProductListBloc>(
+                    create: (BuildContext context) =>
                       ProductListBloc(productRepository: productRepository),
-                  child: NaylorsHomePage(title: appTitle),
-                ),
-            //'/product': (context) =>
-            //    ProductDetailScreen(initProduct: settings.arguments),
-            //'/checkout': (context) => CheckoutPage(),
-          };
-          WidgetBuilder builder = routes[settings.name];
-          return MaterialPageRoute(builder: (context) => builder(context));
-        });
+                  ),
+                  BlocProvider<CartBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                      CartBloc(cartRepository: cartRepository),
+                  ),
+                ],
+                child: NaylorsHomePage(title: appTitle),
+              ),
+          '/product': (context) => BlocProvider(
+                create: (context) =>
+                    ProductBloc(productRepository: productRepository),
+                child: ProductDetailBody(settings.arguments),
+              ),
+          //'/product': (context) =>
+          //    ProductDetailScreen(initProduct: settings.arguments),
+          //'/checkout': (context) => CheckoutPage(),
+        };
+        WidgetBuilder builder = routes[settings.name];
+        return MaterialPageRoute(builder: (context) => builder(context));
+      },
+    );
   }
 }
 
@@ -120,21 +143,26 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(title: Text(title), actions: <Widget>[
-        Badge(
-          badgeContent: Text("0",
-            //cartDetail.cart.length.toString(),
-            style: style.copyWith(color: Colors.white, fontSize: 14),
-          ),
-          //showBadge: (cartDetail.cart.length > 0) ? true : false,
-          position: BadgePosition.topEnd(top: 2, end: 2),
-          child: IconButton(
-            onPressed: _openEndDrawer,
-            icon: Icon(
-              Icons.shopping_cart,
-              size: 36,
-              color: Colors.white,
-            ),
-          ),
+        BlocBuilder<CartBloc, CartState>(
+          builder: (context, state) {
+            return Badge(
+              badgeContent: Text(
+                (state is CartNotEmpty) ? state.cart.length.toString() : "0",
+                //cartDetail.cart.length.toString(),
+                style: style.copyWith(color: Colors.white, fontSize: 14),
+              ),
+              //showBadge: (cartDetail.cart.length > 0) ? true : false,
+              position: BadgePosition.topEnd(top: 2, end: 2),
+              child: IconButton(
+                onPressed: _openEndDrawer,
+                icon: Icon(
+                  Icons.shopping_cart,
+                  size: 36,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          }
         ),
       ]),
       body: ProductListBody(),
@@ -205,7 +233,7 @@ class _NaylorsHomePageState extends State<NaylorsHomePage> {
           ],
         ),
       ),
-      endDrawer: Text("Working on it"),//CartBody(),
+      endDrawer: Text("Working on it"), //CartBody(),
     );
   }
 }
