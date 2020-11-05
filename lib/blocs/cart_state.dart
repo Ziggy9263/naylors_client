@@ -13,6 +13,8 @@ abstract class CartState extends Equatable {
 /// Product (Singular)
 class CartInitial extends CartState {}
 
+class CartModificationInProgress extends CartState {}
+
 class CartEmpty extends CartState {}
 
 class CartNotEmpty extends CartState {

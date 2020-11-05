@@ -5,6 +5,8 @@ import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class ProductListBody extends StatelessWidget {
+  NaylorsHomePageState parent;
+  ProductListBody(this.parent);
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   String format(double n) {
@@ -34,7 +36,11 @@ class ProductListBody extends StatelessWidget {
             return Card(
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed('/product', arguments: item);
+                  Navigator.of(context)
+                      .pushNamed('/product', arguments: item)
+                      .then((_) {
+                    this.parent.setState(() {});
+                  });
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

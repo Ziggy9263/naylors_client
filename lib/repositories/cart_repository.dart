@@ -1,8 +1,14 @@
 import 'package:meta/meta.dart';
+import 'package:http/http.dart' as http;
 import 'package:naylors_client/models/models.dart';
+import 'package:naylors_client/repositories/repositories.dart';
 
 class CartRepository {
   List<CartItem> detail;
+  final ProductRepository productRepository = ProductRepository(
+      productApiClient: ProductApiClient(
+    httpClient: http.Client(),
+  ));
 
   CartRepository({@required this.detail}) : assert(detail != null);
 
@@ -15,6 +21,16 @@ class CartRepository {
       }
     }
     if (!done) detail.add(i);
+    return detail;
+  }
+
+  Future<List<CartItem>> populate() async {
+    for (int index = 0; index < detail.length; index++) {
+      if (detail[index].detail == null) {
+        detail[index].detail = await productRepository
+            .getProduct(detail[index].product.toString());
+      }
+    }
     return detail;
   }
 

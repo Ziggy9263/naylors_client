@@ -3,10 +3,12 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:naylors_client/repositories/api.dart';
-import 'package:naylors_client/cart.dart';
-import 'package:naylors_client/products.dart';
+import 'package:naylors_client/blocs/blocs.dart';
+import 'package:naylors_client/models/models.dart';
+import 'package:naylors_client/widgets/widgets.dart';
+import 'package:naylors_client/util/util.dart';
 
 class CheckoutPage extends StatefulWidget {
   @override
@@ -18,14 +20,29 @@ class _CheckoutPageState extends State<CheckoutPage> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   List<TextEditingController> quantityList = new List<TextEditingController>();
   String _email;
+  List<CartItem> cart = List<CartItem>();
 
   @override
   initState() {
     super.initState();
     _loadAuthInfo();
-    cartDetail.cart.forEach((v) {
+    cart = BlocProvider.of<CartBloc>(context).cartRepository.detail;
+    cart.forEach((v) {
       quantityList.add(TextEditingController(text: v.quantity.toString()));
     });
+    /*quantityList.forEach((quantity) {
+      quantity.selection =
+          TextSelection.collapsed(offset: quantity.text.length);
+      quantity.addListener(() {
+        final newText = quantity.text.toLowerCase();
+        quantity.value = quantity.value.copyWith(
+          text: newText,
+          selection: TextSelection(
+              baseOffset: newText.length, extentOffset: quantity.text.length),
+          composing: TextRange.empty,
+        );
+      });
+    });*/
   }
 
   _loadAuthInfo() async {
@@ -40,7 +57,22 @@ class _CheckoutPageState extends State<CheckoutPage> {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         for (int i = 0; i < quantityList.length; i++) {
-          cartDetail.cart[i].quantity = int.parse(quantityList[i].text);
+          if (quantityList[i].text == "") quantityList[i].text = "0";
+          int newQ = int.parse(
+              (quantityList[i].text != "") ? quantityList[i].text : "0");
+          cart[i].quantity = newQ;
+        }
+      });
+    });
+  }
+
+  _refreshWithFocus() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        for (int i = 0; i < quantityList.length; i++) {
+          int newQ = int.parse(
+              (quantityList[i].text != "") ? quantityList[i].text : "0");
+          cart[i].quantity = newQ;
         }
       });
     });
@@ -52,22 +84,18 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   double getSubtotal() {
     double subtotal = 0;
-    for (int i = 0; i < cartDetail.cart.length; i++) {
-      subtotal = subtotal +
-          (cartDetail.cart[i].quantity * cartDetail.cart[i].detail.price);
+    for (int i = 0; i < cart.length; i++) {
+      subtotal = subtotal + (cart[i].quantity * cart[i].detail.price);
     }
     return subtotal;
   }
 
   double getTax() {
     double tax = 0;
-    for (int i = 0; i < cartDetail.cart.length; i++) {
-      double subtotal =
-          (cartDetail.cart[i].quantity * cartDetail.cart[i].detail.price);
-      tax = (tax +
-          (!cartDetail.cart[i].detail.taxExempt == false
-              ? subtotal * 0.0825
-              : 0));
+    for (int i = 0; i < cart.length; i++) {
+      double subtotal = (cart[i].quantity * cart[i].detail.price);
+      tax =
+          (tax + (!cart[i].detail.taxExempt == false ? subtotal * 0.0825 : 0));
     }
     return tax;
   }
@@ -157,14 +185,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 margin: EdgeInsets.all(8),
                 child: ListView.builder(
                   padding: EdgeInsets.all(0),
-                  itemCount: cartDetail.cart.length,
+                  itemCount: cart.length,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) {
                     _deleteItemFromCart() {
                       SchedulerBinding.instance
                           .addPostFrameCallback((timeStamp) {
                         setState(() {
-                          cartDetail.cart.removeAt(index);
+                          BlocProvider.of<CartBloc>(context)
+                              .add(CartRemove(product: cart[index].product));
                         });
                       });
                     }
@@ -175,14 +204,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         SchedulerBinding.instance
                             .addPostFrameCallback((timeStamp) {
                           setState(() {
-                            cartDetail.cart[index].quantity = int.parse(value);
+                            cart[index].quantity = int.parse(value);
                           });
                         });
                       } else
                         return;
                     }
 
-                    final item = cartDetail.cart[index];
+                    final item = cart[index];
                     String size;
                     item.detail.sizes.forEach((val) {
                       if (val['tag'] == item.product.toString())
@@ -226,12 +255,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 constraints: BoxConstraints.expand(),
                                 margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.white70,
-                                      Colors.white,
-                                    ]
-                                  ),
+                                  gradient: LinearGradient(colors: [
+                                    Colors.white70,
+                                    Colors.white,
+                                  ]),
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
@@ -271,6 +298,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                             showCursor: false,
                                             controller: quantityList[index],
                                             autocorrect: true,
+                                            onChanged: (_) {
+                                              _refreshWithFocus();
+                                            },
                                             onSubmitted: _setQuantity,
                                             onEditingComplete:
                                                 _refreshQuantities,
