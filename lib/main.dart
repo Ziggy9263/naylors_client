@@ -26,18 +26,28 @@ void main() {
     detail: List<CartItem>(),
   );
 
+  final OrderRepository orderRepository = OrderRepository(
+    orderApiClient: OrderApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
   runApp(MyApp(
-      productRepository: productRepository, cartRepository: cartRepository));
+      productRepository: productRepository,
+      cartRepository: cartRepository,
+      orderRepository: orderRepository));
 }
 
 class MyApp extends StatelessWidget {
   final ProductRepository productRepository;
   final CartRepository cartRepository;
+  final OrderRepository orderRepository;
 
   MyApp(
       {Key key,
       @required this.productRepository,
-      @required this.cartRepository})
+      @required this.cartRepository,
+      @required this.orderRepository})
       : assert(productRepository != null),
         super(key: key);
 
@@ -85,15 +95,35 @@ class MyApp extends StatelessWidget {
                 child: ProductDetailBody(settings.arguments),
               ),
           '/checkout': (context) => MultiBlocProvider(
-            providers: [
-              BlocProvider<CartBloc>(
-                lazy: false,
-                create: (BuildContext context) =>
-                    CartBloc(cartRepository: cartRepository),
+                providers: [
+                  BlocProvider<CartBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        CartBloc(cartRepository: cartRepository),
+                  ),
+                  BlocProvider<OrderBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        OrderBloc(orderRepository: orderRepository),
+                  ),
+                ],
+                child: CheckoutPage(),
               ),
-            ],
-            child: CheckoutPage(),
-          ),
+          '/payment': (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<CartBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        CartBloc(cartRepository: cartRepository),
+                  ),
+                  BlocProvider<OrderBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        OrderBloc(orderRepository: orderRepository),
+                  ),
+                ],
+                child: CheckoutPayment(cart: settings.arguments),
+              ),
         };
         WidgetBuilder builder = routes[settings.name];
         return MaterialPageRoute(builder: (context) => builder(context));

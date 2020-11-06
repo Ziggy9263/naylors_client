@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:naylors_client/models/models.dart';
 
 Future<AuthInfo> login(String email, String password) async {
   var body = new Map<String, dynamic>();
@@ -50,6 +51,7 @@ Future<AuthInfo> register(String email, String password, String name,
     throw Exception('Failed to Create User');
   }
 }
+
 
 class AuthInfo {
   final String token;

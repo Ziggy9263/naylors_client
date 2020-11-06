@@ -7,3 +7,8 @@ export 'product_bloc.dart';
 export 'cart_event.dart';
 export 'cart_state.dart';
 export 'cart_bloc.dart';
+
+// Order
+export 'order_event.dart';
+export 'order_state.dart';
+export 'order_bloc.dart';

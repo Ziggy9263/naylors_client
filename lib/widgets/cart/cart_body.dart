@@ -6,6 +6,7 @@ import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
+// ignore: must_be_immutable
 class CartBody extends StatefulWidget {
   NaylorsHomePageState parent;
 
