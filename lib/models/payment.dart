@@ -1,5 +1,19 @@
 import 'package:equatable/equatable.dart';
 
+enum CardType { MasterCard, Visa, Discover, AmericanExpress, Others, Invalid }
+
+class PaymentCard {
+  CardType type;
+  String number;
+  String name;
+  int month;
+  int year;
+  int cvv;
+
+  PaymentCard(
+      {this.type, this.number, this.name, this.month, this.year, this.cvv});
+}
+
 // ignore: must_be_immutable
 class PaymentInfo extends Equatable {
   final String cardNumber; // Referenced by tag

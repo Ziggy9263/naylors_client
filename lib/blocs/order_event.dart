@@ -7,6 +7,13 @@ abstract class OrderEvent extends Equatable {
   const OrderEvent();
 }
 
+class OrderReset extends OrderEvent {
+  const OrderReset();
+
+  @override
+  List<Object> get props => [];
+}
+
 class OrderRequested extends OrderEvent {
   final String uuid;
 

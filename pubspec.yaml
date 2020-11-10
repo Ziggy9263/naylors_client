@@ -57,6 +57,12 @@ flutter:
     - logo.jpg
     - scratch.png
     - no-image.png
+    - american_express.png
+    - discover.png
+    - mastercard.png
+    - visa.png
+    - card_cvv.png
+    - calendar.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

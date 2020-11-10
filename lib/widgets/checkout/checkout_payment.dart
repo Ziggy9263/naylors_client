@@ -28,6 +28,7 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
 
   OrderReq order;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  PaymentCard _paymentCard = PaymentCard();
   TextEditingController cardNumber = TextEditingController();
   TextEditingController cardHolder = TextEditingController();
   TextEditingController expiryMonth = TextEditingController();
@@ -43,6 +44,27 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
       avsZipFocus,
       avsStreetFocus;
   final _formKey = GlobalKey<FormState>();
+
+  _getCardType() {
+    setState(() {
+      _paymentCard.type = CardUtils.getCardType(cardNumber.text);
+    });
+  }
+
+  List<TextSpan> _formatErrorMsg(List<String> data) {
+    List<TextSpan> lines = [];
+    data.forEach((val) => {
+      lines.add(TextSpan(text: val))
+    });
+    return lines;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _paymentCard.type = CardType.Others;
+    cardNumber.addListener(_getCardType);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,30 +144,25 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                   textInputAction: TextInputAction.next,
                                   style: style,
                                   decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.fromLTRB(
-                                        20.0, 15.0, 20.0, 15.0),
-                                    hintText: "XXXX-XXXX-XXXX-XXXX",
-                                    labelText: "Card Number",
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
-                                  ),
+                                      contentPadding: EdgeInsets.fromLTRB(
+                                          20.0, 15.0, 20.0, 15.0),
+                                      hintText: "XXXX XXXX XXXX XXXX",
+                                      labelText: "Card Number",
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                      icon: CardUtils.getCardIcon(
+                                          _paymentCard.type)),
+                                  onSaved: (_) => _paymentCard.number =
+                                      CardUtils.getCleanedNumber(_),
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     new LengthLimitingTextInputFormatter(24),
+                                    CardNumberInputFormatter(),
                                   ],
-                                  validator: (value) {
-                                    RegExp emailExp = new RegExp(
-                                        r"(^4[0-9]{12}(?:[0-9]{3})?$)|(^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$)|(3[47][0-9]{13})|(^3(?:0[0-5]|[68][0-9])[0-9]{11}$)|(^6(?:011|5[0-9]{2})[0-9]{12}$)|(^(?:2131|1800|35\d{3})\d{11}$) ");
-                                    if (value.isEmpty) {
-                                      return 'Please enter your card number';
-                                    }
-                                    if (!emailExp.hasMatch(value)) {
-                                      return 'Please enter valid information';
-                                    }
-                                    return null;
-                                  },
+                                  validator: CardUtils.validateCardNumber,
                                 ),
                                 SizedBox(height: 12),
                                 TextFormField(
@@ -163,113 +180,98 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                   ),
+                                  onSaved: (_) => _paymentCard.name = _,
+                                  validator: (String value) => value.isEmpty
+                                      ? CardStrings.fieldReq
+                                      : null,
                                 ),
-                                SizedBox(height: 12),
-                                SizedBox(
-                                  height: 100,
-                                  width: 300,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Row(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              width: 55,
-                                              child: TextFormField(
-                                                controller: expiryMonth,
-                                                obscureText: false,
-                                                focusNode: expiryMonthFocus,
-                                                textInputAction:
-                                                    TextInputAction.next,
-                                                style: style,
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.fromLTRB(10.0,
-                                                          15.0, 10.0, 15.0),
-                                                  hintText: "01",
-                                                  labelText: "MM",
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                  ),
-                                                ),
-                                                keyboardType: TextInputType
-                                                    .numberWithOptions(
-                                                  decimal: false,
-                                                  signed: false,
-                                                ),
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 70,
-                                              child: TextFormField(
-                                                obscureText: false,
-                                                focusNode: expiryYearFocus,
-                                                textInputAction:
-                                                    TextInputAction.next,
-                                                style: style,
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.fromLTRB(10.0,
-                                                          15.0, 10.0, 15.0),
-                                                  hintText: "2020",
-                                                  labelText: "YYYY",
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                  ),
-                                                ),
-                                                keyboardType: TextInputType
-                                                    .numberWithOptions(
-                                                  decimal: false,
-                                                  signed: false,
-                                                ),
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 80,
+                                SizedBox(height: 15),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    SizedBox(
+                                        width: 150,
                                         child: TextFormField(
-                                          controller: cvv,
-                                          obscureText: false,
-                                          focusNode: cvvFocus,
-                                          textInputAction: TextInputAction.next,
-                                          style: style,
-                                          decoration: InputDecoration(
-                                            contentPadding: EdgeInsets.fromLTRB(
-                                                20.0, 15.0, 20.0, 15.0),
-                                            hintText: "123",
-                                            labelText: "CVV",
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
+                                            textInputAction:
+                                                TextInputAction.next,
+                                            style: style,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.fromLTRB(
+                                                      10.0, 15.0, 10.0, 15.0),
+                                              hintText: "01/20",
+                                              labelText: "MM/YY",
+                                              errorMaxLines: 2,
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
+                                              ),
+                                              icon: Image.asset(
+                                                'assets/calendar.png',
+                                                width: 40.0,
+                                                color: Colors.grey[600],
+                                              ),
                                             ),
+                                            validator: CardUtils.validateDate,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                              decimal: false,
+                                              signed: false,
+                                            ),
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                              new LengthLimitingTextInputFormatter(
+                                                  4),
+                                              new CardMonthInputFormatter(),
+                                            ],
+                                            onSaved: (value) {
+                                              List<int> expiryDate =
+                                                  CardUtils.getExpiryDate(
+                                                      value);
+                                              _paymentCard.month =
+                                                  expiryDate[0];
+                                              _paymentCard.year = expiryDate[1];
+                                            })),
+                                    SizedBox(
+                                      width: 150,
+                                      child: TextFormField(
+                                        controller: cvv,
+                                        obscureText: false,
+                                        focusNode: cvvFocus,
+                                        textInputAction: TextInputAction.next,
+                                        style: style,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              20.0, 15.0, 20.0, 15.0),
+                                          hintText: "123",
+                                          labelText: "CVV",
+                                          errorMaxLines: 2,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
                                           ),
-                                          keyboardType:
-                                              TextInputType.numberWithOptions(
-                                            decimal: false,
-                                            signed: false,
+                                          icon: new Image.asset(
+                                            'assets/card_cvv.png',
+                                            width: 50.0,
+                                            color: Colors.grey[600],
                                           ),
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
                                         ),
+                                        onSaved: (_) =>
+                                            _paymentCard.cvv = int.parse(_),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                          decimal: false,
+                                          signed: false,
+                                        ),
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(height: 12),
                                 TextFormField(
@@ -402,7 +404,123 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
           return Container(child: Text("Success"));
         }
         if (state is OrderPlaceFailure) {
-          return Container(child: Text("Failure"));
+          return WillPopScope(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.fromLTRB(0, 12, 0, 6),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                      onPressed: () {
+                        BlocProvider.of<OrderBloc>(context).add(OrderReset());
+                      },
+                      icon: Icon(Icons.arrow_back,
+                          size: 32.0, color: Colors.black),
+                    ),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+                      child: SizedBox(
+                        height: 120.0,
+                        child: Image.asset(
+                          "assets/logo.jpg",
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      "Provide Payment Info",
+                      style: style.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        /*(_email != null) ? "$_email" : */ "Not Logged In",
+                        style: style.copyWith(
+                          fontWeight: FontWeight.w300,
+                          color: Colors.blueGrey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Something Went Wrong!",
+                    style: style.copyWith(
+                      color: Colors.red,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Error Dump',
+                        style: style.copyWith(
+                          fontFamily: 'Monospace',
+                          fontSize: 12,
+                        ),
+                        children: _formatErrorMsg(state.lines),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - 44,
+                      height: 64,
+                      margin: EdgeInsets.fromLTRB(0, 2, 0, 4),
+                      child: RaisedButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "GO BACK",
+                                textAlign: TextAlign.center,
+                                style: style.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        color: Colors.red,
+                        splashColor: Colors.redAccent,
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        onPressed: () => BlocProvider.of<OrderBloc>(context)
+                            .add(OrderReset()),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            onWillPop: () async {
+              BlocProvider.of<OrderBloc>(context).add(OrderReset());
+              return false;
+            },
+          );
         }
         return Container(
           child: InkWell(
@@ -416,3 +534,4 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
     );
   }
 }
+

@@ -1,4 +1,5 @@
 export 'format.dart';
+export 'card_utils.dart';
 
 import 'package:naylors_client/models/models.dart';
 
