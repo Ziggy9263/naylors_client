@@ -1,3 +1,8 @@
+// Auth
+export 'auth_event.dart';
+export 'auth_state.dart';
+export 'auth_bloc.dart';
+
 // Product
 export 'product_event.dart';
 export 'product_state.dart';

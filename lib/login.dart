@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:naylors_client/repositories/api.dart';
+import 'package:naylors_client/repositories/auth_api_client.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 

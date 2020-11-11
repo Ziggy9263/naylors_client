@@ -24,7 +24,7 @@ class OrderApiClient {
       'avsZip': order.paymentInfo.avsZip,
       'avsStreet': order.paymentInfo.avsStreet
     };
-    final response = await http.post(
+    final response = await this.httpClient.post(
       'http://order.naylorsfeed.com/api/orders',
       body: jsonEncode(body),
       headers: {
