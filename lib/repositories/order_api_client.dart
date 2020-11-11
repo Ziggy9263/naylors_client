@@ -28,6 +28,7 @@ class OrderApiClient {
       'http://order.naylorsfeed.com/api/orders',
       body: jsonEncode(body),
       headers: {
+        'Content-Type': 'application/json',
         'Authorization':
             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imphc29uLnphbmUuY29va0BnbWFpbC5jb20iLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE2MDI2MDUzMjl9.DlMAIXwuzLhNhbXQZ9QTk5BO-okbFeV8_XTnMg7b66s'
       },

@@ -1,20 +1,17 @@
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
-import 'dart:convert';
 
 import 'package:naylors_client/repositories/repositories.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 
-List<String> multiLineError(dynamic error) {
-  if (error is String) {
-    StringBuffer sb = new StringBuffer();
-    sb.write(error);
-    LineSplitter ls = new LineSplitter();
-    List<String> lines = ls.convert(sb.toString());
-    return lines;
-  }
-  return <String>['$error'];
+String formatError(dynamic error) {
+  String formatted = error.toString();
+  formatted = formatted.replaceAll(new RegExp(r'\\n'), '  \n');
+  formatted = formatted.replaceAll(new RegExp(r'&quot;'), "'");
+  formatted = formatted.replaceAll(new RegExp(r'    '), ">");
+  print('FORMATTED ERROR: $formatted');
+  return 'Error Dump: \n\n>$formatted';
 }
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
@@ -35,7 +32,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         final OrderRes order = await orderRepository.placeOrder(event.order);
         yield OrderPlaceSuccess(order: order);
       } catch (_) {
-        yield OrderPlaceFailure(error: _, lines: multiLineError(_));
+        yield OrderPlaceFailure(error: _, formatted: formatError(_));
       }
     }
   }

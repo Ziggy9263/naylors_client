@@ -26,12 +26,13 @@ class OrderPlaceSuccess extends OrderState {
 
 class OrderPlaceFailure extends OrderState {
   final dynamic error;
-  final List<String> lines;
+  final String formatted;
 
-  const OrderPlaceFailure({@required this.error, @required this.lines}) : assert(error != null && lines != null);
+  const OrderPlaceFailure({@required this.error, @required this.formatted})
+      : assert(error != null && formatted != null);
 
   @override
-  List<Object> get props => [error, lines];
+  List<Object> get props => [error, formatted];
 }
 
 /// Order (Singular)

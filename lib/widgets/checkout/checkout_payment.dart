@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
@@ -31,15 +33,13 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
   PaymentCard _paymentCard = PaymentCard();
   TextEditingController cardNumber = TextEditingController();
   TextEditingController cardHolder = TextEditingController();
-  TextEditingController expiryMonth = TextEditingController();
-  TextEditingController expiryYear = TextEditingController();
+  TextEditingController expiration = TextEditingController();
   TextEditingController cvv = TextEditingController();
   TextEditingController avsZip = TextEditingController();
   TextEditingController avsStreet = TextEditingController();
   FocusNode cardNumberFocus,
       cardHolderFocus,
-      expiryMonthFocus,
-      expiryYearFocus,
+      expirationFocus,
       cvvFocus,
       avsZipFocus,
       avsStreetFocus;
@@ -49,14 +49,6 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
     setState(() {
       _paymentCard.type = CardUtils.getCardType(cardNumber.text);
     });
-  }
-
-  List<TextSpan> _formatErrorMsg(List<String> data) {
-    List<TextSpan> lines = [];
-    data.forEach((val) => {
-      lines.add(TextSpan(text: val))
-    });
-    return lines;
   }
 
   @override
@@ -192,8 +184,10 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     SizedBox(
-                                        width: 150,
+                                        width: 160,
                                         child: TextFormField(
+                                            controller: expiration,
+                                            focusNode: expirationFocus,
                                             textInputAction:
                                                 TextInputAction.next,
                                             style: style,
@@ -201,8 +195,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
                                                       10.0, 15.0, 10.0, 15.0),
-                                              hintText: "01/20",
-                                              labelText: "MM/YY",
+                                              hintText: "02/2020",
+                                              labelText: "MM/YYYY",
                                               errorMaxLines: 2,
                                               border: OutlineInputBorder(
                                                 borderRadius:
@@ -224,7 +218,7 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                               FilteringTextInputFormatter
                                                   .digitsOnly,
                                               new LengthLimitingTextInputFormatter(
-                                                  4),
+                                                  6),
                                               new CardMonthInputFormatter(),
                                             ],
                                             onSaved: (value) {
@@ -274,7 +268,7 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                   ],
                                 ),
                                 SizedBox(height: 12),
-                                TextFormField(
+                                TextFormField( // TODO: Validate address
                                   controller: avsStreet,
                                   obscureText: false,
                                   focusNode: avsStreetFocus,
@@ -291,7 +285,7 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                   ),
                                 ),
                                 SizedBox(height: 12),
-                                TextFormField(
+                                TextFormField( // TODO: Validate Zip code
                                   controller: avsZip,
                                   obscureText: false,
                                   focusNode: avsZipFocus,
@@ -368,10 +362,13 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                         onPressed: () {
                           if (_formKey.currentState.validate()) {
-                            PaymentInfo paymentInfo = PaymentInfo(
-                              cardNumber: cardNumber.text,
-                              expiryMonth: expiryMonth.text,
-                              expiryYear: expiryYear.text,
+                            List<int> expiryDate =
+                                CardUtils.getExpiryDate(expiration.text);
+                            PaymentInfo paymentInfo = new PaymentInfo(
+                              cardNumber:
+                                  _paymentCard.number ?? cardNumber.text,
+                              expiryMonth: expiryDate[0].toString(),
+                              expiryYear: expiryDate[1].toString(),
                               cvv: cvv.text,
                               avsStreet: avsStreet.text,
                               avsZip: avsZip.text,
@@ -401,7 +398,20 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
           return Center(child: CircularProgressIndicator());
         }
         if (state is OrderPlaceSuccess) {
-          return Container(child: Text("Success"));
+          return WillPopScope(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Center(
+                child: Text("Success"),
+              ),
+            ),
+            onWillPop: () async {
+              Navigator.pushReplacementNamed(context, '/');
+              return false;
+            },
+          );
         }
         if (state is OrderPlaceFailure) {
           return WillPopScope(
@@ -471,14 +481,24 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                     ),
                   ),
                   Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Error Dump',
-                        style: style.copyWith(
-                          fontFamily: 'Monospace',
-                          fontSize: 12,
-                        ),
-                        children: _formatErrorMsg(state.lines),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Markdown(
+                        padding: EdgeInsets.zero,
+                        data: "${state.formatted}",
+                        shrinkWrap: true,
+                        styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              fontFamily: 'Monospace',
+                              fontSize: 10,
+                            ),
+                            blockquote: TextStyle(
+                              fontFamily: 'Monospace',
+                              fontSize: 10,
+                            )),
+                        extensionSet: md.ExtensionSet(
+                            md.ExtensionSet.gitHubFlavored.blockSyntaxes,
+                            md.ExtensionSet.gitHubFlavored.inlineSyntaxes),
                       ),
                     ),
                   ),
@@ -534,4 +554,3 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
     );
   }
 }
-

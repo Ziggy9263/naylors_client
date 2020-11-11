@@ -42,10 +42,12 @@ class CardMonthInputFormatter extends TextInputFormatter {
     }
 
     var buffer = new StringBuffer();
+    bool done = false;
     for (int i = 0; i < text.length; i++) {
       buffer.write(text[i]);
       var nonZeroIndex = i + 1;
-      if (nonZeroIndex % 2 == 0 && nonZeroIndex != text.length) {
+      if (nonZeroIndex % 2 == 0 && nonZeroIndex != text.length && !done) {
+        done = true;
         buffer.write('/');
       }
     }

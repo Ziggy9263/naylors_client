@@ -130,8 +130,7 @@ class CardUtils {
       return 'Expiry month is invalid';
     }
 
-    var fourDigitsYear = convertYearTo4Digits(year);
-    if ((fourDigitsYear < 1) || (fourDigitsYear > 2099)) {
+    if ((year < 1) || (year > 2099)) {
       return 'Expiry year is invalid';
     }
 

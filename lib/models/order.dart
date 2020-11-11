@@ -13,9 +13,9 @@ class OrderReq extends Equatable {
 }
 
 class OrderRes extends Equatable {
-  final List<CartItem> cartDetail;
+  final List<dynamic> cartDetail;
   final String userComments;
-  final List<PaymentHistory> payHistory;
+  final List<dynamic> payHistory;
 
   OrderRes({this.cartDetail, this.userComments, this.payHistory});
 
