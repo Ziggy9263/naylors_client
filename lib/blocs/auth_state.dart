@@ -23,11 +23,19 @@ class AuthSuccess extends AuthState {
   List<Object> get props => [auth];
 }
 
+class AuthRegisterSuccess extends AuthState {
+  final AuthInfo auth;
+
+  const AuthRegisterSuccess({@required this.auth}) : assert(auth != null);
+
+  @override
+  List<Object> get props => [auth];
+}
+
 class AuthFailure extends AuthState {
   final dynamic error;
 
-  const AuthFailure({@required this.error})
-      : assert(error != null);
+  const AuthFailure({@required this.error}) : assert(error != null);
 
   @override
   List<Object> get props => [error];

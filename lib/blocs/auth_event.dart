@@ -7,13 +7,26 @@ abstract class AuthEvent extends Equatable {
   const AuthEvent();
 }
 
-class AuthLogin extends AuthEvent {
-  final String username;
-  final String password;
-  const AuthLogin(this.username, this.password) : assert(username != null && password != null);
+class AuthGet extends AuthEvent {
+  const AuthGet();
 
   @override
-  List<Object> get props => [username, password];
+  List<Object> get props => [];
+}
+
+class AuthReset extends AuthEvent {
+  const AuthReset();
+
+  @override
+  List<Object> get props => [];
+}
+
+class AuthLogin extends AuthEvent {
+  final AuthLoginInfo auth;
+  const AuthLogin(this.auth) : assert(auth != null);
+
+  @override
+  List<Object> get props => [auth];
 }
 
 class AuthRegister extends AuthEvent {

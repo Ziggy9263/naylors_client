@@ -14,6 +14,15 @@ class AuthInfo {
   }
 }
 
+
+class AuthLoginInfo {
+  String email;
+  String password;
+
+  AuthLoginInfo(this.email, this.password)
+    : assert(email != null && password != null);
+}
+
 class AuthRegisterInfo {
   String email;
   String password;

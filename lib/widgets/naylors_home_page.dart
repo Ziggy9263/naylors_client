@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class NaylorsHomePage extends StatefulWidget {
@@ -79,7 +81,9 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                   color: Colors.white70,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
-                    child: Text((_email) ?? "Not Available"),
+                    child: Text(
+                        BlocProvider.of<AuthBloc>(context).email ??
+                            "Not Available"),
                   ),
                 ),
               ),
@@ -116,7 +120,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
               leading: Icon(Icons.account_box, color: Colors.blueGrey),
               title: Text('Profile'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).pushNamed('/profile');
               },
             ),
             ListTile(

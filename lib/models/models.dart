@@ -3,3 +3,4 @@ export 'product.dart';
 export 'cart.dart';
 export 'payment.dart';
 export 'order.dart';
+export 'misc.dart';

@@ -11,10 +11,10 @@ class AuthApiClient {
 
   AuthApiClient({@required this.httpClient}) : assert(httpClient != null);
 
-  Future<AuthInfo> login(String email, String password) async {
+  Future<AuthInfo> login(AuthLoginInfo auth) async {
     var body = new Map<String, dynamic>();
-    body['email'] = email;
-    body['password'] = password;
+    body['email'] = auth.email;
+    body['password'] = auth.password;
     final response = await this.httpClient.post(
           '$baseUrl/api/auth/login',
           body: body,
@@ -36,7 +36,7 @@ class AuthApiClient {
     }
   }
 
-  Future<AuthInfo> register(AuthRegister data) async {
+  Future<AuthInfo> register(AuthRegisterInfo data) async {
     var body = new Map<String, dynamic>();
     body['email'] = data.email;
     body['password'] = data.password;
@@ -54,7 +54,7 @@ class AuthApiClient {
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to Create User');
+      throw Exception('Something went wrong!');
     }
   }
 }

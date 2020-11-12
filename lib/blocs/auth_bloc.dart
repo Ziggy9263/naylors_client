@@ -14,10 +14,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
+    if (event is AuthReset) {
+      yield AuthInitial();
+    }
+    if (event is AuthGet) {
+      try {
+        final AuthInfo auth = await authRepository.getInfo();
+        yield AuthSuccess(auth: auth);
+      } catch (_) {
+        yield AuthFailure(error: _);
+      }
+    }
     if (event is AuthLogin) {
       yield AuthInProgress();
       try {
-        final AuthInfo auth = await authRepository.login(event.username, event.password);
+        final AuthInfo auth = await authRepository.login(event.auth);
         yield AuthSuccess(auth: auth);
       } catch (_) {
         yield AuthFailure(error: _);
@@ -27,10 +38,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield AuthInProgress();
       try {
         final AuthInfo auth = await authRepository.register(event.auth);
+        final AuthLoginInfo login =
+            AuthLoginInfo(event.auth.email, event.auth.password);
         yield AuthSuccess(auth: auth);
       } catch (_) {
         yield AuthFailure(error: _);
       }
     }
   }
+
+  String get email => authRepository.email;
 }

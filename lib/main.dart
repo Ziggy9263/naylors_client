@@ -3,18 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 
-import 'package:naylors_client/login.dart';
-import 'package:naylors_client/register.dart';
-import 'package:naylors_client/models/models.dart';
-
 import 'package:naylors_client/simple_bloc_observer.dart';
 import 'package:bloc/bloc.dart';
 import 'package:naylors_client/repositories/repositories.dart';
+import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
+
+  final AuthRepository authRepository = AuthRepository(
+    authApiClient: AuthApiClient(
+      httpClient: http.Client(),
+    ),
+  );
 
   final ProductRepository productRepository = ProductRepository(
     productApiClient: ProductApiClient(
@@ -33,22 +36,28 @@ void main() {
   );
 
   runApp(MyApp(
+      authRepository: authRepository,
       productRepository: productRepository,
       cartRepository: cartRepository,
       orderRepository: orderRepository));
 }
 
 class MyApp extends StatelessWidget {
+  final AuthRepository authRepository;
   final ProductRepository productRepository;
   final CartRepository cartRepository;
   final OrderRepository orderRepository;
 
   MyApp(
       {Key key,
+      @required this.authRepository,
       @required this.productRepository,
       @required this.cartRepository,
       @required this.orderRepository})
-      : assert(productRepository != null),
+      : assert(authRepository != null &&
+            productRepository != null &&
+            cartRepository != null &&
+            orderRepository != null),
         super(key: key);
 
   final appTitle = 'Naylor\'s Online';
@@ -61,11 +70,39 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/', // Skipping login for now TODO: Don't forget to revert
+      initialRoute: '/login',
       onGenerateRoute: (RouteSettings settings) {
         var routes = <String, WidgetBuilder>{
-          '/login': (context) => LoginPage(),
-          '/register': (context) => RegisterPage(),
+          '/login': (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
+                  ),
+                ],
+                child: LoginPage(),
+              ),
+          '/register': (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
+                  ),
+                ],
+                child: RegisterPage(),
+              ),
+          '/profile': (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
+                  ),
+                ],
+                child: ProfilePage(),
+              ),
           '/': (context) => MultiBlocProvider(
                 providers: [
                   BlocProvider<ProductListBloc>(
@@ -76,6 +113,11 @@ class MyApp extends StatelessWidget {
                     lazy: false,
                     create: (BuildContext context) =>
                         CartBloc(cartRepository: cartRepository),
+                  ),
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
                   ),
                 ],
                 child: NaylorsHomePage(title: appTitle),
@@ -90,6 +132,11 @@ class MyApp extends StatelessWidget {
                     lazy: false,
                     create: (BuildContext context) =>
                         CartBloc(cartRepository: cartRepository),
+                  ),
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
                   ),
                 ],
                 child: ProductDetailBody(settings.arguments),
@@ -106,6 +153,11 @@ class MyApp extends StatelessWidget {
                     create: (BuildContext context) =>
                         OrderBloc(orderRepository: orderRepository),
                   ),
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
+                  ),
                 ],
                 child: CheckoutPage(),
               ),
@@ -120,6 +172,11 @@ class MyApp extends StatelessWidget {
                     lazy: false,
                     create: (BuildContext context) =>
                         OrderBloc(orderRepository: orderRepository),
+                  ),
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
                   ),
                 ],
                 child: CheckoutPayment(cart: settings.arguments),
