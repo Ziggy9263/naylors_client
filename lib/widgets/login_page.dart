@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
 
     emailFocus = FocusNode();
     passFocus = FocusNode();
+    BlocProvider.of<AuthBloc>(context).add(AuthRetrieve());
   }
 
   _loadAuthInfo() async {

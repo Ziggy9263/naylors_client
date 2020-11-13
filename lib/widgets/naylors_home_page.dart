@@ -106,7 +106,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
               leading: Icon(Icons.credit_card, color: Colors.blueGrey),
               title: Text('Orders'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, '/orders');
               },
             ),
             Divider(

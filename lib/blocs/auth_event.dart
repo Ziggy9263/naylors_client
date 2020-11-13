@@ -7,6 +7,15 @@ abstract class AuthEvent extends Equatable {
   const AuthEvent();
 }
 
+/// Retrieve auth data, if it already exists
+class AuthRetrieve extends AuthEvent {
+  const AuthRetrieve();
+
+  @override
+  List<Object> get props => [];
+}
+
+/// Get auth data, which should exist already
 class AuthGet extends AuthEvent {
   const AuthGet();
 
@@ -14,6 +23,7 @@ class AuthGet extends AuthEvent {
   List<Object> get props => [];
 }
 
+/// Reset auth (for handling errors)
 class AuthReset extends AuthEvent {
   const AuthReset();
 
@@ -21,6 +31,7 @@ class AuthReset extends AuthEvent {
   List<Object> get props => [];
 }
 
+/// Send login data
 class AuthLogin extends AuthEvent {
   final AuthLoginInfo auth;
   const AuthLogin(this.auth) : assert(auth != null);
@@ -29,6 +40,7 @@ class AuthLogin extends AuthEvent {
   List<Object> get props => [auth];
 }
 
+/// Send register data
 class AuthRegister extends AuthEvent {
   final AuthRegisterInfo auth;
 
@@ -36,4 +48,12 @@ class AuthRegister extends AuthEvent {
 
   @override
   List<Object> get props => [auth];
+}
+
+/// Clear local auth data
+class AuthLogout extends AuthEvent {
+  const AuthLogout();
+
+  @override
+  List<Object> get props => [];
 }

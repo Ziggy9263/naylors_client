@@ -23,10 +23,18 @@ class AuthRepository {
   Future<AuthInfo> getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     auth = new AuthInfo(
-        token: prefs.getString('token'),
-        email: prefs.getString('email'),
-        isAdmin: prefs.getBool('isAdmin'));
+        token: prefs.getString('token') ?? null,
+        email: prefs.getString('email') ?? null,
+        isAdmin: prefs.getBool('isAdmin') ?? false);
+    if (auth.token == null || auth.email == null) {
+      throw Exception("$auth is incorrect");
+    }
     return auth;
+  }
+
+  void logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 
   String get email {

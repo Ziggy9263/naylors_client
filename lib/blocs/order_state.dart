@@ -64,4 +64,12 @@ class OrderListLoadSuccess extends OrderState {
   List<Object> get props => [orderList];
 }
 
-class OrderListLoadFailure extends OrderState {}
+class OrderListLoadFailure extends OrderState {
+  final dynamic error;
+
+  const OrderListLoadFailure({@required this.error})
+      : assert(error != null);
+
+  @override
+  List<Object> get props => [error];
+}

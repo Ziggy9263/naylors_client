@@ -14,6 +14,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   @override
   Stream<CartState> mapEventToState(CartEvent event) async* {
+    if (event is CartClear) {
+      yield CartModificationInProgress();
+      try {
+        final List<CartItem> cartDetail = await cartRepository.clear();
+        if (cartDetail.length == 0)
+          yield CartEmpty();
+        else
+          throw Exception("How did this happen?");
+      } catch (_) {
+        yield CartLoadFailure();
+      }
+    }
     if (event is CartModify) {
       yield CartModificationInProgress();
       try {
@@ -33,7 +45,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final List<CartItem> cartDetail = await cartRepository.populate();
         if (cartDetail.isNotEmpty) yield CartNotEmpty(cart: cartDetail);
         if (cartDetail.isEmpty) yield CartEmpty();
-          
       } catch (_) {
         yield CartLoadFailure();
       }

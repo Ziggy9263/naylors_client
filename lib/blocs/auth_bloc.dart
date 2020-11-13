@@ -17,7 +17,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is AuthReset) {
       yield AuthInitial();
     }
+    if (event is AuthRetrieve) {
+      yield AuthInProgress();
+      try {
+        final AuthInfo auth = await authRepository.getInfo();
+        yield AuthSuccess(auth: auth);
+      } catch (_) {
+        yield AuthInitial();
+      }
+    }
     if (event is AuthGet) {
+      yield AuthInProgress();
       try {
         final AuthInfo auth = await authRepository.getInfo();
         yield AuthSuccess(auth: auth);
@@ -44,6 +54,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (_) {
         yield AuthFailure(error: _);
       }
+    }
+    if (event is AuthLogout) {
+      authRepository.logout();
+      yield AuthInitial();
     }
   }
 

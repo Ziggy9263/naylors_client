@@ -19,14 +19,18 @@ class CartModify extends CartEvent {
 class CartRemove extends CartEvent {
   final int product;
 
-  const CartRemove({@required this.product})
-      : assert(product != null);
-  
+  const CartRemove({@required this.product}) : assert(product != null);
+
   @override
   List<Object> get props => [product];
 }
 
 class CartRequested extends CartEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class CartClear extends CartEvent {
   @override
   List<Object> get props => [];
 }

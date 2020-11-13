@@ -37,8 +37,9 @@ class OrderListRes extends Equatable {
   OrderListRes({this.list});
 
   factory OrderListRes.fromJSON(Map<String, dynamic> json) {
+    json.map((m) => OrderRes.fromJSON(m))
     return OrderListRes(
-      list: json[0],
+      list: ,
     );
   }
 

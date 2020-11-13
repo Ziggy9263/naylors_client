@@ -268,7 +268,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                   ],
                                 ),
                                 SizedBox(height: 12),
-                                TextFormField( // TODO: Validate address
+                                TextFormField(
+                                  // TODO: Validate address
                                   controller: avsStreet,
                                   obscureText: false,
                                   focusNode: avsStreetFocus,
@@ -285,7 +286,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                                   ),
                                 ),
                                 SizedBox(height: 12),
-                                TextFormField( // TODO: Validate Zip code
+                                TextFormField(
+                                  // TODO: Validate Zip code
                                   controller: avsZip,
                                   obscureText: false,
                                   focusNode: avsZipFocus,
@@ -398,13 +400,83 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
           return Center(child: CircularProgressIndicator());
         }
         if (state is OrderPlaceSuccess) {
+          BlocProvider.of<CartBloc>(context).add(CartClear());
           return WillPopScope(
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
               ),
               child: Center(
-                child: Text("Success"),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(child: SizedBox()),
+                    Material(
+                      elevation: 0,
+                      shape: CircleBorder(),
+                      color: Colors.lightGreen[50],
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Material(
+                          elevation: 0,
+                          shape: CircleBorder(),
+                          color: Colors.lightGreen,
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Icon(
+                              Icons.check_circle,
+                              size: 80,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    Text("Your Order Has Been Placed!",
+                        style: style.copyWith(
+                            fontSize: 26, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 25),
+                    Text("Check your Orders page for updates on your order.",
+                        style: style.copyWith(fontSize: 18)),
+                    SizedBox(height: 5),
+                    Text("Your order should be prepared shortly."),
+                    Expanded(child: SizedBox()),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width - 44,
+                        height: 64,
+                        margin: EdgeInsets.fromLTRB(0, 2, 0, 10),
+                        child: RaisedButton(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  "CHECK ORDER PROGRESS",
+                                  textAlign: TextAlign.center,
+                                  style: style.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              Icon(Icons.arrow_right,
+                                  color: Colors.white, size: 40)
+                            ],
+                          ),
+                          color: Colors.green,
+                          splashColor: Colors.redAccent,
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          onPressed: () => Navigator.of(context)
+                              .pushReplacementNamed('/orders'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             onWillPop: () async {

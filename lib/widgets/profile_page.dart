@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
 
-// TODO: Auto-login after registration.
+// TODO: Check for tax exemption automatically, fill in name and address in payment
 
 class ProfilePage extends StatefulWidget {
   @override

@@ -38,4 +38,9 @@ class CartRepository {
     detail.removeWhere((element) => (element.product == int.parse(tag)));
     return detail;
   }
+
+  Future<List<CartItem>> clear() async {
+    detail.clear();
+    return detail;
+  }
 }

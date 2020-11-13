@@ -181,6 +181,21 @@ class MyApp extends StatelessWidget {
                 ],
                 child: CheckoutPayment(cart: settings.arguments),
               ),
+          '/orders': (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>(
+                lazy: false,
+                create: (BuildContext context) =>
+                    AuthBloc(authRepository: authRepository),
+              ),
+              BlocProvider<OrderBloc>(
+                lazy: false,
+                create: (BuildContext context) =>
+                    OrderBloc(orderRepository: orderRepository),
+              ),
+            ],
+            child: OrderPage(),
+          )
         };
         WidgetBuilder builder = routes[settings.name];
         return MaterialPageRoute(builder: (context) => builder(context));

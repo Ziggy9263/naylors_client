@@ -7,6 +7,7 @@ export 'product_detail.dart';
 export 'cart/cart.dart';
 export 'checkout/checkout.dart';
 export 'profile_page.dart';
+export 'order_page.dart';
 
 /// Reusable
 export 'quantity_incremental_buttons.dart';

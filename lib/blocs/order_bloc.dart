@@ -35,10 +35,19 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         yield OrderPlaceFailure(error: _, formatted: formatError(_));
       }
     }
+    if (event is OrderListRequested) {
+      yield OrderListLoadInProgress();
+      try {
+        final OrderListRes orderList = await orderRepository.getOrders();
+        yield OrderListLoadSuccess(orderList: orderList);
+      } catch (_) {
+        yield OrderListLoadFailure(error: _);
+      }
+    }
   }
 }
 
-class OrderListBloc extends Bloc<OrderEvent, OrderState> {
+/*class OrderListBloc extends Bloc<OrderEvent, OrderState> {
   final OrderRepository orderRepository;
 
   OrderListBloc({@required this.orderRepository})
@@ -58,3 +67,4 @@ class OrderListBloc extends Bloc<OrderEvent, OrderState> {
     }
   }
 }
+*/
