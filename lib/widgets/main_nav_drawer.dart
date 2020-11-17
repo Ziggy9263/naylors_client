@@ -37,7 +37,9 @@ class MainNavDrawer extends StatelessWidget {
             leading: Icon(Icons.store, color: Colors.blueGrey),
             title: Text('Products'),
             onTap: () {
-              Navigator.pop(context);
+              BlocProvider.of<NavigatorBloc>(context)
+                  .add(NavigatorToProducts());
+              Navigator.of(context).pop();
             },
           ),
           ListTile(
@@ -51,7 +53,8 @@ class MainNavDrawer extends StatelessWidget {
             leading: Icon(Icons.credit_card, color: Colors.blueGrey),
             title: Text('Orders'),
             onTap: () {
-              Navigator.pushNamed(context, '/orders');
+              BlocProvider.of<NavigatorBloc>(context).add(NavigatorToOrders());
+              Navigator.pop(context);
             },
           ),
           Divider(
@@ -65,7 +68,8 @@ class MainNavDrawer extends StatelessWidget {
             leading: Icon(Icons.account_box, color: Colors.blueGrey),
             title: Text('Profile'),
             onTap: () {
-              Navigator.of(context).pushNamed('/profile');
+              BlocProvider.of<NavigatorBloc>(context).add(NavigatorToProfile());
+              Navigator.pop(context);
             },
           ),
           ListTile(

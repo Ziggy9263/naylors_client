@@ -4,8 +4,9 @@ import 'package:naylors_client/models/models.dart';
 
 class OrderRepository {
   final OrderApiClient orderApiClient;
+  final ProductApiClient productApiClient;
 
-  OrderRepository({@required this.orderApiClient})
+  OrderRepository({@required this.orderApiClient, @required this.productApiClient})
       : assert(orderApiClient != null);
 
   Future<OrderListRes> getOrders() async {

@@ -59,22 +59,65 @@ class PayHistory extends Equatable {
 }
 
 class OrderRes extends Equatable {
-  final List<dynamic> cartDetail;
+  final List<CartItem> cartDetail;
   final String userComments;
   final List<PayHistory> payHistory;
 
   OrderRes({this.cartDetail, this.userComments, this.payHistory});
 
   factory OrderRes.fromJSON(Map<String, dynamic> json) {
+    List<CartItem> cart = new List<CartItem>();
     List<PayHistory> payments = new List<PayHistory>();
     json['payHistory'].forEach((value) {
       payments.add(PayHistory.fromMap(value));
     });
+    json['cartDetail'].forEach((value) {
+      cart.add(CartItem.fromMap(value));
+    });
     return OrderRes(
-      cartDetail: json['cartDetail'],
+      cartDetail: cart,
       userComments: json['userComments'],
       payHistory: payments,
     );
+  }
+
+  List<String> get itemList {
+    List<String> items = new List<String>();
+    cartDetail.forEach((value) {
+      items.add(value.detail.name);
+    });
+    return items;
+  }
+
+  String get formattedItemList {
+    List<String> items = this.itemList;
+    for (int i = 0; i < items.length; i++) {
+      items[i] = cartDetail[i].quantity.toString() + " " + items[i];
+    }
+    return items.join(", ");
+  }
+
+  double get subtotal {
+    double subtotal = 0;
+    for (int i = 0; i < cartDetail.length; i++) {
+      subtotal =
+          subtotal + (cartDetail[i].quantity * cartDetail[i].detail.price);
+    }
+    return subtotal;
+  }
+
+  double get tax {
+    double tax = 0;
+    for (int i = 0; i < cartDetail.length; i++) {
+      double subtotal = (cartDetail[i].quantity * cartDetail[i].detail.price);
+      tax = (tax +
+          (!cartDetail[i].detail.taxExempt == false ? subtotal * 0.0825 : 0));
+    }
+    return tax;
+  }
+
+  double get total {
+    return this.subtotal + this.tax;
   }
 
   String get recentStatus {
@@ -87,6 +130,7 @@ class OrderRes extends Equatable {
 
 class OrderListRes extends Equatable {
   final List<OrderRes> list;
+  int failedOrders;
 
   OrderListRes({this.list});
 
@@ -98,6 +142,23 @@ class OrderListRes extends Equatable {
     return OrderListRes(
       list: orders,
     );
+  }
+
+  List<OrderRes> get formattedList {
+    List<OrderRes> orders = List<OrderRes>();
+    failedOrders = 0;
+    this.list.forEach((value) {
+      if (value.recentStatus == "Placed") {
+        orders.add(value);
+      } else if (value.recentStatus == "Completed") {
+        orders.add(value);
+      } else if (value.recentStatus == "Cancelled") {
+        orders.add(value);
+      } else {
+        failedOrders += 1;
+      }
+    });
+    return orders;
   }
 
   @override

@@ -10,6 +10,16 @@ class CartItem extends Equatable {
 
   CartItem({this.product, this.quantity, this.detail});
 
+  factory CartItem.fromMap(Map<String, dynamic> data) {
+    return CartItem(
+      product: data['product'],
+      quantity: data['quantity'],
+      detail: (data['detail'] == null)
+          ? null
+          : ProductDetail.fromJSON(data['detail']),
+    );
+  }
+
   @override
   List<Object> get props => [product];
 }

@@ -33,13 +33,17 @@ void main() {
     orderApiClient: OrderApiClient(
       httpClient: http.Client(),
     ),
+    productApiClient: productRepository.productApiClient,
   );
+
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   runApp(MyApp(
       authRepository: authRepository,
       productRepository: productRepository,
       cartRepository: cartRepository,
-      orderRepository: orderRepository));
+      orderRepository: orderRepository,
+      navigatorKey: navigatorKey));
 }
 
 class MyApp extends StatelessWidget {
@@ -47,17 +51,20 @@ class MyApp extends StatelessWidget {
   final ProductRepository productRepository;
   final CartRepository cartRepository;
   final OrderRepository orderRepository;
+  final GlobalKey<NavigatorState> navigatorKey;
 
   MyApp(
       {Key key,
       @required this.authRepository,
       @required this.productRepository,
       @required this.cartRepository,
-      @required this.orderRepository})
+      @required this.orderRepository,
+      @required this.navigatorKey})
       : assert(authRepository != null &&
             productRepository != null &&
             cartRepository != null &&
-            orderRepository != null),
+            orderRepository != null &&
+            navigatorKey != null),
         super(key: key);
 
   final appTitle = 'Naylor\'s Online';
@@ -119,6 +126,17 @@ class MyApp extends StatelessWidget {
                     create: (BuildContext context) =>
                         AuthBloc(authRepository: authRepository),
                   ),
+                  BlocProvider<NavigatorBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        NavigatorBloc(navigatorKey: navigatorKey),
+                  ),
+                  BlocProvider<OrderBloc>(
+                    lazy: false,
+                    create: (BuildContext context) => OrderBloc(
+                        orderRepository: orderRepository,
+                        productRepository: productRepository),
+                  ),
                 ],
                 child: NaylorsHomePage(title: appTitle),
               ),
@@ -150,8 +168,9 @@ class MyApp extends StatelessWidget {
                   ),
                   BlocProvider<OrderBloc>(
                     lazy: false,
-                    create: (BuildContext context) =>
-                        OrderBloc(orderRepository: orderRepository),
+                    create: (BuildContext context) => OrderBloc(
+                        orderRepository: orderRepository,
+                        productRepository: productRepository),
                   ),
                   BlocProvider<AuthBloc>(
                     lazy: false,
@@ -170,8 +189,9 @@ class MyApp extends StatelessWidget {
                   ),
                   BlocProvider<OrderBloc>(
                     lazy: false,
-                    create: (BuildContext context) =>
-                        OrderBloc(orderRepository: orderRepository),
+                    create: (BuildContext context) => OrderBloc(
+                        orderRepository: orderRepository,
+                        productRepository: productRepository),
                   ),
                   BlocProvider<AuthBloc>(
                     lazy: false,
@@ -182,20 +202,19 @@ class MyApp extends StatelessWidget {
                 child: CheckoutPayment(cart: settings.arguments),
               ),
           '/orders': (context) => MultiBlocProvider(
-            providers: [
-              BlocProvider<AuthBloc>(
-                lazy: false,
-                create: (BuildContext context) =>
-                    AuthBloc(authRepository: authRepository),
-              ),
-              BlocProvider<OrderBloc>(
-                lazy: false,
-                create: (BuildContext context) =>
-                    OrderBloc(orderRepository: orderRepository),
-              ),
-            ],
-            child: OrderPage(),
-          )
+                providers: [
+                  BlocProvider<ProductBloc>(
+                    create: (context) =>
+                        ProductBloc(productRepository: productRepository),
+                  ),
+                  BlocProvider<AuthBloc>(
+                    lazy: false,
+                    create: (BuildContext context) =>
+                        AuthBloc(authRepository: authRepository),
+                  ),
+                ],
+                child: OrderPage(),
+              )
         };
         WidgetBuilder builder = routes[settings.name];
         return MaterialPageRoute(builder: (context) => builder(context));

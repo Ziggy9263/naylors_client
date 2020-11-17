@@ -17,3 +17,8 @@ export 'cart_bloc.dart';
 export 'order_event.dart';
 export 'order_state.dart';
 export 'order_bloc.dart';
+
+// Navigator
+export 'navigator_event.dart';
+export 'navigator_state.dart';
+export 'navigator_bloc.dart';

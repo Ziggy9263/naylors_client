@@ -15,10 +15,12 @@ String formatError(dynamic error) {
 }
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
+  // TODO: SQLite?
   final OrderRepository orderRepository;
+  final ProductRepository productRepository;
 
-  OrderBloc({@required this.orderRepository})
-      : assert(orderRepository != null),
+  OrderBloc({@required this.orderRepository, @required this.productRepository})
+      : assert(orderRepository != null && productRepository != null),
         super(OrderInitial());
 
   @override
@@ -39,6 +41,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       yield OrderListLoadInProgress();
       try {
         final OrderListRes orderList = await orderRepository.getOrders();
+        for (int i = 0; i < orderList.list.length; i++) {
+          for (int u = 0; u < orderList.list[i].cartDetail.length; u++) {
+            if (orderList.list[i].cartDetail[u].detail == null) {
+              orderList.list[i].cartDetail[u].detail =
+                  await productRepository.getProduct(
+                      orderList.list[i].cartDetail[u].product.toString());
+            }
+          }
+        }
         yield OrderListLoadSuccess(orderList: orderList);
       } catch (_) {
         yield OrderListLoadFailure(error: _);
