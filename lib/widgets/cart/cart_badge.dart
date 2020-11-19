@@ -19,23 +19,28 @@ class CartBadge extends StatelessWidget {
     List<CartItem> cart =
         BlocProvider.of<CartBloc>(context).cartRepository.detail;
     int badgeContent = 0;
+    bool cartToggle = BlocProvider.of<NavigatorBloc>(context).cartToggle; 
     cart.forEach((val) => badgeContent += val.quantity);
-    return Badge(
-      badgeContent: Text(
-        badgeContent.toString(),
-        style: style.copyWith(
-          color: Colors.white,
-          fontSize: 11,
+    return Material(
+      shape: CircleBorder(),
+      color: (cartToggle) ? Colors.white24 : Colors.transparent,
+      child: Badge(
+        badgeContent: Text(
+          badgeContent.toString(),
+          style: style.copyWith(
+            color: Colors.white,
+            fontSize: 11,
+          ),
         ),
-      ),
-      showBadge: (badgeContent > 0) ? true : false,
-      position: BadgePosition.topEnd(top: 2, end: 2),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          Icons.shopping_cart,
-          size: 36,
-          color: Colors.white,
+        showBadge: (badgeContent > 0 && !cartToggle) ? true : false,
+        position: BadgePosition.topEnd(top: 2, end: 2),
+        child: IconButton(
+          onPressed: onPressed,
+          icon: Icon(
+            Icons.shopping_cart,
+            size: 36,
+            color: (cartToggle) ? Colors.black54 : Colors.white,
+          ),
         ),
       ),
     );

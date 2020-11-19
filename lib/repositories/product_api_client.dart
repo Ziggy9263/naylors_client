@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:naylors_client/models/models.dart';
 
 class ProductApiClient {
-  static const baseUrl = 'http://order.naylorsfeed.com';
+  static const baseUrl = 'https://order.naylorsfeed.com';
   final http.Client httpClient;
 
   ProductApiClient({@required this.httpClient}) : assert(httpClient != null);

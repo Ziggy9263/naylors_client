@@ -42,11 +42,7 @@ class CartBodyState extends State<CartBody> {
         BlocProvider.of<CartBloc>(context).add(CartRequested());
       }
       if (state is CartModificationInProgress) {
-        return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Center(child: CircularProgressIndicator()));
+        return Container(child: Center(child: CircularProgressIndicator()));
       }
       if (state is CartNotEmpty) {
         return Container(
@@ -56,32 +52,30 @@ class CartBodyState extends State<CartBody> {
           child: Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(0, 36, 0, 0),
-                child: Stack(
-                  children: <Widget>[
-                    IconButton(
-                      onPressed: () {
-                        this.parent.setState(() {});
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.arrow_back,
-                          size: 32.0, color: Colors.black),
-                    ),
-                    Align(
-                      heightFactor: 1.5,
-                      child: Text(
-                        'Your Cart',
-                        style: style.copyWith(
-                          color: Colors.black,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: OutlinedButton(
+                  onPressed: () {
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToCart());
+                    parent.setState(() => {
+                          parent.headerTitle =
+                              (BlocProvider.of<NavigatorBloc>(context)
+                                      .cartToggle)
+                                  ? "Naylor's Online: Products"
+                                  : "Naylor's Online: Your Cart"
+                        });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.arrow_back,
+                          size: 32.0, color: Colors.lightBlue),
+                      Text("Return to Products"),
+                    ],
+                  ),
                 ),
               ),
-              Divider(),
               Expanded(
                 child: CartDetailCards(
                   parent: this,
@@ -124,16 +118,21 @@ class CartBodyState extends State<CartBody> {
       }
       return InkWell(
         onTap: () {
-          this.parent.setState(() {});
-          Navigator.of(context).pop();
+          parent.setState(() => {
+                parent.headerTitle =
+                    (BlocProvider.of<NavigatorBloc>(context).cartToggle)
+                        ? "Naylor's Online: Products"
+                        : "Naylor's Online: Your Cart"
+              });
+          BlocProvider.of<NavigatorBloc>(context).add(NavigatorToCart());
         },
         child: Center(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(Icons.keyboard_return, color: Colors.white),
+            Icon(Icons.keyboard_return, color: Colors.black),
             SizedBox(width: 12),
-            Text("Cart is Empty", style: style.copyWith(color: Colors.white)),
+            Text("Cart is Empty", style: style.copyWith(color: Colors.black)),
           ],
         )),
       );

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:naylors_client/models/models.dart';
 
 class AuthApiClient {
-  static const baseUrl = 'http://order.naylorsfeed.com';
+  static const baseUrl = 'https://order.naylorsfeed.com';
   final http.Client httpClient;
 
   AuthApiClient({@required this.httpClient}) : assert(httpClient != null);

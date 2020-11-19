@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:naylors_client/models/models.dart';
 
 class OrderApiClient {
-  static const baseUrl = 'http://order.naylorsfeed.com';
+  static const baseUrl = 'https://order.naylorsfeed.com';
   final http.Client httpClient;
 
   OrderApiClient({@required this.httpClient}) : assert(httpClient != null);
@@ -25,7 +25,7 @@ class OrderApiClient {
       'avsStreet': order.paymentInfo.avsStreet
     };
     final response = await this.httpClient.post(
-      'http://order.naylorsfeed.com/api/orders',
+      '$baseUrl/api/orders',
       body: jsonEncode(body),
       headers: {
         'Content-Type': 'application/json',

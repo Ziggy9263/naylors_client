@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
+import 'package:naylors_client/widgets/widgets.dart';
 
 class MainNavDrawer extends StatelessWidget {
-  const MainNavDrawer({
-    Key key,
-  }) : super(key: key);
+  final NaylorsHomePageState parent;
+  const MainNavDrawer({Key key, this.parent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +39,9 @@ class MainNavDrawer extends StatelessWidget {
             onTap: () {
               BlocProvider.of<NavigatorBloc>(context)
                   .add(NavigatorToProducts());
+              parent.setState(() {
+                parent.headerTitle = "Naylor's Online: Products";
+              });
               Navigator.of(context).pop();
             },
           ),
@@ -46,6 +49,9 @@ class MainNavDrawer extends StatelessWidget {
             leading: Icon(Icons.filter_list, color: Colors.blueGrey),
             title: Text('Categories'),
             onTap: () {
+              parent.setState(() {
+                parent.headerTitle = "Naylor's Online: Categories";
+              });
               Navigator.pop(context);
             },
           ),
@@ -54,6 +60,9 @@ class MainNavDrawer extends StatelessWidget {
             title: Text('Orders'),
             onTap: () {
               BlocProvider.of<NavigatorBloc>(context).add(NavigatorToOrders());
+              parent.setState(() {
+                parent.headerTitle = "Naylor's Online: Your Orders";
+              });
               Navigator.pop(context);
             },
           ),
@@ -69,6 +78,9 @@ class MainNavDrawer extends StatelessWidget {
             title: Text('Profile'),
             onTap: () {
               BlocProvider.of<NavigatorBloc>(context).add(NavigatorToProfile());
+              parent.setState(() {
+                parent.headerTitle = "Naylor's Online: Your Profile";
+              });
               Navigator.pop(context);
             },
           ),
