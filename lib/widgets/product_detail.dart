@@ -203,19 +203,7 @@ class ProductDetailBody extends StatelessWidget {
                               DropdownButton(
                                 value: product.tag,
                                 items: dropdownItems,
-                                /*[
-                                  /**
-                                   * TODO: Create a builder for product specific sizes with links to respective tag
-                                   * Requirements: API Sizes field on products in format of:
-                                   *    size: [ { "label": "50lbs", "tag": "36009" }, ... ]
-                                   */
-                                  DropdownMenuItem(
-                                      child: Text('50lbs.'), value: '36009'),
-                                  DropdownMenuItem(
-                                      child: Text('1 bag'), value: '12345'),
-                                ],*/
                                 onChanged: (_) {
-                                  //_runFuture(_);
                                   BlocProvider.of<ProductBloc>(context)
                                       .add(ProductRequested(tag: _));
                                 },
