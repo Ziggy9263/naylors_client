@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
+import 'package:naylors_client/util/util.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class OrderPage extends StatefulWidget {
@@ -36,19 +37,22 @@ class _OrderPageState extends State<OrderPage> {
                         child: Text(
                           "Previous Orders",
                           style: style.copyWith(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 18, fontWeight: FontWeight.bold,
+                              color: Colors.grey[600]),
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          (state.orderList.failedOrders > 0 ? null : false) ?? Padding(
-                            padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
-                            child: Tooltip(
-                              message: "${state.orderList.failedOrders} Orders Previously Failed to Process",
-                              child: Icon(Icons.warning),
-                            ),
-                          ),
+                          (state.orderList.failedOrders > 0 ? null : false) ??
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
+                                child: Tooltip(
+                                  message:
+                                      "${state.orderList.failedOrders} Orders Previously Failed to Process",
+                                  child: Icon(Icons.warning, color: Colors.grey[600]),
+                                ),
+                              ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
                             child: IconButton(
@@ -71,7 +75,7 @@ class _OrderPageState extends State<OrderPage> {
                       return Card(
                         elevation: 0.5,
                         child: Container(
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 2.0),
                           child: Row(
                             children: <Widget>[
                               Material(
@@ -88,32 +92,55 @@ class _OrderPageState extends State<OrderPage> {
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 2, 8, 8),
+                                  padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
                                   child: Column(
                                     children: <Widget>[
                                       Padding(
                                         padding: EdgeInsets.all(8.0),
                                         child: Text(
-                                            "${orders[index].recentStatus}",
+                                            "Order Status: ${orders[index].recentStatus}",
                                             style: style.copyWith(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
                                             "Details: ",
                                             style: style.copyWith(
-                                                fontSize: 12,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          Text(
-                                            "${orders[index].formattedItemList}",
+                                          Expanded(
+                                            child: Text(
+                                              "${orders[index].formattedItemList}",
+                                              style: style.copyWith(
+                                                  fontSize: 16,
+                                                  fontStyle: FontStyle.italic),
+                                            ),
+                                          ),
+                                          Text("Total: ",
                                             style: style.copyWith(
-                                                fontSize: 12,
-                                                fontStyle: FontStyle.italic),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                            )),
+                                          Text("\$${format(orders[index].total)}",
+                                            style: style.copyWith(
+                                                fontSize: 16,
+                                                color: Colors.green),
                                           ),
                                         ],
+                                      ),
+                                      SizedBox(height: 16),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text("UUID: ${orders[index].uuid}",
+                                          style: style.copyWith(
+                                            fontSize: 10,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w300,
+                                          )),
                                       ),
                                     ],
                                   ),

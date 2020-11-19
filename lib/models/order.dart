@@ -62,8 +62,9 @@ class OrderRes extends Equatable {
   final List<CartItem> cartDetail;
   final String userComments;
   final List<PayHistory> payHistory;
+  final String uuid;
 
-  OrderRes({this.cartDetail, this.userComments, this.payHistory});
+  OrderRes({this.cartDetail, this.userComments, this.payHistory, this.uuid});
 
   factory OrderRes.fromJSON(Map<String, dynamic> json) {
     List<CartItem> cart = new List<CartItem>();
@@ -78,6 +79,7 @@ class OrderRes extends Equatable {
       cartDetail: cart,
       userComments: json['userComments'],
       payHistory: payments,
+      uuid: json['uuid'],
     );
   }
 
