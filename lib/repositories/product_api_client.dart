@@ -28,14 +28,25 @@ class ProductApiClient {
 
   Future<ProductDetail> getProduct(String tag) async {
     final productUrl = "$baseUrl/api/products/$tag";
-    final response =
-        await this.httpClient.get(productUrl);
+    final response = await this.httpClient.get(productUrl);
 
     if (response.statusCode == 200) {
       var data = ProductDetail.fromJSON(jsonDecode(response.body));
       return data;
     } else {
       throw Exception('Failed to Get Product $tag');
+    }
+  }
+
+  Future<ProductList> searchProducts(String query) async {
+    final productUrl = "$baseUrl/api/products/?q=$query";
+    final response = await this.httpClient.get(productUrl);
+
+    if (response.statusCode == 200) {
+      var data = ProductList.fromJSON(response.body);
+      return data;
+    } else {
+      throw Exception('Search for $query failed!');
     }
   }
 }

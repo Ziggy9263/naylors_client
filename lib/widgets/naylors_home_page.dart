@@ -20,7 +20,7 @@ class NaylorsHomePage extends StatefulWidget {
 class NaylorsHomePageState extends State<NaylorsHomePage> {
   final String title;
   String _email;
-  String headerTitle = "";
+  String headerTitle = "Naylor's Online: Products";
   final GlobalKey<ScaffoldState> scaffoldKey;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
@@ -62,6 +62,34 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
             title: Text(headerTitle),
             actions: <Widget>[
               Padding(
+                padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                child: Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: <Widget>[
+                    Material(
+                      shape: CircleBorder(),
+                      color: (BlocProvider.of<NavigatorBloc>(context).searchToggle) ? Colors.white : Colors.transparent,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.search,
+                          size: 36.0,
+                          color: (BlocProvider.of<NavigatorBloc>(context).searchToggle) ? Colors.black54 : Colors.white,
+                        ),
+                        onPressed: () {
+                          BlocProvider.of<NavigatorBloc>(context)
+                              .add(NavigatorToSearch());
+                          BlocProvider.of<SearchBloc>(context)
+                              .add(SearchInit());
+                          setState(() => {
+                            headerTitle = "Naylor's Product Search"
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
                 child: CartBadge(
                     style: style,
@@ -87,6 +115,9 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           }
           if (state is NavigatorAtCart) {
             return CartBody(parent: this);
+          }
+          if (state is NavigatorAtSearch) {
+            return SearchPage();
           }
           return Center(child: CircularProgressIndicator());
         }),

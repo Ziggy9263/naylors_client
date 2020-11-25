@@ -137,6 +137,11 @@ class MyApp extends StatelessWidget {
                         orderRepository: orderRepository,
                         productRepository: productRepository),
                   ),
+                  BlocProvider<SearchBloc>(
+                    lazy: false,
+                    create: (BuildContext context) => SearchBloc(
+                      productRepository: productRepository),
+                  ),
                 ],
                 child: NaylorsHomePage(title: appTitle),
               ),

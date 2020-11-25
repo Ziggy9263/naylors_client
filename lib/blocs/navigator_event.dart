@@ -28,3 +28,5 @@ class NavigatorToProfile extends NavigatorEvent {}
 class NavigatorToCart extends NavigatorEvent {}
 
 class NavigatorToCheckout extends NavigatorEvent {}
+
+class NavigatorToSearch extends NavigatorEvent {}

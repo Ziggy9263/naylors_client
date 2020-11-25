@@ -126,15 +126,21 @@ class CartBodyState extends State<CartBody> {
               });
           BlocProvider.of<NavigatorBloc>(context).add(NavigatorToCart());
         },
-        child: Center(
-            child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(Icons.keyboard_return, color: Colors.black),
-            SizedBox(width: 12),
-            Text("Cart is Empty", style: style.copyWith(color: Colors.black)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.keyboard_return, color: Colors.white, size: 30),
+                SizedBox(width: 8),
+                Text("Cart is Empty", style: style.copyWith(color: Colors.white, fontSize: 24)),
+              ],
+            ),
+            SizedBox(height: 24),
+            Text("Tap anywhere to go back", style: style.copyWith(color: Colors.white, fontSize: 14)),
           ],
-        )),
+        ),
       );
     });
   }

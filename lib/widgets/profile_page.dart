@@ -52,25 +52,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is AuthInitial) {
-            BlocProvider.of<AuthBloc>(context).add(AuthGet());
-          }
-          if (state is AuthSuccess) {
-            return Center(
-              child: Column(
-                children: <Widget>[
-                  Text('${state.auth.email}'),
-                ],
-              ),
-            );
-          }
-          return Center(child: CircularProgressIndicator());
-        },
-      ),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthInitial) {
+          BlocProvider.of<AuthBloc>(context).add(AuthGet());
+        }
+        if (state is AuthSuccess) {
+          return Center(
+            child: Column(
+              children: <Widget>[
+                Text('${state.auth.email}'),
+              ],
+            ),
+          );
+        }
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 }

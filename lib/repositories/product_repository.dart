@@ -15,4 +15,8 @@ class ProductRepository {
   Future<ProductDetail> getProduct(String tag) async {
     return productApiClient.getProduct(tag);
   }
+
+  Future<ProductList> searchProducts(String query) async {
+    return productApiClient.searchProducts(query);
+  }
 }

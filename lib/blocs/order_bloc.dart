@@ -41,16 +41,20 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       yield OrderListLoadInProgress();
       try {
         final OrderListRes orderList = await orderRepository.getOrders();
-        for (int i = 0; i < orderList.list.length; i++) {
-          for (int u = 0; u < orderList.list[i].cartDetail.length; u++) {
-            if (orderList.list[i].cartDetail[u].detail == null) {
-              orderList.list[i].cartDetail[u].detail =
-                  await productRepository.getProduct(
-                      orderList.list[i].cartDetail[u].product.toString());
+        if (orderList.list.length < 1)
+          yield OrderListEmpty();
+        else {
+          for (int i = 0; i < orderList.list.length; i++) {
+            for (int u = 0; u < orderList.list[i].cartDetail.length; u++) {
+              if (orderList.list[i].cartDetail[u].detail == null) {
+                orderList.list[i].cartDetail[u].detail =
+                    await productRepository.getProduct(
+                        orderList.list[i].cartDetail[u].product.toString());
+              }
             }
           }
+          yield OrderListLoadSuccess(orderList: orderList);
         }
-        yield OrderListLoadSuccess(orderList: orderList);
       } catch (_) {
         yield OrderListLoadFailure(error: _);
       }

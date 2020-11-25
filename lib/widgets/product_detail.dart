@@ -75,7 +75,7 @@ class ProductDetailBody extends StatelessWidget {
           product.sizes.forEach((value) {
             dropdownItems.add(DropdownMenuItem(
               child: Text(value['size']),
-              value: value['tag'],
+              value: value['tag'].toString(),
             ));
           });
 

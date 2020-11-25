@@ -22,3 +22,8 @@ export 'order_bloc.dart';
 export 'navigator_event.dart';
 export 'navigator_state.dart';
 export 'navigator_bloc.dart';
+
+// Search
+export 'search_event.dart';
+export 'search_state.dart';
+export 'search_bloc.dart';

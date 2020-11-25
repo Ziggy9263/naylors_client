@@ -29,3 +29,5 @@ class NavigatorAtProfile extends NaylorsNavigatorState {}
 class NavigatorAtCart extends NaylorsNavigatorState {}
 
 class NavigatorAtCheckout extends NaylorsNavigatorState {}
+
+class NavigatorAtSearch extends NaylorsNavigatorState {}

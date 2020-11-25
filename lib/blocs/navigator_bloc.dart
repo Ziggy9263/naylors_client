@@ -14,6 +14,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
         super(NavigatorInitial());
 
   bool cartToggle = false;
+  bool searchToggle = false;
 
   @override
   Stream<NaylorsNavigatorState> mapEventToState(NavigatorEvent event) async* {
@@ -22,26 +23,32 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
     }
     if (event is NavigatorToHome) {
       cartToggle = false;
+      searchToggle = false;
       navigatorKey.currentState.pushReplacementNamed('/');
     }
     if (event is NavigatorToProducts) {
       cartToggle = false;
+      searchToggle = false;
       yield NavigatorAtProducts();
     }
     if (event is NavigatorToProduct) {
       cartToggle = false;
+      searchToggle = false;
       navigatorKey.currentState.pushNamed('/product', arguments: event.product);
       yield NavigatorAtProduct(product: event.product);
     }
     if (event is NavigatorToOrders) {
       cartToggle = false;
+      searchToggle = false;
       yield NavigatorAtOrders();
     }
     if (event is NavigatorToProfile) {
       cartToggle = false;
+      searchToggle = false;
       yield NavigatorAtProfile();
     }
     if (event is NavigatorToCart) {
+      searchToggle = false;
       cartToggle = !cartToggle;
       if (cartToggle)
         yield NavigatorAtCart();
@@ -50,8 +57,17 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
     }
     if (event is NavigatorToCheckout) {
       cartToggle = false;
+      searchToggle = false;
       navigatorKey.currentState.pushNamed('/checkout');
       yield NavigatorAtCheckout();
+    }
+    if (event is NavigatorToSearch) {
+      cartToggle = false;
+      searchToggle = !searchToggle;
+      if (searchToggle)
+        yield NavigatorAtSearch();
+      else
+        yield NavigatorAtProducts();
     }
   }
 }

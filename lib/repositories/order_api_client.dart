@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:naylors_client/models/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderApiClient {
   static const baseUrl = 'https://order.naylorsfeed.com';
@@ -24,13 +25,14 @@ class OrderApiClient {
       'avsZip': order.paymentInfo.avsZip,
       'avsStreet': order.paymentInfo.avsStreet
     };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
     final response = await this.httpClient.post(
       '$baseUrl/api/orders',
       body: jsonEncode(body),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imphc29uLnphbmUuY29va0BnbWFpbC5jb20iLCJpc0FkbWluIjp0cnVlLCJpYXQiOjE2MDI2MDUzMjl9.DlMAIXwuzLhNhbXQZ9QTk5BO-okbFeV8_XTnMg7b66s'
+        'Authorization': 'Bearer $token'
       },
     );
 
@@ -42,7 +44,8 @@ class OrderApiClient {
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Status ${response.statusCode} ${response.reasonPhrase}: ${response.body}');
+      throw Exception(
+          'Status ${response.statusCode} ${response.reasonPhrase}: ${response.body}');
     }
   }
 
@@ -51,6 +54,9 @@ class OrderApiClient {
     final response = await this.httpClient.get(ordersUrl);
 
     if (response.statusCode == 200) {
+      if (response.body == '[]') {
+        return OrderListRes(list: []);
+      }
       var data = OrderListRes.fromJSON(jsonDecode(response.body));
       return data;
     } else {
