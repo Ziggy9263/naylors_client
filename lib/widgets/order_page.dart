@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -5,6 +7,7 @@ import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/util/util.dart';
 import 'package:naylors_client/widgets/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 
 class OrderPage extends StatefulWidget {
   @override
@@ -35,11 +38,13 @@ class _OrderPageState extends State<OrderPage> {
                 children: <Widget>[
                   Icon(Icons.keyboard_return, color: Colors.white, size: 30),
                   SizedBox(width: 8),
-                  Text("No Previous Orders", style: style.copyWith(color: Colors.white, fontSize: 24)),
+                  Text("No Previous Orders",
+                      style: style.copyWith(color: Colors.white, fontSize: 24)),
                 ],
               ),
               SizedBox(height: 24),
-              Text("Tap anywhere to go back", style: style.copyWith(color: Colors.white, fontSize: 14)),
+              Text("Tap anywhere to go back",
+                  style: style.copyWith(color: Colors.white, fontSize: 14)),
             ],
           ),
         );
@@ -49,55 +54,43 @@ class _OrderPageState extends State<OrderPage> {
         return Center(
           child: Column(
             children: [
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
+                  Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
+                  child: Text(
+                    "Previous Orders",
+                    style: style.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[100]),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
-                      child: Text(
-                        "Previous Orders",
-                        style: style.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[100]),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
-                      child: Text(
-                        "${state.orderList.list.length}",
-                        style: style.copyWith(
-                          fontSize: 12,
-                          color: Colors.grey[100],
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        (state.orderList.failedOrders > 0 ? null : Container()) ??
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
-                              child: Tooltip(
-                                message:
-                                    "${state.orderList.failedOrders} Orders Previously Failed to Process",
-                                child: Icon(Icons.warning,
-                                    color: Colors.grey[100]),
-                              ),
-                            ),
+                    (state.orderList.failedOrders > 0 ? null : Container()) ??
                         Padding(
                           padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          child: IconButton(
-                            icon: Icon(Icons.refresh, color: Colors.grey[600]),
-                            onPressed: () {
-                              BlocProvider.of<OrderBloc>(context)
-                                  .add(OrderListRequested());
-                            },
+                          child: Tooltip(
+                            message:
+                                "${state.orderList.failedOrders} Orders Previously Failed to Process",
+                            child: Icon(Icons.warning, color: Colors.grey[100]),
                           ),
                         ),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
+                      child: IconButton(
+                        icon: Icon(Icons.refresh, color: Colors.grey[100]),
+                        onPressed: () {
+                          BlocProvider.of<OrderBloc>(context)
+                              .add(OrderListRequested());
+                        },
+                      ),
                     ),
-                  ]),
+                  ],
+                ),
+              ]),
               Expanded(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -191,7 +184,20 @@ class _OrderPageState extends State<OrderPage> {
         );
       }
       if (state is OrderListLoadFailure) {
-        return Center(child: Text("${state.error}"));
+        Timer(new Duration(seconds: 5), () {
+          BlocProvider.of<OrderBloc>(context).add(OrderListRequested());
+        });
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text("${state.error}",
+                  style: style.copyWith(color: Colors.white)),
+              SizedBox(height: 12),
+              CircularProgressIndicator(backgroundColor: Colors.white),
+            ],
+          ),
+        );
       }
       return Center(child: CircularProgressIndicator());
     });

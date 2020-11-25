@@ -40,6 +40,34 @@ class CartBodyState extends State<CartBody> {
       }
       if (state is CartEmpty) {
         BlocProvider.of<CartBloc>(context).add(CartRequested());
+        return InkWell(
+          onTap: () {
+            parent.setState(() => {
+                  parent.headerTitle =
+                      (BlocProvider.of<NavigatorBloc>(context).cartToggle)
+                          ? "Naylor's Online: Products"
+                          : "Naylor's Online: Your Cart"
+                });
+            BlocProvider.of<NavigatorBloc>(context).add(NavigatorToCart());
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.keyboard_return, color: Colors.white, size: 30),
+                  SizedBox(width: 8),
+                  Text("Cart is Empty",
+                      style: style.copyWith(color: Colors.white, fontSize: 24)),
+                ],
+              ),
+              SizedBox(height: 24),
+              Text("Tap anywhere to go back",
+                  style: style.copyWith(color: Colors.white, fontSize: 14)),
+            ],
+          ),
+        );
       }
       if (state is CartModificationInProgress) {
         return Container(child: Center(child: CircularProgressIndicator()));
@@ -116,32 +144,8 @@ class CartBodyState extends State<CartBody> {
           ),
         );
       }
-      return InkWell(
-        onTap: () {
-          parent.setState(() => {
-                parent.headerTitle =
-                    (BlocProvider.of<NavigatorBloc>(context).cartToggle)
-                        ? "Naylor's Online: Products"
-                        : "Naylor's Online: Your Cart"
-              });
-          BlocProvider.of<NavigatorBloc>(context).add(NavigatorToCart());
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.keyboard_return, color: Colors.white, size: 30),
-                SizedBox(width: 8),
-                Text("Cart is Empty", style: style.copyWith(color: Colors.white, fontSize: 24)),
-              ],
-            ),
-            SizedBox(height: 24),
-            Text("Tap anywhere to go back", style: style.copyWith(color: Colors.white, fontSize: 14)),
-          ],
-        ),
-      );
+      return Center(
+          child: CircularProgressIndicator(backgroundColor: Colors.white));
     });
   }
 }

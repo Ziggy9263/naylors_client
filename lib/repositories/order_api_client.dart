@@ -51,7 +51,14 @@ class OrderApiClient {
 
   Future<OrderListRes> fetchOrders() async {
     final ordersUrl = "$baseUrl/api/orders/";
-    final response = await this.httpClient.get(ordersUrl);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    final response = await this.httpClient.get(
+      ordersUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
 
     if (response.statusCode == 200) {
       if (response.body == '[]') {

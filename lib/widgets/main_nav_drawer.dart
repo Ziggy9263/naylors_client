@@ -60,6 +60,7 @@ class MainNavDrawer extends StatelessWidget {
             title: Text('Orders'),
             onTap: () {
               BlocProvider.of<NavigatorBloc>(context).add(NavigatorToOrders());
+              BlocProvider.of<OrderBloc>(context).add(OrderReset());
               parent.setState(() {
                 parent.headerTitle = "Naylor's Online: Your Orders";
               });
