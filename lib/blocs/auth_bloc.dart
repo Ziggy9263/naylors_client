@@ -62,4 +62,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   String get email => authRepository.email;
+  bool get isAdmin => authRepository.isAdmin;
 }

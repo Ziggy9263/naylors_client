@@ -14,6 +14,11 @@ class ProductRequested extends ProductEvent {
   List<Object> get props => [tag];
 }
 
+class ProductReset extends ProductEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class ProductListRequested extends ProductEvent {
   const ProductListRequested();
 

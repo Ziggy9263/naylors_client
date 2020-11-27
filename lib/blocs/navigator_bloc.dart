@@ -34,7 +34,6 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
     if (event is NavigatorToProduct) {
       cartToggle = false;
       searchToggle = false;
-      navigatorKey.currentState.pushNamed('/product', arguments: event.product);
       yield NavigatorAtProduct(product: event.product);
     }
     if (event is NavigatorToOrders) {

@@ -21,7 +21,7 @@ class ProductListBody extends StatelessWidget {
         BlocProvider.of<ProductListBloc>(context).add(ProductListRequested());
       }
       if (state is ProductListLoadInProgress) {
-        return Center(child: CircularProgressIndicator());
+        return Center(child: CircularProgressIndicator(backgroundColor: Colors.white));
       }
       if (state is ProductListLoadSuccess) {
         final productList = state.productList.list;
@@ -37,11 +37,10 @@ class ProductListBody extends StatelessWidget {
                 return Card(
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context)
-                          .pushNamed('/product', arguments: item)
-                          .then((_) {
-                        this.parent.setState(() {});
-                      });
+                      BlocProvider.of<NavigatorBloc>(context).add(
+                          NavigatorToProduct(product: int.parse(item.tag)));
+                      BlocProvider.of<ProductBloc>(context).add(ProductReset());
+                      this.parent.setState(() {});
                     },
                     child: Padding(
                       padding:

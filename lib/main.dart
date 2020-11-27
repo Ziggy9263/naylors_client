@@ -112,6 +112,10 @@ class MyApp extends StatelessWidget {
               ),
           '/': (context) => MultiBlocProvider(
                 providers: [
+                  BlocProvider<ProductBloc>(
+                    create: (BuildContext context) =>
+                      ProductBloc(productRepository: productRepository),
+                  ),
                   BlocProvider<ProductListBloc>(
                     create: (BuildContext context) =>
                         ProductListBloc(productRepository: productRepository),
@@ -144,25 +148,6 @@ class MyApp extends StatelessWidget {
                   ),
                 ],
                 child: NaylorsHomePage(title: appTitle),
-              ),
-          '/product': (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<ProductBloc>(
-                    create: (context) =>
-                        ProductBloc(productRepository: productRepository),
-                  ),
-                  BlocProvider<CartBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        CartBloc(cartRepository: cartRepository),
-                  ),
-                  BlocProvider<AuthBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        AuthBloc(authRepository: authRepository),
-                  ),
-                ],
-                child: ProductDetailBody(settings.arguments),
               ),
           '/checkout': (context) => MultiBlocProvider(
                 providers: [

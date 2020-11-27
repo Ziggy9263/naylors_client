@@ -74,14 +74,13 @@ class CartBodyState extends State<CartBody> {
       }
       if (state is CartNotEmpty) {
         return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
+          padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
           child: Column(
             children: <Widget>[
-              Container(
+              /*Container(
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: OutlinedButton(
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),
                   onPressed: () {
                     BlocProvider.of<NavigatorBloc>(context)
                         .add(NavigatorToCart());
@@ -93,17 +92,19 @@ class CartBodyState extends State<CartBody> {
                                   : "Naylor's Online: Your Cart"
                         });
                   },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(Icons.arrow_back,
-                          size: 32.0, color: Colors.lightBlue),
-                      Text("Return to Products"),
-                    ],
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(Icons.arrow_back,
+                            size: 32.0, color: Colors.lightBlue),
+                        Text("Return to Products"),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ),*/
               Expanded(
                 child: CartDetailCards(
                   parent: this,

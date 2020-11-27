@@ -206,13 +206,18 @@ class CartDetailCards extends StatelessWidget {
                                   Icons.visibility,
                                   size: 32,
                                 ),
-                                onPressed: () async {
-                                  Navigator.pushNamed(context, '/product',
-                                          arguments: item.detail)
-                                      .then((value) {
-                                    this.parent.setState(() {
-                                      item.quantity = cart[index].quantity;
-                                    });
+                                onPressed: () {
+                                  BlocProvider.of<NavigatorBloc>(context).add(
+                                      NavigatorToProduct(
+                                          product: int.parse(item.detail.tag)));
+                                  BlocProvider.of<ProductBloc>(context)
+                                      .add(ProductReset());
+                                  this.parent.setState(() {
+                                    item.quantity = cart[index].quantity;
+                                  });
+                                  this.parent.parent.setState(() {
+                                    this.parent.parent.headerTitle =
+                                        "Naylor's Online: Product Detail";
                                   });
                                 },
                                 color: Colors.black54,

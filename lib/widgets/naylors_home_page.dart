@@ -68,12 +68,18 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                   children: <Widget>[
                     Material(
                       shape: CircleBorder(),
-                      color: (BlocProvider.of<NavigatorBloc>(context).searchToggle) ? Colors.white : Colors.transparent,
+                      color:
+                          (BlocProvider.of<NavigatorBloc>(context).searchToggle)
+                              ? Colors.white
+                              : Colors.transparent,
                       child: IconButton(
                         icon: Icon(
                           Icons.search,
                           size: 36.0,
-                          color: (BlocProvider.of<NavigatorBloc>(context).searchToggle) ? Colors.black54 : Colors.white,
+                          color: (BlocProvider.of<NavigatorBloc>(context)
+                                  .searchToggle)
+                              ? Colors.black54
+                              : Colors.white,
                         ),
                         onPressed: () {
                           BlocProvider.of<NavigatorBloc>(context)
@@ -81,8 +87,12 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                           BlocProvider.of<SearchBloc>(context)
                               .add(SearchInit());
                           setState(() => {
-                            headerTitle = "Naylor's Product Search"
-                          });
+                                headerTitle =
+                                    (BlocProvider.of<NavigatorBloc>(context)
+                                            .searchToggle)
+                                        ? "Naylor's Online: Products"
+                                        : "Naylor's Online: Search"
+                              });
                         },
                       ),
                     ),
@@ -97,8 +107,12 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                       BlocProvider.of<NavigatorBloc>(context)
                           .add(NavigatorToCart());
                       setState(() => {
-                        headerTitle = (BlocProvider.of<NavigatorBloc>(context).cartToggle) ? "Naylor's Online: Products" : "Naylor's Online: Your Cart"
-                      });
+                            headerTitle =
+                                (BlocProvider.of<NavigatorBloc>(context)
+                                        .cartToggle)
+                                    ? "Naylor's Online: Products"
+                                    : "Naylor's Online: Your Cart"
+                          });
                     }),
               ),
             ]),
@@ -116,8 +130,11 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           if (state is NavigatorAtCart) {
             return CartBody(parent: this);
           }
+          if (state is NavigatorAtProduct) {
+            return ProductDetailBody(this, state.product);
+          }
           if (state is NavigatorAtSearch) {
-            return SearchPage();
+            return SearchPage(this);
           }
           return Center(child: CircularProgressIndicator());
         }),

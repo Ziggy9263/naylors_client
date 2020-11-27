@@ -40,4 +40,8 @@ class AuthRepository {
   String get email {
     return this.auth.email ?? "Not Available";
   }
+
+  bool get isAdmin {
+    return this.auth.isAdmin ?? false;
+  }
 }
