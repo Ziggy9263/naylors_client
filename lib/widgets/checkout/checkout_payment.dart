@@ -63,7 +63,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
     return Scaffold(
       body: BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
         if (state is OrderInitial) {
-          return Container(
+          return WillPopScope(
+            child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
               ),
@@ -78,7 +79,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                     child: IconButton(
                       padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                       onPressed: () {
-                        Navigator.pop(context);
+                        BlocProvider.of<NavigatorBloc>(context)
+                            .add(NavigatorToCheckout());
                       },
                       icon: Icon(Icons.arrow_back,
                           size: 32.0, color: Colors.black),
@@ -394,10 +396,17 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                     ),
                   ),
                 ],
-              ));
+              ),
+            ),
+            onWillPop: () {
+              BlocProvider.of<NavigatorBloc>(context)
+                  .add(NavigatorToCheckout());
+              return Future.value(false);
+            },
+          );
         }
         if (state is OrderPlaceInProgress) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(backgroundColor: Colors.white));
         }
         if (state is OrderPlaceSuccess) {
           BlocProvider.of<CartBloc>(context).add(CartClear());
@@ -437,9 +446,11 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                         style: style.copyWith(
                             fontSize: 26, fontWeight: FontWeight.bold)),
                     SizedBox(height: 25),
-                    Text("Check your Orders page for updates on your order.",
-                        style: style.copyWith(fontSize: 16),
-                        textAlign: TextAlign.center,),
+                    Text(
+                      "Check your Orders page for updates on your order.",
+                      style: style.copyWith(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                     SizedBox(height: 5),
                     Text("Your order should be prepared shortly."),
                     Expanded(child: SizedBox()),
@@ -471,8 +482,9 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                           color: Colors.green,
                           splashColor: Colors.redAccent,
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          onPressed: () => Navigator.of(context)
-                              .pushReplacementNamed('/orders'),
+                          onPressed: () =>
+                              BlocProvider.of<NavigatorBloc>(context)
+                                  .add(NavigatorToOrders()),
                         ),
                       ),
                     ),
@@ -481,7 +493,9 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
               ),
             ),
             onWillPop: () async {
-              Navigator.pushReplacementNamed(context, '/');
+              BlocProvider.of<OrderBloc>(context).add(OrderReset());
+              BlocProvider.of<NavigatorBloc>(context)
+                  .add(NavigatorToCheckout());
               return false;
             },
           );
@@ -536,7 +550,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                     child: Align(
                       alignment: Alignment.topRight,
                       child: Text(
-                        /*(_email != null) ? "$_email" : */ "Not Logged In",
+                        BlocProvider.of<AuthBloc>(context).email ??
+                            "Not Available",
                         style: style.copyWith(
                           fontWeight: FontWeight.w300,
                           color: Colors.blueGrey,
@@ -620,7 +635,7 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
             onTap: () {
               Navigator.of(context).pop();
             },
-            child: Center(child: Text("Something went wrong.")),
+            child: Center(child: CircularProgressIndicator(backgroundColor: Colors.white)),
           ),
         );
       }),

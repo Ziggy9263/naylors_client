@@ -30,4 +30,6 @@ class NavigatorAtCart extends NaylorsNavigatorState {}
 
 class NavigatorAtCheckout extends NaylorsNavigatorState {}
 
+class NavigatorAtPayment extends NaylorsNavigatorState {}
+
 class NavigatorAtSearch extends NaylorsNavigatorState {}

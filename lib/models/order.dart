@@ -113,7 +113,7 @@ class OrderRes extends Equatable {
     for (int i = 0; i < cartDetail.length; i++) {
       double subtotal = (cartDetail[i].quantity * cartDetail[i].detail.price);
       tax = (tax +
-          (!cartDetail[i].detail.taxExempt == false ? subtotal * 0.0825 : 0));
+          (!cartDetail[i].detail.taxExempt ? subtotal * 0.0825 : 0));
     }
     return tax;
   }

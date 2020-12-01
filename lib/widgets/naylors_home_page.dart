@@ -56,7 +56,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.lightBlue,
-        appBar: AppBar(
+        appBar: BlocProvider.of<NavigatorBloc>(context).appBarToggle ? AppBar(
             backgroundColor: Colors.lightBlue,
             elevation: 0,
             title: Text(headerTitle),
@@ -115,14 +115,14 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                           });
                     }),
               ),
-            ]),
+            ]) : null,
         body: BlocBuilder<NavigatorBloc, NaylorsNavigatorState>(
             builder: (context, state) {
           if (state is NavigatorInitial || state is NavigatorAtProducts) {
             return ProductListBody(this);
           }
           if (state is NavigatorAtOrders) {
-            return OrderPage();
+            return OrderPage(this);
           }
           if (state is NavigatorAtProfile) {
             return ProfilePage();
@@ -135,6 +135,13 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           }
           if (state is NavigatorAtSearch) {
             return SearchPage(this);
+          }
+          if (state is NavigatorAtCheckout) {
+            return CheckoutPage(this);
+          }
+          if (state is NavigatorAtPayment) {
+            return CheckoutPayment(
+                cart: BlocProvider.of<CartBloc>(context).cartRepository.detail);
           }
           return Center(child: CircularProgressIndicator());
         }),

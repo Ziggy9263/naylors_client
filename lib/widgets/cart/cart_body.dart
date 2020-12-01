@@ -74,6 +74,18 @@ class CartBodyState extends State<CartBody> {
       }
       if (state is CartNotEmpty) {
         return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[
+                Colors.lightBlue,
+                Colors.lightBlue,
+                Colors.lightBlue,
+                Colors.lightBlue[100],
+              ],
+            ),
+          ),
           padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
           child: Column(
             children: <Widget>[
@@ -131,10 +143,11 @@ class CartBodyState extends State<CartBody> {
                     splashColor: Colors.lightGreenAccent,
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/checkout').then((val) {
-                        setState(() {
-                          BlocProvider.of<CartBloc>(context)
-                              .add(CartRequested());
+                      SchedulerBinding.instance
+                          .addPostFrameCallback((timeStamp) {
+                        parent.setState(() {
+                          BlocProvider.of<NavigatorBloc>(context)
+                              .add(NavigatorToCheckout());
                         });
                       });
                     },

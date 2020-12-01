@@ -13,6 +13,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       : assert(navigatorKey != null),
         super(NavigatorInitial());
 
+  bool appBarToggle = true;
   bool cartToggle = false;
   bool searchToggle = false;
 
@@ -22,47 +23,57 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       navigatorKey.currentState.pop();
     }
     if (event is NavigatorToHome) {
-      cartToggle = false;
-      searchToggle = false;
-      navigatorKey.currentState.pushReplacementNamed('/');
+        appBarToggle = true;
+        cartToggle = false;
+        searchToggle = false;
     }
     if (event is NavigatorToProducts) {
-      cartToggle = false;
-      searchToggle = false;
+        appBarToggle = true;
+        cartToggle = false;
+        searchToggle = false;
       yield NavigatorAtProducts();
     }
     if (event is NavigatorToProduct) {
-      cartToggle = false;
-      searchToggle = false;
+        appBarToggle = true;
+        cartToggle = false;
+        searchToggle = false;
       yield NavigatorAtProduct(product: event.product);
     }
     if (event is NavigatorToOrders) {
-      cartToggle = false;
-      searchToggle = false;
+        appBarToggle = true;
+        cartToggle = false;
+        searchToggle = false;
       yield NavigatorAtOrders();
     }
     if (event is NavigatorToProfile) {
-      cartToggle = false;
-      searchToggle = false;
+        appBarToggle = true;
+        cartToggle = false;
+        searchToggle = false;
       yield NavigatorAtProfile();
     }
     if (event is NavigatorToCart) {
-      searchToggle = false;
-      cartToggle = !cartToggle;
+        appBarToggle = true;
+        searchToggle = false;
+        cartToggle = !cartToggle;
       if (cartToggle)
         yield NavigatorAtCart();
       else
         yield NavigatorAtProducts();
     }
     if (event is NavigatorToCheckout) {
-      cartToggle = false;
-      searchToggle = false;
-      navigatorKey.currentState.pushNamed('/checkout');
+        appBarToggle = false;
+        cartToggle = false;
+        searchToggle = false;
       yield NavigatorAtCheckout();
     }
+    if (event is NavigatorToPayment) {
+        appBarToggle = false;
+      yield NavigatorAtPayment();
+    }
     if (event is NavigatorToSearch) {
-      cartToggle = false;
-      searchToggle = !searchToggle;
+        appBarToggle = true;
+        cartToggle = false;
+        searchToggle = !searchToggle;
       if (searchToggle)
         yield NavigatorAtSearch();
       else

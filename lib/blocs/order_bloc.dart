@@ -15,7 +15,7 @@ String formatError(dynamic error) {
 }
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
-  // TODO: SQLite?
+  int currentChoice = 0;
   final OrderRepository orderRepository;
   final ProductRepository productRepository;
 
@@ -26,18 +26,21 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   @override
   Stream<OrderState> mapEventToState(OrderEvent event) async* {
     if (event is OrderReset) {
+      currentChoice = 0;
       yield OrderInitial();
     }
     if (event is OrderPlaced) {
       yield OrderPlaceInProgress();
       try {
         final OrderRes order = await orderRepository.placeOrder(event.order);
+        currentChoice = 0;
         yield OrderPlaceSuccess(order: order);
       } catch (_) {
         yield OrderPlaceFailure(error: _, formatted: formatError(_));
       }
     }
     if (event is OrderListRequested) {
+      currentChoice = 0;
       yield OrderListLoadInProgress();
       try {
         final OrderListRes orderList = await orderRepository.getOrders();

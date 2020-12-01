@@ -11,18 +11,24 @@ import 'package:naylors_client/widgets/widgets.dart';
 import 'package:naylors_client/util/util.dart';
 
 class CheckoutPage extends StatefulWidget {
+  final NaylorsHomePageState parent;
+  CheckoutPage(this.parent) : assert(parent != null);
   @override
-  CheckoutPageState createState() => CheckoutPageState();
+  CheckoutPageState createState() => CheckoutPageState(parent);
 }
 
+enum PayOption { inStore, withCard }
+
 class CheckoutPageState extends State<CheckoutPage> {
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final NaylorsHomePageState parent;
+  CheckoutPageState(this.parent) : assert(parent != null);
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   List<TextEditingController> quantityList = new List<TextEditingController>();
   String _email;
   List<CartItem> cart = List<CartItem>();
   OrderReq order;
   String headerTitle = "Review Your Cart";
+  PayOption payOption = PayOption.withCard;
 
   @override
   initState() {
@@ -96,8 +102,7 @@ class CheckoutPageState extends State<CheckoutPage> {
     double tax = 0;
     for (int i = 0; i < cart.length; i++) {
       double subtotal = (cart[i].quantity * cart[i].detail.price);
-      tax =
-          (tax + (!cart[i].detail.taxExempt == false ? subtotal * 0.0825 : 0));
+      tax = (tax + (!cart[i].detail.taxExempt ? subtotal * 0.0825 : 0));
     }
     return tax;
   }
@@ -109,25 +114,8 @@ class CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      /*appBar: AppBar(
-          title: Text('Naylor\'s Online Order: Checkout'),
-          backgroundColor: Colors.green,
-          actions: <Widget>[
-            Ink(
-              decoration: BoxDecoration(
-                color: Colors.grey[700],
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: Icon(Icons.person),
-                padding: EdgeInsets.all(0),
-                onPressed: () {},
-              ),
-            ),
-          ]),*/
-      body: Container(
+    return WillPopScope(
+      child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
         ),
@@ -141,7 +129,10 @@ class CheckoutPageState extends State<CheckoutPage> {
               child: IconButton(
                 padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 onPressed: () {
-                  Navigator.pop(context);
+                  parent.setState(() {
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToProducts());
+                  });
                 },
                 icon: Icon(Icons.arrow_back, size: 32.0, color: Colors.black),
               ),
@@ -192,6 +183,55 @@ class CheckoutPageState extends State<CheckoutPage> {
                     parent: this),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                FlatButton(
+                  //highlightColor: Colors.lightBlue[100],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                    Radio(
+                      value: PayOption.inStore,
+                      groupValue: payOption,
+                      onChanged: (PayOption value) {
+                        setState(() {
+                          payOption = value;
+                        });
+                      },
+                    ),
+                    Text("Pay In Store", style: style.copyWith(fontSize: 16)),
+                  ]),
+                  onPressed: () {
+                    setState(() {
+                      payOption = PayOption.inStore;
+                    });
+                  },
+                ),
+                FlatButton(
+                  //highlightColor: Colors.lightBlue[100],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                    Radio(
+                      value: PayOption.withCard,
+                      groupValue: payOption,
+                      onChanged: (PayOption value) {
+                        setState(() {
+                          payOption = value;
+                        });
+                      },
+                    ),
+                    Text("Pay With Card", style: style.copyWith(fontSize: 16)),
+                  ]),
+                  onPressed: () {
+                    setState(() {
+                      payOption = PayOption.withCard;
+                    });
+                  },
+                ),
+              ],
+            ),
             Align(
               alignment: Alignment.bottomRight,
               child: Padding(
@@ -240,26 +280,6 @@ class CheckoutPageState extends State<CheckoutPage> {
                         ],
                       ),
                     ),
-                    /*RichText(
-                      text: TextSpan(
-                        text: "Total: ",
-                        style: style.copyWith(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w300,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: "\$${format(getTotal())}",
-                            style: style.copyWith(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 32,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),*/
                   ],
                 ),
               ),
@@ -277,6 +297,7 @@ class CheckoutPageState extends State<CheckoutPage> {
                       Expanded(
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
                                 "CONTINUE TO",
@@ -321,15 +342,8 @@ class CheckoutPageState extends State<CheckoutPage> {
                   splashColor: Colors.lightGreenAccent,
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   onPressed: () {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      setState(() {
-                        Navigator.of(context)
-                            .pushNamed('/payment', arguments: cart)
-                            .then((_) {
-                              Navigator.of(context).pop();
-                            });
-                      });
-                    });
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToPayment());
                   },
                 ),
               ),
@@ -337,6 +351,12 @@ class CheckoutPageState extends State<CheckoutPage> {
           ],
         ),
       ),
+      onWillPop: () {
+        parent.setState(() {
+          BlocProvider.of<NavigatorBloc>(context).add(NavigatorToProducts());
+        });
+        return Future.value(false);
+      },
     );
   }
 }

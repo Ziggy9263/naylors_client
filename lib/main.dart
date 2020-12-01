@@ -100,21 +100,11 @@ class MyApp extends StatelessWidget {
                 ],
                 child: RegisterPage(),
               ),
-          '/profile': (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<AuthBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        AuthBloc(authRepository: authRepository),
-                  ),
-                ],
-                child: ProfilePage(),
-              ),
           '/': (context) => MultiBlocProvider(
                 providers: [
                   BlocProvider<ProductBloc>(
                     create: (BuildContext context) =>
-                      ProductBloc(productRepository: productRepository),
+                        ProductBloc(productRepository: productRepository),
                   ),
                   BlocProvider<ProductListBloc>(
                     create: (BuildContext context) =>
@@ -143,68 +133,12 @@ class MyApp extends StatelessWidget {
                   ),
                   BlocProvider<SearchBloc>(
                     lazy: false,
-                    create: (BuildContext context) => SearchBloc(
-                      productRepository: productRepository),
+                    create: (BuildContext context) =>
+                        SearchBloc(productRepository: productRepository),
                   ),
                 ],
                 child: NaylorsHomePage(title: appTitle),
               ),
-          '/checkout': (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<CartBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        CartBloc(cartRepository: cartRepository),
-                  ),
-                  BlocProvider<OrderBloc>(
-                    lazy: false,
-                    create: (BuildContext context) => OrderBloc(
-                        orderRepository: orderRepository,
-                        productRepository: productRepository),
-                  ),
-                  BlocProvider<AuthBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        AuthBloc(authRepository: authRepository),
-                  ),
-                ],
-                child: CheckoutPage(),
-              ),
-          '/payment': (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<CartBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        CartBloc(cartRepository: cartRepository),
-                  ),
-                  BlocProvider<OrderBloc>(
-                    lazy: false,
-                    create: (BuildContext context) => OrderBloc(
-                        orderRepository: orderRepository,
-                        productRepository: productRepository),
-                  ),
-                  BlocProvider<AuthBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        AuthBloc(authRepository: authRepository),
-                  ),
-                ],
-                child: CheckoutPayment(cart: settings.arguments),
-              ),
-          '/orders': (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<ProductBloc>(
-                    create: (context) =>
-                        ProductBloc(productRepository: productRepository),
-                  ),
-                  BlocProvider<AuthBloc>(
-                    lazy: false,
-                    create: (BuildContext context) =>
-                        AuthBloc(authRepository: authRepository),
-                  ),
-                ],
-                child: OrderPage(),
-              )
         };
         WidgetBuilder builder = routes[settings.name];
         return MaterialPageRoute(builder: (context) => builder(context));
