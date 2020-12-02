@@ -53,12 +53,10 @@ class OrderApiClient {
     final ordersUrl = "$baseUrl/api/orders/";
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
-    final response = await this.httpClient.get(
-      ordersUrl,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      });
+    final response = await this.httpClient.get(ordersUrl, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
 
     if (response.statusCode == 200) {
       if (response.body == '[]') {
@@ -68,6 +66,27 @@ class OrderApiClient {
       return data;
     } else {
       throw Exception('Failed to Get List of Orders');
+    }
+  }
+
+  Future<OrderRes> deleteOrder(String uuid) async {
+    final ordersUrl = "$baseUrl/api/orders/$uuid";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    final response = await this.httpClient.delete(ordersUrl, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    });
+
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      if (json['deleted'] is bool) {
+        throw Exception("${json['reason']}");
+      }
+      var data = OrderRes.fromJSON(json);
+      return data;
+    } else {
+      throw Exception('Failed to Delete/Cancel Order');
     }
   }
 }

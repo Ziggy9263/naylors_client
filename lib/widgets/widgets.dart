@@ -2,14 +2,20 @@
 export 'login_page.dart';
 export 'register_page.dart';
 export 'naylors_home_page.dart';
+/// Products
 export 'product_list.dart';
 export 'product_detail.dart';
+/// Cart
 export 'cart/cart.dart';
 export 'checkout/checkout.dart';
+/// Profile
 export 'profile_page.dart';
-export 'order_page.dart';
+/// Orders
+export 'order/order_page.dart';
+export 'order/order_single_view.dart';
+export 'order/order_status_icon.dart';
+/// Search
 export 'search/search_page.dart';
-
-/// Reusable
+/// Misc. Reusable
 export 'quantity_incremental_buttons.dart';
 export 'main_nav_drawer.dart';

@@ -15,32 +15,58 @@ String formatError(dynamic error) {
 }
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
-  int currentChoice = 0;
   final OrderRepository orderRepository;
-  final ProductRepository productRepository;
 
-  OrderBloc({@required this.orderRepository, @required this.productRepository})
-      : assert(orderRepository != null && productRepository != null),
+  OrderBloc({@required this.orderRepository})
+      : assert(orderRepository != null),
         super(OrderInitial());
 
   @override
   Stream<OrderState> mapEventToState(OrderEvent event) async* {
     if (event is OrderReset) {
-      currentChoice = 0;
       yield OrderInitial();
     }
     if (event is OrderPlaced) {
       yield OrderPlaceInProgress();
       try {
         final OrderRes order = await orderRepository.placeOrder(event.order);
-        currentChoice = 0;
         yield OrderPlaceSuccess(order: order);
       } catch (_) {
         yield OrderPlaceFailure(error: _, formatted: formatError(_));
       }
     }
+    if (event is OrderCancel) {
+      yield OrderLoadInProgress();
+      try {
+        final OrderRes order = await orderRepository.cancelOrder(event.uuid);
+        yield OrderCancelSuccess(order: order);
+      } catch (_) {
+        yield OrderCancelFailure(error: _, formatted: formatError(_));
+      }
+    }
+  }
+}
+
+class OrderListBloc extends Bloc<OrderListEvent, OrderListState> {
+  final OrderRepository orderRepository;
+  final ProductRepository productRepository;
+  List<OrderRes> orders;
+  int currentChoice = 0;
+
+  OrderListBloc(
+      {@required this.orderRepository, @required this.productRepository})
+      : assert(orderRepository != null && productRepository != null),
+        super(OrderListInitial());
+
+  set currentOrder(val) {
+    orders[currentChoice] = val;
+  }
+
+  get currentOrder => orders[currentChoice];
+
+  @override
+  Stream<OrderListState> mapEventToState(OrderListEvent event) async* {
     if (event is OrderListRequested) {
-      currentChoice = 0;
       yield OrderListLoadInProgress();
       try {
         final OrderListRes orderList = await orderRepository.getOrders();
@@ -56,6 +82,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
               }
             }
           }
+          orders = orderList.list;
           yield OrderListLoadSuccess(orderList: orderList);
         }
       } catch (_) {
@@ -64,25 +91,3 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     }
   }
 }
-
-/*class OrderListBloc extends Bloc<OrderEvent, OrderState> {
-  final OrderRepository orderRepository;
-
-  OrderListBloc({@required this.orderRepository})
-      : assert(orderRepository != null),
-        super(OrderListInitial());
-
-  @override
-  Stream<OrderState> mapEventToState(OrderEvent event) async* {
-    if (event is OrderListRequested) {
-      yield OrderListLoadInProgress();
-      try {
-        final OrderListRes orderList = await orderRepository.getOrders();
-        yield OrderListLoadSuccess(orderList: orderList);
-      } catch (_) {
-        yield OrderListLoadFailure();
-      }
-    }
-  }
-}
-*/

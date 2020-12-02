@@ -24,7 +24,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
-  NaylorsHomePageState(this.title, this.scaffoldKey);
+  NaylorsHomePageState(this.title, this.scaffoldKey) : assert(scaffoldKey != null);
 
   @override
   void initState() {
@@ -49,6 +49,10 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       Navigator.pushReplacementNamed(context, '/login');
     });
+  }
+
+  showSnackBar(SnackBar data) async {
+    this.scaffoldKey.currentState.showSnackBar(data);
   }
 
   @override

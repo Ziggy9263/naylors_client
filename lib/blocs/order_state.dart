@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 import 'package:naylors_client/models/models.dart';
 
+/// Order
 abstract class OrderState extends Equatable {
   const OrderState();
 
@@ -35,7 +36,30 @@ class OrderPlaceFailure extends OrderState {
   List<Object> get props => [error, formatted];
 }
 
-/// Order (Singular)
+/// Order (Cancellation)
+class OrderCancelInProgress extends OrderState {}
+
+class OrderCancelSuccess extends OrderState {
+  final OrderRes order;
+
+  const OrderCancelSuccess({@required this.order}) : assert(order != null);
+
+  @override
+  List<Object> get props => [order];
+}
+
+class OrderCancelFailure extends OrderState {
+  final dynamic error;
+  final String formatted;
+
+  const OrderCancelFailure({@required this.error, @required this.formatted})
+      : assert(error != null && formatted != null);
+
+  @override
+  List<Object> get props => [error, formatted];
+}
+
+/// Order (Load)
 class OrderLoadInProgress extends OrderState {}
 
 class OrderLoadSuccess extends OrderState {
@@ -49,12 +73,21 @@ class OrderLoadSuccess extends OrderState {
 
 class OrderLoadFailure extends OrderState {}
 
-/// Order (List)
-class OrderListInitial extends OrderState {}
+/// OrderList
+abstract class OrderListState extends Equatable {
+  const OrderListState();
 
-class OrderListLoadInProgress extends OrderState {}
+  @override
+  List<Object> get props => [];
+}
 
-class OrderListLoadSuccess extends OrderState {
+class OrderListInitial extends OrderListState {}
+
+class OrderListEmpty extends OrderListState {}
+
+class OrderListLoadInProgress extends OrderListState {}
+
+class OrderListLoadSuccess extends OrderListState {
   final OrderListRes orderList;
 
   const OrderListLoadSuccess({@required this.orderList})
@@ -64,9 +97,7 @@ class OrderListLoadSuccess extends OrderState {
   List<Object> get props => [orderList];
 }
 
-class OrderListEmpty extends OrderState {}
-
-class OrderListLoadFailure extends OrderState {
+class OrderListLoadFailure extends OrderListState {
   final dynamic error;
 
   const OrderListLoadFailure({@required this.error}) : assert(error != null);

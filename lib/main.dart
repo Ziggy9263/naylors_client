@@ -128,8 +128,13 @@ class MyApp extends StatelessWidget {
                   BlocProvider<OrderBloc>(
                     lazy: false,
                     create: (BuildContext context) => OrderBloc(
-                        orderRepository: orderRepository,
-                        productRepository: productRepository),
+                        orderRepository: orderRepository),
+                  ),
+                  BlocProvider<OrderListBloc>(
+                    lazy: false,
+                    create: (BuildContext context) => OrderListBloc(
+                      orderRepository: orderRepository,
+                      productRepository: productRepository),
                   ),
                   BlocProvider<SearchBloc>(
                     lazy: false,
@@ -137,7 +142,7 @@ class MyApp extends StatelessWidget {
                         SearchBloc(productRepository: productRepository),
                   ),
                 ],
-                child: NaylorsHomePage(title: appTitle),
+                child: NaylorsHomePage(title: appTitle, scaffoldKey: GlobalKey<ScaffoldState>()),
               ),
         };
         WidgetBuilder builder = routes[settings.name];

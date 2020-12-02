@@ -23,13 +23,6 @@ class OrderRequested extends OrderEvent {
   List<Object> get props => [uuid];
 }
 
-class OrderListRequested extends OrderEvent {
-  const OrderListRequested();
-
-  @override
-  List<Object> get props => [];
-}
-
 class OrderPlaced extends OrderEvent {
   final OrderReq order;
 
@@ -37,4 +30,25 @@ class OrderPlaced extends OrderEvent {
 
   @override
   List<Object> get props => [order];
+}
+
+class OrderCancel extends OrderEvent {
+  final String uuid;
+
+  const OrderCancel({@required this.uuid}) : assert(uuid != null);
+
+  @override
+  List<Object> get props => [uuid];
+}
+
+abstract class OrderListEvent extends Equatable {
+  const OrderListEvent();
+}
+
+class OrderListRequested extends OrderListEvent {
+  final int choice;
+  const OrderListRequested({this.choice = 0});
+
+  @override
+  List<Object> get props => [choice];
 }
