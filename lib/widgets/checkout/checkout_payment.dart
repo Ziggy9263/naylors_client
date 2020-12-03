@@ -12,21 +12,23 @@ import 'package:naylors_client/util/util.dart';
 
 class CheckoutPayment extends StatefulWidget {
   final List<CartItem> cart;
+  NaylorsHomePageState parent;
   CheckoutPayment({
     Key key,
     @required this.cart,
+    @required this.parent,
   });
 
   @override
-  _CheckoutPaymentState createState() => _CheckoutPaymentState(cart: cart);
+  _CheckoutPaymentState createState() =>
+      _CheckoutPaymentState(cart: cart, parent: parent);
 }
 
 class _CheckoutPaymentState extends State<CheckoutPayment> {
-  _CheckoutPaymentState({
-    @required this.cart,
-  });
+  _CheckoutPaymentState({@required this.cart, @required this.parent});
 
   final List<CartItem> cart;
+  NaylorsHomePageState parent;
 
   OrderReq order;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
@@ -406,7 +408,8 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
           );
         }
         if (state is OrderPlaceInProgress) {
-          return Center(child: CircularProgressIndicator(backgroundColor: Colors.white));
+          return Center(
+              child: CircularProgressIndicator(backgroundColor: Colors.white));
         }
         if (state is OrderPlaceSuccess) {
           BlocProvider.of<CartBloc>(context).add(CartClear());
@@ -482,9 +485,14 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                           color: Colors.green,
                           splashColor: Colors.redAccent,
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          onPressed: () =>
-                              BlocProvider.of<NavigatorBloc>(context)
-                                  .add(NavigatorToOrders()),
+                          onPressed: () => this.parent.setState(() {
+                            BlocProvider.of<NavigatorBloc>(context)
+                                .add(NavigatorToOrders());
+                            BlocProvider.of<OrderListBloc>(context)
+                                .add(OrderListRequested());
+                            BlocProvider.of<OrderBloc>(context)
+                                .add(OrderReset());
+                          }),
                         ),
                       ),
                     ),
@@ -635,7 +643,9 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
             onTap: () {
               Navigator.of(context).pop();
             },
-            child: Center(child: CircularProgressIndicator(backgroundColor: Colors.white)),
+            child: Center(
+                child:
+                    CircularProgressIndicator(backgroundColor: Colors.white)),
           ),
         );
       }),

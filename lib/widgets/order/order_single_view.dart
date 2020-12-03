@@ -40,26 +40,28 @@ class OrderSingleView extends StatelessWidget {
         );
       }
       if (state is OrderCancelSuccess) {
-        BlocProvider.of<OrderListBloc>(context).currentOrder = state.order;
-        BlocProvider.of<OrderBloc>(context).add(OrderReset());
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           this.parent.setState(() {
+            BlocProvider.of<OrderListBloc>(context).currentOrder = state.order;
             this.parent.showSnackBar(SnackBar(
                 content: Text(
                     'An order for ${state.order.formattedItemList} Successfully Cancelled')));
           });
         });
+        BlocProvider.of<OrderBloc>(context).add(OrderReset());
       }
       if (state is OrderCancelFailure) {
         BlocProvider.of<OrderBloc>(context).add(OrderReset());
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           this.parent.setState(() {
-            this.parent.showSnackBar(
-                SnackBar(content: Text('Unable to Cancel Order!')));
+            this.parent.showSnackBar(SnackBar(
+                content:
+                    Text('Unable to Cancel Order! Reason: ${state.error}')));
           });
         });
       }
       if (state is OrderInitial) {
+        CartBloc cart = BlocProvider.of<CartBloc>(context);
         return Container(
           padding: EdgeInsets.all(4),
           width: MediaQuery.of(context).size.width,
@@ -220,25 +222,38 @@ class OrderSingleView extends StatelessWidget {
                           child: Column(
                             children: [
                               Icon(Icons.cancel, color: Colors.red),
-                              Text("Cancel"),
+                              Text("Cancel", style: style.copyWith(
+                                fontSize: 16,
+                              )),
                             ],
                           ),
                           onPressed: () {
-                            BlocProvider.of<OrderBloc>(context).add(
-                                OrderCancel(uuid: orders[currentChoice].uuid));
+                            bool alreadyCancelled =
+                                (currentOrder.recentStatus == "Cancelled");
+                            if (!alreadyCancelled) {
+                              BlocProvider.of<OrderBloc>(context).add(
+                                  OrderCancel(
+                                      uuid: orders[currentChoice].uuid));
+                            } else
+                              this.parent.showSnackBar(SnackBar(
+                                  content: Text(
+                                      "This order has already been cancelled.")));
                           },
                         ),
                         MaterialButton(
                           child: Column(
                             children: [
-                              Icon(Icons.edit, color: Colors.grey),
-                              Text("Edit"),
+                              Icon(Icons.edit, color: Colors.grey[200]),
+                              Text("Edit", style: style.copyWith(
+                                fontSize: 16,
+                                color: Colors.grey[200])),
                             ],
                           ),
                           onPressed: () {
                             this.parent.setState(() {
-                              this.parent.showSnackBar(
-                                  SnackBar(content: Text('Edit')));
+                              this.parent.showSnackBar(SnackBar(
+                                  content: Text(
+                                      'This Feature Is Not Available Yet!')));
                             });
                           },
                         ),
@@ -246,15 +261,154 @@ class OrderSingleView extends StatelessWidget {
                           child: Column(
                             children: [
                               Icon(Icons.redo, color: Colors.lightBlue),
-                              Text("Re-Order"),
+                              Text("Re-Order", style: style.copyWith(
+                                fontSize: 16,
+                              )),
                             ],
                           ),
                           onPressed: () {
-                            this.parent.setState(() {
-                              this.parent.showSnackBar(SnackBar(
-                                  content: Text(
-                                      'Re-Order ${orders[currentChoice].formattedItemList}?')));
-                            });
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.4,
+                                    height: MediaQuery.of(context).size.height /
+                                        2.8,
+                                    decoration: new BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      color: const Color(0xFFFFFF),
+                                      borderRadius: new BorderRadius.all(
+                                          new Radius.circular(32.0)),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              1.4,
+                                          padding: EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: BoxShape.rectangle,
+                                            borderRadius:
+                                                new BorderRadius.vertical(
+                                              top: Radius.circular(4.0),
+                                              bottom: Radius.zero,
+                                            ),
+                                          ),
+                                          child: Text(
+                                              "Re-Order Previous Items?",
+                                              textAlign: TextAlign.center,
+                                              style: style.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                        Divider(
+                                          height: 4,
+                                          color: Colors.lightBlue,
+                                        ),
+                                        Expanded(
+                                          child: ListView.builder(
+                                              itemCount: orders[currentChoice]
+                                                  .cartDetail
+                                                  .length,
+                                              itemBuilder: (context, index) {
+                                                CartItem item =
+                                                    orders[currentChoice]
+                                                        .cartDetail[index];
+                                                return Container(
+                                                  padding: EdgeInsets.all(4.0),
+                                                  decoration: BoxDecoration(
+                                                    color: (index % 2 == 1)
+                                                        ? Colors.lightBlue[100]
+                                                        : Colors.white,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        "${item.quantity}",
+                                                        style: style.copyWith(
+                                                          fontSize: 22,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${item.detail.name}",
+                                                        style: style.copyWith(
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }),
+                                        ),
+                                        Divider(
+                                          height: 4,
+                                          color: Colors.lightBlue,
+                                        ),
+                                        Center(
+                                            child: Text(
+                                                "Add this list to your cart?")),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            FlatButton(
+                                                color: Colors.green,
+                                                child: Text("Yes",
+                                                    style: style.copyWith(
+                                                        color: Colors.white)),
+                                                onPressed: () {
+                                                  SchedulerBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (timeStamp) {
+                                                    this.parent.setState(() {
+                                                      for (int i = 0;
+                                                          i <
+                                                              orders[currentChoice]
+                                                                  .cartDetail
+                                                                  .length;
+                                                          i++) {
+                                                        CartItem item = orders[
+                                                                currentChoice]
+                                                            .cartDetail[i];
+                                                        cart.cartRepository
+                                                            .modify(item);
+                                                        cart.add(
+                                                            CartRequested());
+                                                      }
+                                                    });
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                }),
+                                            FlatButton(
+                                                color: Colors.red,
+                                                child: Text("No",
+                                                    style: style.copyWith(
+                                                        color: Colors.white)),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                }),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           },
                         ),
                       ],

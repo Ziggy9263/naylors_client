@@ -58,7 +58,7 @@ class OrderListBloc extends Bloc<OrderListEvent, OrderListState> {
       : assert(orderRepository != null && productRepository != null),
         super(OrderListInitial());
 
-  set currentOrder(val) {
+  set currentOrder(OrderRes val) {
     orders[currentChoice] = val;
   }
 
