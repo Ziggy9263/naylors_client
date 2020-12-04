@@ -25,13 +25,7 @@ class CartRepository {
   }
 
   Future<List<CartItem>> populate() async {
-    for (int index = 0; index < detail.length; index++) {
-      if (detail[index].detail == null) {
-        detail[index].detail = await productRepository
-            .getProduct(detail[index].product.toString());
-      }
-    }
-    return detail;
+    return productRepository.productApiClient.populate(this.detail);
   }
 
   Future<List<CartItem>> remove(String tag) async {

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:naylors_client/models/models.dart';
 
 abstract class NaylorsNavigatorState extends Equatable {
   const NaylorsNavigatorState();
@@ -30,6 +31,12 @@ class NavigatorAtCart extends NaylorsNavigatorState {}
 
 class NavigatorAtCheckout extends NaylorsNavigatorState {}
 
-class NavigatorAtPayment extends NaylorsNavigatorState {}
+class NavigatorAtPayment extends NaylorsNavigatorState {
+  final PayOption payOption;
+  NavigatorAtPayment({this.payOption}) : assert(payOption != null);
+
+  @override
+  List<Object> get props => [payOption];
+}
 
 class NavigatorAtSearch extends NaylorsNavigatorState {}

@@ -14,6 +14,8 @@ class PaymentCard {
       {this.type, this.number, this.name, this.month, this.year, this.cvv});
 }
 
+enum PayOption { inStore, withCard }
+
 // ignore: must_be_immutable
 class PaymentInfo extends Equatable {
   final String cardNumber; // Referenced by tag
@@ -22,6 +24,7 @@ class PaymentInfo extends Equatable {
   final String cvv;
   final String avsZip;
   final String avsStreet;
+  final PayOption payOption;
 
   PaymentInfo(
       {this.cardNumber,
@@ -29,11 +32,12 @@ class PaymentInfo extends Equatable {
       this.expiryYear,
       this.cvv,
       this.avsZip,
-      this.avsStreet});
+      this.avsStreet,
+      this.payOption});
 
   @override
   List<Object> get props =>
-      [cardNumber, expiryMonth, expiryYear, cvv, avsZip, avsStreet];
+      [cardNumber, expiryMonth, expiryYear, cvv, avsZip, avsStreet, payOption];
 }
 
 class PaymentHistory extends Equatable {

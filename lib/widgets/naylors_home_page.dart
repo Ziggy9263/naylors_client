@@ -146,7 +146,8 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           if (state is NavigatorAtPayment) {
             return CheckoutPayment(
                 parent: this,
-                cart: BlocProvider.of<CartBloc>(context).cartRepository.detail);
+                cart: BlocProvider.of<CartBloc>(context).cartRepository.detail,
+                payOption: state.payOption);
           }
           return Center(child: CircularProgressIndicator());
         }),

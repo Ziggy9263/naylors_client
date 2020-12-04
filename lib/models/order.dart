@@ -58,8 +58,9 @@ class PayHistory extends Equatable {
   List<Object> get props => [status, ts, ref];
 }
 
+// ignore: must_be_immutable
 class OrderRes extends Equatable {
-  final List<CartItem> cartDetail;
+  List<CartItem> cartDetail;
   final String userComments;
   final List<PayHistory> payHistory;
   final String uuid;
@@ -130,8 +131,9 @@ class OrderRes extends Equatable {
   List<Object> get props => [cartDetail, userComments, payHistory];
 }
 
+// ignore: must_be_immutable
 class OrderListRes extends Equatable {
-  final List<OrderRes> list;
+  List<OrderRes> list;
   int failedOrders;
 
   OrderListRes({this.list});

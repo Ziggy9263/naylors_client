@@ -17,14 +17,15 @@ class OrderApiClient {
         .map((d) => {'product': d.product, 'quantity': d.quantity})
         .toList();
     body['userComments'] = order.userComments;
-    body['paymentInfo'] = {
+    body['paymentInfo'] = (order.paymentInfo.payOption == PayOption.withCard) ? {
       'cardNumber': order.paymentInfo.cardNumber,
       'expiryMonth': order.paymentInfo.expiryMonth,
       'expiryYear': order.paymentInfo.expiryYear,
       'cvv': order.paymentInfo.cvv,
       'avsZip': order.paymentInfo.avsZip,
-      'avsStreet': order.paymentInfo.avsStreet
-    };
+      'avsStreet': order.paymentInfo.avsStreet,
+      'payOption': "WithCard"
+    } : {'payOption': "InStore"};
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     final response = await this.httpClient.post(

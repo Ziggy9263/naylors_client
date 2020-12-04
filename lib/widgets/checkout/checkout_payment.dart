@@ -12,23 +12,27 @@ import 'package:naylors_client/util/util.dart';
 
 class CheckoutPayment extends StatefulWidget {
   final List<CartItem> cart;
-  NaylorsHomePageState parent;
-  CheckoutPayment({
-    Key key,
-    @required this.cart,
-    @required this.parent,
-  });
+  final NaylorsHomePageState parent;
+  final PayOption payOption;
+  CheckoutPayment(
+      {Key key,
+      @required this.cart,
+      @required this.parent,
+      @required this.payOption});
 
   @override
   _CheckoutPaymentState createState() =>
-      _CheckoutPaymentState(cart: cart, parent: parent);
+      _CheckoutPaymentState(cart: cart, parent: parent, payOption: payOption);
 }
 
 class _CheckoutPaymentState extends State<CheckoutPayment> {
-  _CheckoutPaymentState({@required this.cart, @required this.parent});
+  _CheckoutPaymentState(
+      {@required this.cart, @required this.parent, @required this.payOption});
 
   final List<CartItem> cart;
   NaylorsHomePageState parent;
+  PayOption payOption;
+  String payOptionString;
 
   OrderReq order;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
@@ -58,13 +62,14 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
     super.initState();
     _paymentCard.type = CardType.Others;
     cardNumber.addListener(_getCardType);
+    payOptionString = (payOption == PayOption.withCard) ? "WithCard" : "InStore";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<OrderBloc, OrderState>(builder: (context, state) {
-        if (state is OrderInitial) {
+        if (state is OrderInitial && payOption == PayOption.withCard) {
           return WillPopScope(
             child: Container(
               decoration: BoxDecoration(
@@ -115,7 +120,7 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                     child: Align(
                       alignment: Alignment.topRight,
                       child: Text(
-                        /*(_email != null) ? "$_email" : */ "Not Logged In",
+                        BlocProvider.of<AuthBloc>(context).email ?? "Not Logged In",
                         style: style.copyWith(
                           fontWeight: FontWeight.w300,
                           color: Colors.blueGrey,
@@ -378,6 +383,181 @@ class _CheckoutPaymentState extends State<CheckoutPayment> {
                               cvv: cvv.text,
                               avsStreet: avsStreet.text,
                               avsZip: avsZip.text,
+                              payOption: payOption
+                            );
+                            SchedulerBinding.instance
+                                .addPostFrameCallback((timeStamp) {
+                              setState(() {
+                                BlocProvider.of<OrderBloc>(context)
+                                    .add(OrderPlaced(
+                                  order: OrderReq(
+                                    cartDetail: cart,
+                                    userComments: cardHolder.text,
+                                    paymentInfo: paymentInfo,
+                                  ),
+                                ));
+                              });
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            onWillPop: () {
+              BlocProvider.of<NavigatorBloc>(context)
+                  .add(NavigatorToCheckout());
+              return Future.value(false);
+            },
+          );
+        }
+        if (state is OrderInitial && payOption == PayOption.inStore) {
+          return WillPopScope(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+              ),
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.fromLTRB(0, 12, 0, 6),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                      onPressed: () {
+                        BlocProvider.of<NavigatorBloc>(context)
+                            .add(NavigatorToCheckout());
+                      },
+                      icon: Icon(Icons.arrow_back,
+                          size: 32.0, color: Colors.black),
+                    ),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+                      child: SizedBox(
+                        height: 120.0,
+                        child: Image.asset(
+                          "assets/logo.jpg",
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      "Provide Name for Pickup",
+                      style: style.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        BlocProvider.of<AuthBloc>(context).email ?? "Not Logged In",
+                        style: style.copyWith(
+                          fontWeight: FontWeight.w300,
+                          color: Colors.blueGrey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Form(
+                        key: _formKey,
+                        child: FocusScope(
+                          child: ListView(
+                            children: <Widget>[
+                              Column(mainAxisSize: MainAxisSize.max, children: [
+                                TextFormField(
+                                  controller: cardHolder,
+                                  obscureText: false,
+                                  focusNode: cardHolderFocus,
+                                  textInputAction: TextInputAction.next,
+                                  style: style,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.fromLTRB(
+                                        20.0, 15.0, 20.0, 15.0),
+                                    hintText: "Zane Grey",
+                                    labelText: "Name for this Order",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                  ),
+                                  onSaved: (_) => _paymentCard.name = _,
+                                  validator: (String value) => value.isEmpty
+                                      ? CardStrings.fieldReq
+                                      : null,
+                                ),
+                              ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - 44,
+                      height: 64,
+                      margin: EdgeInsets.fromLTRB(0, 2, 0, 4),
+                      child: RaisedButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "PAY",
+                                textAlign: TextAlign.center,
+                                style: style.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            VerticalDivider(
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Total: ",
+                              style: style.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              "\$${format(getTotal(cart))}",
+                              style: style.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                        color: Colors.green,
+                        splashColor: Colors.lightGreenAccent,
+                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            PaymentInfo paymentInfo = new PaymentInfo(
+                              payOption: payOption
                             );
                             SchedulerBinding.instance
                                 .addPostFrameCallback((timeStamp) {

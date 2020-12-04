@@ -17,8 +17,6 @@ class CheckoutPage extends StatefulWidget {
   CheckoutPageState createState() => CheckoutPageState(parent);
 }
 
-enum PayOption { inStore, withCard }
-
 class CheckoutPageState extends State<CheckoutPage> {
   final NaylorsHomePageState parent;
   CheckoutPageState(this.parent) : assert(parent != null);
@@ -298,7 +296,7 @@ class CheckoutPageState extends State<CheckoutPage> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
+                            children: (payOption == PayOption.withCard) ? <Widget>[
                               Text(
                                 "CONTINUE TO",
                                 style: style.copyWith(
@@ -309,6 +307,23 @@ class CheckoutPageState extends State<CheckoutPage> {
                               ),
                               Text(
                                 "PAYMENT",
+                                style: style.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ] : <Widget>[
+                              Text(
+                                "PLACE",
+                                style: style.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                "ORDER",
                                 style: style.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
@@ -343,7 +358,7 @@ class CheckoutPageState extends State<CheckoutPage> {
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   onPressed: () {
                     BlocProvider.of<NavigatorBloc>(context)
-                        .add(NavigatorToPayment());
+                        .add(NavigatorToPayment(payOption: payOption));
                   },
                 ),
               ),

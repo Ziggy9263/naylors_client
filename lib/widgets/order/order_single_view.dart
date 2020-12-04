@@ -42,12 +42,13 @@ class OrderSingleView extends StatelessWidget {
       if (state is OrderCancelSuccess) {
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           this.parent.setState(() {
-            BlocProvider.of<OrderListBloc>(context).currentOrder = state.order;
             this.parent.showSnackBar(SnackBar(
                 content: Text(
                     'An order for ${state.order.formattedItemList} Successfully Cancelled')));
           });
         });
+        BlocProvider.of<OrderListBloc>(context).currentOrder = state.order;
+        print('${BlocProvider.of<OrderListBloc>(context).currentOrder}');
         BlocProvider.of<OrderBloc>(context).add(OrderReset());
       }
       if (state is OrderCancelFailure) {
@@ -222,18 +223,22 @@ class OrderSingleView extends StatelessWidget {
                           child: Column(
                             children: [
                               Icon(Icons.cancel, color: Colors.red),
-                              Text("Cancel", style: style.copyWith(
-                                fontSize: 16,
-                              )),
+                              Text("Cancel",
+                                  style: style.copyWith(
+                                    fontSize: 16,
+                                  )),
                             ],
                           ),
                           onPressed: () {
                             bool alreadyCancelled =
                                 (currentOrder.recentStatus == "Cancelled");
                             if (!alreadyCancelled) {
-                              BlocProvider.of<OrderBloc>(context).add(
-                                  OrderCancel(
-                                      uuid: orders[currentChoice].uuid));
+                              SchedulerBinding.instance
+                                  .addPostFrameCallback((timeStamp) {
+                                BlocProvider.of<OrderBloc>(context).add(
+                                    OrderCancel(
+                                        uuid: orders[currentChoice].uuid));
+                              });
                             } else
                               this.parent.showSnackBar(SnackBar(
                                   content: Text(
@@ -244,9 +249,9 @@ class OrderSingleView extends StatelessWidget {
                           child: Column(
                             children: [
                               Icon(Icons.edit, color: Colors.grey[200]),
-                              Text("Edit", style: style.copyWith(
-                                fontSize: 16,
-                                color: Colors.grey[200])),
+                              Text("Edit",
+                                  style: style.copyWith(
+                                      fontSize: 16, color: Colors.grey[200])),
                             ],
                           ),
                           onPressed: () {
@@ -261,9 +266,10 @@ class OrderSingleView extends StatelessWidget {
                           child: Column(
                             children: [
                               Icon(Icons.redo, color: Colors.lightBlue),
-                              Text("Re-Order", style: style.copyWith(
-                                fontSize: 16,
-                              )),
+                              Text("Re-Order",
+                                  style: style.copyWith(
+                                    fontSize: 16,
+                                  )),
                             ],
                           ),
                           onPressed: () {

@@ -11,14 +11,22 @@ class OrderRepository {
       : assert(orderApiClient != null);
 
   Future<OrderListRes> getOrders() async {
-    return orderApiClient.fetchOrders();
+    OrderListRes listRes = await orderApiClient.fetchOrders();
+    listRes.list.forEach((element) async {
+      element.cartDetail = await productApiClient.populate(element.cartDetail);
+    });
+    return listRes;
   }
 
   Future<OrderRes> placeOrder(OrderReq order) async {
-    return orderApiClient.placeOrder(order);
+    OrderRes orderRes = await orderApiClient.placeOrder(order);
+    orderRes.cartDetail = await productApiClient.populate(orderRes.cartDetail);
+    return orderRes;
   }
 
   Future<OrderRes> cancelOrder(String uuid) async {
-    return orderApiClient.deleteOrder(uuid);
+    OrderRes order = await orderApiClient.deleteOrder(uuid);
+    order.cartDetail = await productApiClient.populate(order.cartDetail);
+    return order;
   }
 }

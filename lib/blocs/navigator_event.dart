@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:naylors_client/models/models.dart';
 
 abstract class NavigatorEvent extends Equatable {
   const NavigatorEvent();
@@ -29,6 +30,12 @@ class NavigatorToCart extends NavigatorEvent {}
 
 class NavigatorToCheckout extends NavigatorEvent {}
 
-class NavigatorToPayment extends NavigatorEvent {}
+class NavigatorToPayment extends NavigatorEvent {
+  final PayOption payOption;
+  NavigatorToPayment({this.payOption}) : assert(payOption != null);
+
+  @override
+  List<Object> get props => [payOption];
+}
 
 class NavigatorToSearch extends NavigatorEvent {}

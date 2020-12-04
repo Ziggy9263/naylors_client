@@ -49,4 +49,14 @@ class ProductApiClient {
       throw Exception('Search for $query failed!');
     }
   }
+
+  Future<List<CartItem>> populate(List<CartItem> detail) async {
+    for (int index = 0; index < detail.length; index++) {
+      if (detail[index].detail == null) {
+        detail[index].detail = await this
+            .getProduct(detail[index].product.toString());
+      }
+    }
+    return detail;
+  }
 }

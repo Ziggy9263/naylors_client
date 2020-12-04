@@ -68,7 +68,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
     }
     if (event is NavigatorToPayment) {
         appBarToggle = false;
-      yield NavigatorAtPayment();
+      yield NavigatorAtPayment(payOption: event.payOption);
     }
     if (event is NavigatorToSearch) {
         appBarToggle = true;
