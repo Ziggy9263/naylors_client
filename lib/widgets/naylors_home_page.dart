@@ -24,7 +24,8 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
-  NaylorsHomePageState(this.title, this.scaffoldKey) : assert(scaffoldKey != null);
+  NaylorsHomePageState(this.title, this.scaffoldKey)
+      : assert(scaffoldKey != null);
 
   @override
   void initState() {
@@ -60,66 +61,69 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.lightBlue,
-        appBar: BlocProvider.of<NavigatorBloc>(context).appBarToggle ? AppBar(
-            backgroundColor: Colors.lightBlue,
-            elevation: 0,
-            title: Text(headerTitle),
-            actions: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
-                child: Stack(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  children: <Widget>[
-                    Material(
-                      shape: CircleBorder(),
-                      color:
-                          (BlocProvider.of<NavigatorBloc>(context).searchToggle)
-                              ? Colors.white
-                              : Colors.transparent,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.search,
-                          size: 36.0,
-                          color: (BlocProvider.of<NavigatorBloc>(context)
-                                  .searchToggle)
-                              ? Colors.black54
-                              : Colors.white,
-                        ),
-                        onPressed: () {
-                          BlocProvider.of<NavigatorBloc>(context)
-                              .add(NavigatorToSearch());
-                          BlocProvider.of<SearchBloc>(context)
-                              .add(SearchInit());
-                          setState(() => {
-                                headerTitle =
-                                    (BlocProvider.of<NavigatorBloc>(context)
-                                            .searchToggle)
-                                        ? "Naylor's Online: Products"
-                                        : "Naylor's Online: Search"
-                              });
-                        },
+        appBar: BlocProvider.of<NavigatorBloc>(context).appBarToggle
+            ? AppBar(
+                backgroundColor: Colors.lightBlue,
+                elevation: 0,
+                title: Text(headerTitle),
+                actions: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                      child: Stack(
+                        alignment: AlignmentDirectional.bottomCenter,
+                        children: <Widget>[
+                          Material(
+                            shape: CircleBorder(),
+                            color: (BlocProvider.of<NavigatorBloc>(context)
+                                    .searchToggle)
+                                ? Colors.white
+                                : Colors.transparent,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.search,
+                                size: 36.0,
+                                color: (BlocProvider.of<NavigatorBloc>(context)
+                                        .searchToggle)
+                                    ? Colors.black54
+                                    : Colors.white,
+                              ),
+                              onPressed: () {
+                                BlocProvider.of<NavigatorBloc>(context)
+                                    .add(NavigatorToSearch());
+                                BlocProvider.of<SearchBloc>(context)
+                                    .add(SearchInit());
+                                setState(() => {
+                                      headerTitle =
+                                          (BlocProvider.of<NavigatorBloc>(
+                                                      context)
+                                                  .searchToggle)
+                                              ? "Naylor's Online: Products"
+                                              : "Naylor's Online: Search"
+                                    });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
-                child: CartBadge(
-                    style: style,
-                    onPressed: () {
-                      BlocProvider.of<NavigatorBloc>(context)
-                          .add(NavigatorToCart());
-                      setState(() => {
-                            headerTitle =
-                                (BlocProvider.of<NavigatorBloc>(context)
-                                        .cartToggle)
-                                    ? "Naylor's Online: Products"
-                                    : "Naylor's Online: Your Cart"
-                          });
-                    }),
-              ),
-            ]) : null,
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
+                      child: CartBadge(
+                          style: style,
+                          onPressed: () {
+                            BlocProvider.of<NavigatorBloc>(context)
+                                .add(NavigatorToCart());
+                            setState(() => {
+                                  headerTitle =
+                                      (BlocProvider.of<NavigatorBloc>(context)
+                                              .cartToggle)
+                                          ? "Naylor's Online: Products"
+                                          : "Naylor's Online: Your Cart"
+                                });
+                          }),
+                    ),
+                  ])
+            : null,
         body: BlocBuilder<NavigatorBloc, NaylorsNavigatorState>(
             builder: (context, state) {
           if (state is NavigatorInitial || state is NavigatorAtProducts) {
@@ -136,6 +140,9 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           }
           if (state is NavigatorAtProduct) {
             return ProductDetailBody(this, state.product);
+          }
+          if (state is NavigatorAtProductEdit) {
+            return ProductEdit(this, state.product);
           }
           if (state is NavigatorAtSearch) {
             return SearchPage(this);

@@ -22,6 +22,14 @@ class NavigatorToProduct extends NavigatorEvent {
   List<Object> get props => [product];
 }
 
+class NavigatorToProductEdit extends NavigatorEvent {
+  final int product;
+  NavigatorToProductEdit({this.product});
+
+  @override
+  List<Object> get props => [product];
+}
+
 class NavigatorToOrders extends NavigatorEvent {}
 
 class NavigatorToProfile extends NavigatorEvent {}

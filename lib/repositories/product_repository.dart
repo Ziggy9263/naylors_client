@@ -12,11 +12,23 @@ class ProductRepository {
     return productApiClient.fetchProducts();
   }
 
+  Future<ProductList> searchProducts(String query) async {
+    return productApiClient.searchProducts(query);
+  }
+
   Future<ProductDetail> getProduct(String tag) async {
     return productApiClient.getProduct(tag);
   }
 
-  Future<ProductList> searchProducts(String query) async {
-    return productApiClient.searchProducts(query);
+  Future<ProductDetail> createProduct(ProductDetail product) async {
+    return (product);
+  }
+
+  Future<ProductDetail> updateProduct(ProductDetail product) async {
+    return (product);
+  }
+
+  Future<ProductDetail> deleteProduct(ProductDetail product) async {
+    return (product);
   }
 }

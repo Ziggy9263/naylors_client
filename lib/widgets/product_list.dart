@@ -21,7 +21,8 @@ class ProductListBody extends StatelessWidget {
         BlocProvider.of<ProductListBloc>(context).add(ProductListRequested());
       }
       if (state is ProductListLoadInProgress) {
-        return Center(child: CircularProgressIndicator(backgroundColor: Colors.white));
+        return Center(
+            child: CircularProgressIndicator(backgroundColor: Colors.white));
       }
       if (state is ProductListLoadSuccess) {
         final productList = state.productList.list;
@@ -44,7 +45,7 @@ class ProductListBody extends StatelessWidget {
                     },
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       child: LimitedBox(
                         maxHeight: 64,
                         child: Row(
@@ -118,6 +119,22 @@ class ProductListBody extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            BlocProvider.of<AuthBloc>(context).isAdmin
+                                ? IconButton(
+                                    icon: Icon(Icons.edit),
+                                    padding: EdgeInsets.all(2),
+                                    onPressed: () {
+                                      BlocProvider.of<ProductBloc>(context)
+                                          .add(ProductReset());
+                                      BlocProvider.of<NavigatorBloc>(context)
+                                          .add(NavigatorToProductEdit(
+                                              product: int.parse(item.tag)));
+                                      parent.setState(() {
+                                        parent.headerTitle =
+                                            "Naylor's Online: Product Edit";
+                                      });
+                                    })
+                                : Container(),
                           ],
                         ),
                       ),

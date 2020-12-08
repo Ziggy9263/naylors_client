@@ -30,16 +30,20 @@ class MainNavDrawer extends StatelessWidget {
                   color: Colors.white70,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(5.0, 3.0, 5.0, 3.0),
-                    child: Text(BlocProvider.of<AuthBloc>(context).email ??
-                        "Not Available", style: parent.style.copyWith(fontSize: 14)),
+                    child: Text(
+                        BlocProvider.of<AuthBloc>(context).email ??
+                            "Not Available",
+                        style: parent.style.copyWith(fontSize: 14)),
                   ),
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.store, color: Colors.blueGrey),
-              title: Text('Products', style: parent.style.copyWith(fontSize: 16)),
+              title:
+                  Text('Products', style: parent.style.copyWith(fontSize: 16)),
               onTap: () {
+                BlocProvider.of<ProductBloc>(context).add(ProductReset());
                 BlocProvider.of<NavigatorBloc>(context)
                     .add(NavigatorToProducts());
                 parent.setState(() {
@@ -50,7 +54,8 @@ class MainNavDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.filter_list, color: Colors.blueGrey),
-              title: Text('Categories', style: parent.style.copyWith(fontSize: 16)),
+              title: Text('Categories',
+                  style: parent.style.copyWith(fontSize: 16)),
               onTap: () {
                 parent.setState(() {
                   parent.headerTitle = "Naylor's Online: Categories";
@@ -62,7 +67,8 @@ class MainNavDrawer extends StatelessWidget {
               leading: Icon(Icons.credit_card, color: Colors.blueGrey),
               title: Text('Orders', style: parent.style.copyWith(fontSize: 16)),
               onTap: () {
-                BlocProvider.of<NavigatorBloc>(context).add(NavigatorToOrders());
+                BlocProvider.of<NavigatorBloc>(context)
+                    .add(NavigatorToOrders());
                 BlocProvider.of<OrderBloc>(context).add(OrderReset());
                 parent.setState(() {
                   parent.headerTitle = "Naylor's Online: Your Orders";
@@ -70,6 +76,79 @@ class MainNavDrawer extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
+            BlocProvider.of<AuthBloc>(context).isAdmin
+                ? Divider(
+                  color: Colors.grey,
+                  height: 20,
+                  thickness: 1,
+                  indent: 20,
+                  endIndent: 20,
+                ) : Container(),
+            BlocProvider.of<AuthBloc>(context).isAdmin
+                ? ListTile(
+                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                    title: Text('Manage Products',
+                        style: parent.style
+                            .copyWith(fontSize: 16, color: Colors.white)),
+                    tileColor: Colors.blueGrey,
+                    onTap: () {
+                      BlocProvider.of<ProductBloc>(context).add(ProductReset());
+                      BlocProvider.of<NavigatorBloc>(context)
+                          .add(NavigatorToProductEdit());
+                      parent.setState(() {
+                        parent.headerTitle = "Naylor's Online: Product Edit";
+                      });
+                      Navigator.of(context).pop();
+                    })
+                : Container(),
+            BlocProvider.of<AuthBloc>(context).isAdmin
+                ? ListTile(
+                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                    title: Text('Manage Categories',
+                        style: parent.style
+                            .copyWith(fontSize: 16, color: Colors.white)),
+                    tileColor: Colors.blueGrey,
+                    onTap: () {
+                      BlocProvider.of<NavigatorBloc>(context)
+                          .add(NavigatorToProductEdit());
+                      parent.setState(() {
+                        parent.headerTitle = "Naylor's Online: Category Edit";
+                      });
+                      Navigator.of(context).pop();
+                    })
+                : Container(),
+            BlocProvider.of<AuthBloc>(context).isAdmin
+                ? ListTile(
+                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                    title: Text('Manage Orders',
+                        style: parent.style
+                            .copyWith(fontSize: 16, color: Colors.white)),
+                    tileColor: Colors.blueGrey,
+                    onTap: () {
+                      BlocProvider.of<NavigatorBloc>(context)
+                          .add(NavigatorToProductEdit());
+                      parent.setState(() {
+                        parent.headerTitle = "Naylor's Online: Manage Orders";
+                      });
+                      Navigator.of(context).pop();
+                    })
+                : Container(),
+            BlocProvider.of<AuthBloc>(context).isAdmin
+                ? ListTile(
+                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                    title: Text('Manage Users',
+                        style: parent.style
+                            .copyWith(fontSize: 16, color: Colors.white)),
+                    tileColor: Colors.blueGrey,
+                    onTap: () {
+                      BlocProvider.of<NavigatorBloc>(context)
+                          .add(NavigatorToProductEdit());
+                      parent.setState(() {
+                        parent.headerTitle = "Naylor's Online: Manage Users";
+                      });
+                      Navigator.of(context).pop();
+                    })
+                : Container(),
             Divider(
               color: Colors.grey,
               height: 20,
@@ -79,9 +158,11 @@ class MainNavDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.account_box, color: Colors.blueGrey),
-              title: Text('Profile', style: parent.style.copyWith(fontSize: 16)),
+              title:
+                  Text('Profile', style: parent.style.copyWith(fontSize: 16)),
               onTap: () {
-                BlocProvider.of<NavigatorBloc>(context).add(NavigatorToProfile());
+                BlocProvider.of<NavigatorBloc>(context)
+                    .add(NavigatorToProfile());
                 parent.setState(() {
                   parent.headerTitle = "Naylor's Online: Your Profile";
                 });
@@ -96,7 +177,7 @@ class MainNavDrawer extends StatelessWidget {
                 Navigator.of(context).pushReplacementNamed('/login');
               },
             ),
-            Expanded(child: Container()),
+            Expanded(child: SizedBox()),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -110,7 +191,7 @@ class MainNavDrawer extends StatelessWidget {
                   ),
                 ),
                 Text("Naylor's Farm and Ranch Supply",
-                  style: parent.style.copyWith(fontSize: 16)),
+                    style: parent.style.copyWith(fontSize: 16)),
               ],
             ),
             Row(
@@ -120,7 +201,8 @@ class MainNavDrawer extends StatelessWidget {
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(EdgeInsets.all(0)),
                   ),
-                  child: Text("Terms of Service",
+                  child: Text(
+                    "Terms of Service",
                     style: parent.style.copyWith(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
@@ -133,7 +215,8 @@ class MainNavDrawer extends StatelessWidget {
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(EdgeInsets.all(0)),
                   ),
-                  child: Text("Privacy Policy",
+                  child: Text(
+                    "Privacy Policy",
                     style: parent.style.copyWith(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
@@ -144,9 +227,6 @@ class MainNavDrawer extends StatelessWidget {
                 ),
               ],
             ),
-            /*(BlocProvider.of<AuthBloc>(context).isAdmin)
-                ? Text("isAdmin")
-                : Text("User"),*/
           ],
         ),
       ),

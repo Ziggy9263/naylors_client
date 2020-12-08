@@ -23,6 +23,15 @@ class NavigatorAtProduct extends NaylorsNavigatorState {
   List<Object> get props => [product];
 }
 
+class NavigatorAtProductEdit extends NaylorsNavigatorState {
+  final int product;
+
+  NavigatorAtProductEdit({this.product});
+
+  @override
+  List<Object> get props => [product];
+}
+
 class NavigatorAtOrders extends NaylorsNavigatorState {}
 
 class NavigatorAtProfile extends NaylorsNavigatorState {}

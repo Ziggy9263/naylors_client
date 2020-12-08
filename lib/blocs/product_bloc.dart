@@ -17,6 +17,46 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (event is ProductReset) {
       yield ProductInitial();
     }
+    if (event is ProductEditEvent) {
+      switch (event.step) {
+        case ProductModify.Initialize:
+          yield ProductEditInitial(tag: event.tag);
+          break;
+        case ProductModify.Create:
+          yield ProductEditLoading();
+          try {
+            final ProductDetail product =
+                await productRepository.createProduct(event.product);
+            yield ProductEditSuccess(tag: product.tag);
+          } catch (_) {
+            yield ProductEditFailure(error: _);
+          }
+          break;
+        case ProductModify.Update:
+          yield ProductEditLoading();
+          try {
+            final ProductDetail product =
+                await productRepository.updateProduct(event.product);
+            yield ProductEditSuccess(tag: product.tag);
+          } catch (_) {
+            yield ProductEditFailure(error: _);
+          }
+          break;
+        case ProductModify.Delete:
+          yield ProductEditLoading();
+          try {
+            final ProductDetail product =
+                await productRepository.deleteProduct(event.product);
+            yield ProductEditSuccess(tag: product.tag);
+          } catch (_) {
+            yield ProductEditFailure(error: _);
+          }
+          break;
+        default:
+          yield ProductEditFailure(error: "Foreign ProductModify Given");
+          break;
+      }
+    }
     if (event is ProductRequested) {
       yield ProductLoadInProgress();
       try {
@@ -36,14 +76,13 @@ class ProductListBloc extends Bloc<ProductEvent, ProductState> {
   ProductListBloc({@required this.productRepository})
       : assert(productRepository != null),
         super(ProductListInitial());
-  
+
   @override
   Stream<ProductState> mapEventToState(ProductEvent event) async* {
     if (event is ProductListRequested) {
       yield ProductListLoadInProgress();
       try {
-        final ProductList productList =
-            await productRepository.getProducts();
+        final ProductList productList = await productRepository.getProducts();
         yield ProductListLoadSuccess(productList: productList);
       } catch (_) {
         yield ProductListLoadFailure();

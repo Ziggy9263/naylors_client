@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 
+/// ProductModify used in ProductEditEvent in blocs/product_bloc.dart
+enum ProductModify { Initialize, Create, Update, Delete }
+
 class ProductDetail extends Equatable {
   final String tag;
   final String name;

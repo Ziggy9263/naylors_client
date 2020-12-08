@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:naylors_client/models/models.dart';
 
 abstract class ProductEvent extends Equatable {
   const ProductEvent();
@@ -17,6 +18,18 @@ class ProductRequested extends ProductEvent {
 class ProductReset extends ProductEvent {
   @override
   List<Object> get props => [];
+}
+
+class ProductEditEvent extends ProductEvent {
+  final ProductModify step;
+  final String tag;
+  final ProductDetail product;
+
+  const ProductEditEvent({this.tag, @required this.step, this.product})
+      : assert(step != null);
+
+  @override
+  List<Object> get props => [tag, step, product];
 }
 
 class ProductListRequested extends ProductEvent {
