@@ -85,5 +85,11 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       else
         yield NavigatorAtProducts();
     }
+    if (event is NavigatorToDebug) {
+      appBarToggle = true;
+      cartToggle = false;
+      searchToggle = false;
+      yield NavigatorAtDebug();
+    }
   }
 }

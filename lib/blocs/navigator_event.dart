@@ -47,3 +47,5 @@ class NavigatorToPayment extends NavigatorEvent {
 }
 
 class NavigatorToSearch extends NavigatorEvent {}
+
+class NavigatorToDebug extends NavigatorEvent {}

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as FLNP;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -155,6 +157,49 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                 parent: this,
                 cart: BlocProvider.of<CartBloc>(context).cartRepository.detail,
                 payOption: state.payOption);
+          }
+          if (state is NavigatorAtDebug) {
+            return Column(children: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () async {
+                    FLNP.FlutterLocalNotificationsPlugin flip =
+                        new FLNP.FlutterLocalNotificationsPlugin();
+
+                    // app_icon needs to be added as a drawable resource
+                    // to the Android head project.
+                    var android = new FLNP.AndroidInitializationSettings(
+                        '@drawable/notification_icon');
+                    var ios = new FLNP.IOSInitializationSettings();
+
+                    // Initialize settings for both Android and iOS devices.
+                    var settings = new FLNP.InitializationSettings(
+                        android: android, iOS: ios);
+                    flip.initialize(settings);
+                    // Show a notification after every 15 minutes with the first
+                    // appearance happening a minute after invoking the method
+                    var androidPlatformChannelSpecifics =
+                        new FLNP.AndroidNotificationDetails(
+                            'NAYLORS',
+                            'Naylor\'s Online',
+                            'Naylor\'s Farm and Ranch Supply',
+                            importance: FLNP.Importance.max,
+                            priority: FLNP.Priority.high);
+                    var iOSPlatformChannelSpecifics =
+                        new FLNP.IOSNotificationDetails();
+
+                    // Initialize channel platform for both Android and iOS
+                    var platformChannelSpecifics = new FLNP.NotificationDetails(
+                        android: androidPlatformChannelSpecifics,
+                        iOS: iOSPlatformChannelSpecifics);
+                    await flip.show(
+                        0,
+                        'Naylor\'s Farm & Ranch Supply',
+                        'The early worm catches a big bird!',
+                        platformChannelSpecifics,
+                        payload: 'Default_Sound');
+                  })
+            ]);
           }
           return Center(child: CircularProgressIndicator());
         }),

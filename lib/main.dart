@@ -80,7 +80,7 @@ void callbackDispatcher() {
     var ios = new IOSInitializationSettings();
 
     // Initialize settings for both Android and iOS devices.
-    var settings = new InitializationSettings(android, ios);
+    var settings = new InitializationSettings(android: android, iOS: ios);
     flip.initialize(settings);
     _showNotificationWithDefaultSound(flip);
     return Future.value(true);
@@ -92,12 +92,12 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) a
   // appearance happening a minute after invoking the method
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'NAYLORS', 'Naylor\'s Online', 'Naylor\'s Farm and Ranch Supply',
-      importance: Importance.Max, priority: Priority.High);
+      importance: Importance.max, priority: Priority.high);
   var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
 
   // Initialize channel platform for both Android and iOS
   var platformChannelSpecifics = new NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
   await flip.show(0, 'Naylor\'s Farm & Ranch Supply',
       'The early worm catches a big bird!', platformChannelSpecifics,
       payload: 'Default_Sound');

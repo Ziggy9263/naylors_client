@@ -49,3 +49,5 @@ class NavigatorAtPayment extends NaylorsNavigatorState {
 }
 
 class NavigatorAtSearch extends NaylorsNavigatorState {}
+
+class NavigatorAtDebug extends NaylorsNavigatorState {}

@@ -149,6 +149,22 @@ class MainNavDrawer extends StatelessWidget {
                       Navigator.of(context).pop();
                     })
                 : Container(),
+            BlocProvider.of<AuthBloc>(context).isAdmin
+                ? ListTile(
+                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                    title: Text('Debugging Tools',
+                        style: parent.style
+                            .copyWith(fontSize: 16, color: Colors.white)),
+                    tileColor: Colors.blueGrey,
+                    onTap: () {
+                      BlocProvider.of<NavigatorBloc>(context)
+                          .add(NavigatorToDebug());
+                      parent.setState(() {
+                        parent.headerTitle = "Naylor's Online: Debugging Tools";
+                      });
+                      Navigator.of(context).pop();
+                    })
+                : Container(),
             Divider(
               color: Colors.grey,
               height: 20,

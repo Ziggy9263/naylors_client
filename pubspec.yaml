@@ -38,7 +38,7 @@ dependencies:
   # Use with the WorkManager class for background jobs headless execution.
   workmanager: ^0.2.3
   # Use with FlutterLocalNotificationsPlugin class for local push notifications.
-  flutter_local_notifications: ^1.4.4+2
+  flutter_local_notifications: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -67,7 +67,6 @@ flutter:
     - visa.png
     - card_cvv.png
     - calendar.png
-  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
