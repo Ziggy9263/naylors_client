@@ -1,11 +1,11 @@
 {
-    "name": "naylors_client",
-    "short_name": "naylors_client",
+    "name": "Naylor's Farm & Ranch Supply",
+    "short_name": "naylors_online",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Naylor's Farm and Ranch Supply's Online Order Service",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

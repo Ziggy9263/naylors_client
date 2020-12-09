@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'package:naylors_client/simple_bloc_observer.dart';
 import 'package:bloc/bloc.dart';
@@ -12,6 +14,26 @@ import 'package:naylors_client/widgets/widgets.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  Workmanager.initialize(
+    // Top level function, aka callbackDispatcher
+    callbackDispatcher,
+    // If enabled will post a notification whenever task is running
+    // Handy for debugging tasks
+    isInDebugMode: true,
+  );
+  // Periodic task registration
+  Workmanager.registerPeriodicTask(
+    "2",
+    // This is the value that will be returned in the callbackDispatcher
+    "simplePeriodicTask",
+    // When no frequency is provided, the default 15 minutes is set.
+    // Minimum frequency is 15 minutes. Android will automatically change your
+    // frequency to 15 minutes if you have configured a lower frequency.
+    frequency: Duration(minutes: 15),
+    initialDelay: Duration(minutes: -15),
+  );
 
   final AuthRepository authRepository = AuthRepository(
     authApiClient: AuthApiClient(
@@ -44,6 +66,41 @@ void main() {
       cartRepository: cartRepository,
       orderRepository: orderRepository,
       navigatorKey: navigatorKey));
+}
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) {
+    // Initialize the plugin of flutterlocalnotifications
+    FlutterLocalNotificationsPlugin flip =
+        new FlutterLocalNotificationsPlugin();
+
+    // app_icon needs to be added as a drawable resource
+    // to the Android head project.
+    var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var ios = new IOSInitializationSettings();
+
+    // Initialize settings for both Android and iOS devices.
+    var settings = new InitializationSettings(android, ios);
+    flip.initialize(settings);
+    _showNotificationWithDefaultSound(flip);
+    return Future.value(true);
+  });
+}
+
+Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) async {
+  // Show a notification after every 15 minutes with the first
+  // appearance happening a minute after invoking the method
+  var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'NAYLORS', 'Naylor\'s Online', 'Naylor\'s Farm and Ranch Supply',
+      importance: Importance.Max, priority: Priority.High);
+  var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+
+  // Initialize channel platform for both Android and iOS
+  var platformChannelSpecifics = new NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  await flip.show(0, 'Naylor\'s Farm & Ranch Supply',
+      'The early worm catches a big bird!', platformChannelSpecifics,
+      payload: 'Default_Sound');
 }
 
 class MyApp extends StatelessWidget {
@@ -127,14 +184,14 @@ class MyApp extends StatelessWidget {
                   ),
                   BlocProvider<OrderBloc>(
                     lazy: false,
-                    create: (BuildContext context) => OrderBloc(
-                        orderRepository: orderRepository),
+                    create: (BuildContext context) =>
+                        OrderBloc(orderRepository: orderRepository),
                   ),
                   BlocProvider<OrderListBloc>(
                     lazy: false,
                     create: (BuildContext context) => OrderListBloc(
-                      orderRepository: orderRepository,
-                      productRepository: productRepository),
+                        orderRepository: orderRepository,
+                        productRepository: productRepository),
                   ),
                   BlocProvider<SearchBloc>(
                     lazy: false,
@@ -142,7 +199,8 @@ class MyApp extends StatelessWidget {
                         SearchBloc(productRepository: productRepository),
                   ),
                 ],
-                child: NaylorsHomePage(title: appTitle, scaffoldKey: GlobalKey<ScaffoldState>()),
+                child: NaylorsHomePage(
+                    title: appTitle, scaffoldKey: GlobalKey<ScaffoldState>()),
               ),
         };
         WidgetBuilder builder = routes[settings.name];
