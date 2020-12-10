@@ -21,14 +21,37 @@ class CreateProduct extends StatelessWidget {
 class ProductEdit extends StatelessWidget {
   final NaylorsHomePageState parent;
   final int initProduct;
+
   ProductEdit(this.parent, this.initProduct);
 
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final _formKey = GlobalKey<FormState>();
+  var fields = {
+    'tag': new TextEditingController(),
+    'name': new TextEditingController(),
+    'description': new TextEditingController(),
+    'price': new TextEditingController(),
+    'taxExempt': false,
+    'root': false,
+    'category': new TextEditingController(),
+  };
+  bool root = false;
+  final focus = {
+    'tag': new FocusNode(),
+    'name': new FocusNode(),
+    'description': new FocusNode(),
+    'price': new FocusNode(),
+    'taxExempt': new FocusNode(),
+    'root': new FocusNode(),
+    'category': new FocusNode(),
+  };
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductBloc, ProductState>(
       builder: (context, state) {
+        bool loading = false;
+        ProductDetail product = new ProductDetail();
         if (state is ProductInitial) {
           (initProduct != null)
               ? BlocProvider.of<ProductBloc>(context).add(ProductEditEvent(
@@ -37,240 +60,113 @@ class ProductEdit extends StatelessWidget {
                   ProductEditEvent(step: ProductModify.Initialize, tag: null));
         }
         if (state is ProductEditInitial) {
-          return Container(
-              child: Center(
-                  child:
-                      Text("Edit Screen for ${state.tag ?? 'a new Product'}")));
+          if (state.product != null) product = state.product;
         }
         if (state is ProductEditLoading) {
-          return Center(
-              child: CircularProgressIndicator(backgroundColor: Colors.white));
-        }
+          loading = true;
+        } else
+          loading = false;
         if (state is ProductEditSuccess) {}
         if (state is ProductEditFailure) {}
-        /*if (state is ProductLoadSuccess) {
-          final product = state.product;
-          List<DropdownMenuItem<String>> dropdownItems =
-              List<DropdownMenuItem<String>>();
-
-          product.sizes.forEach((value) {
-            dropdownItems.add(DropdownMenuItem(
-              child: Text(value['size']),
-              value: value['tag'].toString(),
-            ));
-          });
-
-          return Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Container(
-                      decoration: (product.images.isNotEmpty)
-                          ? BoxDecoration(
-                              color: Colors.blue,
-                              image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                alignment: FractionalOffset.center,
-                                image: AssetImage(product.images[0]),
-                              ),
-                            )
-                          : BoxDecoration(
-                              color: Colors.blue,
-                            ),
-                      child: Stack(
-                        children: <Widget>[
-                          Align(
-                            alignment: FractionalOffset(0.02, 0.0),
-                            child: IconButton(
-                              onPressed: () {
-                                BlocProvider.of<NavigatorBloc>(context)
-                                    .add(NavigatorToProducts());
-                              },
-                              icon: Icon(Icons.arrow_back,
-                                  size: 32.0, color: Colors.white),
-                            ),
-                          ),
-                          Align(
-                            alignment: FractionalOffset(1, 0.0),
-                            child: Text("Tag: ${product.tag}",
-                                style: style.copyWith(
-                                    color: Colors.blue,
-                                    fontSize: 14,
-                                    fontFamily: "Monospace",
-                                    backgroundColor: Colors.white)),
-                          ),
-                          Align(
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
-                              child: Text(
-                                product.name,
-                                textAlign: TextAlign.center,
-                                style: style.copyWith(
-                                  fontSize: 42,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 30.0,
-                                      color: Colors.black,
+        return Stack(
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(color: Colors.white),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                      "We're here for ${product.name}, which is a ${fields['root'] ? 'root' : 'non-root'} product in the ${product.category} category."),
+                  Form(
+                      key: _formKey,
+                      child: Container(
+                          child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: FocusScope(
+                                  child: Column(children: <Widget>[
+                                TextFormField(
+                                  controller: fields['tag'],
+                                  obscureText: false,
+                                  focusNode: focus['tag'],
+                                  textInputAction: TextInputAction.next,
+                                  style: style,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.fromLTRB(
+                                        10.0, 7.5, 10.0, 7.5),
+                                    hintText: "Product Tag (e.g. 36009)",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                              alignment: Alignment.bottomRight,
-                              padding: EdgeInsets.fromLTRB(4, 4, 2, 2),
-                              decoration: BoxDecoration(
-                                color: Color(0xDDFFFFFF),
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Colors.blue[900],
-                                    width: 2,
+                                    errorMaxLines: 3,
                                   ),
-                                  top: BorderSide(
-                                    color: Colors.blue[900],
-                                    width: 2,
-                                  ),
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Please enter a number';
+                                    }
+
+                                    return null;
+                                  },
                                 ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                    "\$${format(product.price)}",
-                                    style: style.copyWith(
-                                      color: Colors.green[600],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 32,
+                                Switch(
+                                    value: root,
+                                    autofocus: true,
+                                    focusNode: focus['root'],
+                                    onChanged: (_) {
+                                      this.parent.setState(() {
+                                        root = _;
+                                      });
+                                    }),
+                                TextFormField(
+                                  controller: fields['name'],
+                                  obscureText: false,
+                                  focusNode: focus['name'],
+                                  textInputAction: TextInputAction.next,
+                                  style: style,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.fromLTRB(
+                                        20.0, 15.0, 20.0, 15.0),
+                                    hintText: "Product Name (e.g. Scratch)",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(32.0),
                                     ),
+                                    errorMaxLines: 3,
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                                    child: Text(
-                                        (product.taxExempt)
-                                            ? 'Tax Exempt'
-                                            : '+Tax',
-                                        style: style.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                        )),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Divider(
-                  height: 2,
-                  thickness: 2,
-                  color: Colors.blue[900],
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: SizedBox(
-                      height: 64,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              DropdownButton(
-                                value: product.tag,
-                                items: dropdownItems,
-                                onChanged: (_) {
-                                  BlocProvider.of<ProductBloc>(context)
-                                      .add(ProductRequested(tag: _));
-                                },
-                              ),
-                              Text('Size'),
-                            ],
-                          ),
-                          VerticalDivider(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              QuantityIncrementalButtons(
-                                quantity: quantity,
-                                style: style,
-                                onDecrement: _decrementQuantity,
-                                onIncrement: _incrementQuantity,
-                                onSubmitted: (_) => {},
-                              ),
-                              Text('Quantity'),
-                            ],
-                          ),
-                          VerticalDivider(),
-                          AddToCartButton(this,
-                              product: product, quantity: quantity),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                          child: Divider(
-                              thickness: 1, color: Colors.white, endIndent: 8)),
-                      Text("DESCRIPTION",
-                          style: style.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                      Expanded(
-                          child: Divider(
-                              thickness: 1, color: Colors.white, indent: 8)),
-                    ],
-                  ),
-                  padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
-                ),
-                Expanded(
-                  // Tip: Use two /n/n for newlines in text.
-                  child: Markdown(
-                    data: product.description,
-                    styleSheet: MarkdownStyleSheet(
-                      p: style.copyWith(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                ),
-              ],
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Please enter your name';
+                                    }
+
+                                    return null;
+                                  },
+                                ),
+                              ]))))),
+                  IconButton(
+                      icon: Icon(Icons.send),
+                      onPressed: () {
+                        BlocProvider.of<ProductBloc>(context).add(
+                            ProductEditEvent(
+                                step: ProductModify.Initialize, tag: null));
+                      })
+                ],
+              ),
             ),
-          );
-        }
-        if (state is ProductLoadFailure) {
-          SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-            Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text("An Error Occurred While Loading this Product")));
-          });
-          BlocProvider.of<NavigatorBloc>(context).add(NavigatorToProducts());
-          return Center(
-            child: Icon(Icons.warning, size: 80, color: Colors.red),
-          );
-        }*/
-
-        return Center(
-            child: CircularProgressIndicator(backgroundColor: Colors.white));
+            AnimatedOpacity(
+              opacity: loading ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 500),
+              child: loading
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(color: Colors.black54),
+                      child: Center(
+                          child: CircularProgressIndicator(
+                              backgroundColor: Colors.white)))
+                  : Container(),
+            ),
+          ],
+        );
       },
     );
   }

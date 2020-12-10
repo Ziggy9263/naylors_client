@@ -46,16 +46,16 @@ class ProductListLoadFailure extends ProductState {}
 /// Product (Edit/Create)
 class ProductEditInitial extends ProductState {
   final String tag;
-  const ProductEditInitial({this.tag});
+  final ProductDetail product;
+  const ProductEditInitial({this.tag, this.product});
 
   @override
-  List<Object> get props => [tag];
+  List<Object> get props => [tag, product];
 }
 
 class ProductEditSuccess extends ProductState {
   final String tag;
-  const ProductEditSuccess({@required this.tag})
-      : assert(tag != null);
+  const ProductEditSuccess({@required this.tag}) : assert(tag != null);
 
   @override
   List<Object> get props => [tag];
@@ -63,8 +63,7 @@ class ProductEditSuccess extends ProductState {
 
 class ProductEditFailure extends ProductState {
   final String error;
-  const ProductEditFailure({@required this.error})
-      : assert(error != null);
+  const ProductEditFailure({@required this.error}) : assert(error != null);
 }
 
 class ProductEditLoading extends ProductState {}

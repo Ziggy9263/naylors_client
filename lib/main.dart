@@ -31,8 +31,8 @@ void main() {
     // When no frequency is provided, the default 15 minutes is set.
     // Minimum frequency is 15 minutes. Android will automatically change your
     // frequency to 15 minutes if you have configured a lower frequency.
-    frequency: Duration(minutes: 15),
-    initialDelay: Duration(minutes: -15),
+    frequency: Duration(minutes: 30),
+    initialDelay: Duration(minutes: -30),
   );
 
   final AuthRepository authRepository = AuthRepository(

@@ -18,9 +18,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       yield ProductInitial();
     }
     if (event is ProductEditEvent) {
+      yield ProductEditLoading();
       switch (event.step) {
         case ProductModify.Initialize:
-          yield ProductEditInitial(tag: event.tag);
+          try {
+            final ProductDetail product =
+                await productRepository.getProduct(event.tag);
+            yield ProductEditInitial(tag: event.tag, product: product);
+          } catch (_) {
+            yield ProductEditInitial(tag: event.tag);
+          }
           break;
         case ProductModify.Create:
           yield ProductEditLoading();

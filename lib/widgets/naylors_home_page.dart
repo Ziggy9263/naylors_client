@@ -195,7 +195,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                     await flip.show(
                         0,
                         'Naylor\'s Farm & Ranch Supply',
-                        'The early worm catches a big bird!',
+                        'With but one bird you could have two stones.',
                         platformChannelSpecifics,
                         payload: 'Default_Sound');
                   })
