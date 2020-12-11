@@ -49,6 +49,44 @@ class ProductEdit extends StatefulWidget {
   _ProductEditState createState() => _ProductEditState(parent, initProduct);
 }
 
+class ProductEditFields {
+  TextEditingController tag;
+  TextEditingController name;
+  TextEditingController description;
+  TextEditingController price;
+  bool taxExempt = false;
+  bool root = false;
+  TextEditingController category;
+
+  ProductEditFields({tag, name, description, price, taxExempt, root, category});
+
+  init() {
+    this.tag = new TextEditingController();
+    this.name = new TextEditingController();
+    this.description = new TextEditingController();
+    this.price = new TextEditingController();
+    this.category = new TextEditingController();
+  }
+
+  dispose() {
+    this.tag.dispose();
+    this.name.dispose();
+    this.description.dispose();
+    this.price.dispose();
+    this.category.dispose();
+  }
+
+  set product(ProductDetail product) {
+    this.tag.value = TextEditingValue(text: product.tag);
+    this.name.value = TextEditingValue(text: product.name);
+    this.description.value = TextEditingValue(text: product.description);
+    this.price.value = TextEditingValue(text: product.price.toString());
+    this.taxExempt = product.taxExempt ?? false;
+    this.root = product.root ?? false;
+    this.category.value = TextEditingValue(text: product.category);
+  }
+}
+
 class _ProductEditState extends State<ProductEdit> {
   final NaylorsHomePageState parent;
   final int initProduct;
@@ -63,36 +101,20 @@ class _ProductEditState extends State<ProductEdit> {
   OverlayEntry _overlayEntry;
   bool menuToggle = false;
   final LayerLink _layerLink = LayerLink();
-  TextEditingController tag;
-  TextEditingController name;
-  TextEditingController description;
-  TextEditingController price;
-  bool taxExempt = false;
-  bool root = false;
-  TextEditingController category;
+  ProductEditFields fields = new ProductEditFields();
   ProductEditFocus focus = new ProductEditFocus();
-  ProductDetail product = new ProductDetail();
+  ProductDetail product;
 
   @override
   initState() {
     super.initState();
-    this.tag = TextEditingController(text: product.tag);
-    this.name = TextEditingController(text: product.name);
-    this.description = TextEditingController(text: product.description);
-    this.price = TextEditingController(text: product.price.toString());
-    this.taxExempt = product.taxExempt ?? false;
-    this.root = product.root ?? false;
-    this.category = TextEditingController(text: product.category);
+    fields.init();
   }
 
   @override
   dispose() {
     super.dispose();
-    tag.dispose();
-    name.dispose();
-    description.dispose();
-    price.dispose();
-    category.dispose();
+    fields.dispose();
     focus.dispose();
   }
 
@@ -128,7 +150,7 @@ class _ProductEditState extends State<ProductEdit> {
                               .add(ProductReset());
                           BlocProvider.of<NavigatorBloc>(parent.context).add(
                               NavigatorToProduct(
-                                  product: int.parse(this.tag.text)));
+                                  product: int.parse(fields.tag.text)));
                         },
                       ),
                       ListTile(
@@ -162,8 +184,9 @@ class _ProductEditState extends State<ProductEdit> {
                 ProductEditEvent(step: ProductModify.Initialize, tag: null));
       }
       if (state is ProductEditInitial) {
-        if (state.product != null) {
+        if (state.product != null && this.product == null) {
           product = state.product;
+          fields.product = product;
           SchedulerBinding.instance
               .addPostFrameCallback((_) => {setState(() {})});
         }
@@ -183,7 +206,7 @@ class _ProductEditState extends State<ProductEdit> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                      "We're here for ${product.name}, which is a ${root ? 'root' : 'non-root'} product in the ${product.category} category."),
+                      "We're here for ${fields.name.text}, which is a ${fields.root ? 'root' : 'non-root'} product in the ${fields.category.text} category."),
                   Form(
                       key: _formKey,
                       child: Container(
@@ -195,7 +218,7 @@ class _ProductEditState extends State<ProductEdit> {
                                   children: [
                                     Expanded(
                                       child: TextFormField(
-                                        controller: tag,
+                                        controller: fields.tag,
                                         obscureText: false,
                                         focusNode: focus.tag,
                                         textInputAction: TextInputAction.next,
@@ -226,21 +249,21 @@ class _ProductEditState extends State<ProductEdit> {
                                         /// taxExempt status is true if !TAX
                                         Text("TAX",
                                             style: style.copyWith(
-                                              color: !taxExempt
+                                              color: !fields.taxExempt
                                                   ? Colors.lightBlue
                                                   : Colors.black,
                                               fontSize: 14,
-                                              fontWeight: !taxExempt
+                                              fontWeight: !fields.taxExempt
                                                   ? FontWeight.bold
                                                   : FontWeight.w300,
                                             )),
                                         Switch(
                                             activeColor: Colors.lightBlue,
-                                            value: !this.taxExempt,
+                                            value: !fields.taxExempt,
                                             focusNode: focus.taxExempt,
                                             onChanged: (_) {
                                               setState(() {
-                                                this.taxExempt = !_;
+                                                fields.taxExempt = !_;
                                               });
                                             }),
                                       ],
@@ -250,22 +273,22 @@ class _ProductEditState extends State<ProductEdit> {
                                       children: [
                                         Text("ROOT",
                                             style: style.copyWith(
-                                              color: root
+                                              color: fields.root
                                                   ? Colors.lightBlue
                                                   : Colors.black,
                                               fontSize: 14,
-                                              fontWeight: root
+                                              fontWeight: fields.root
                                                   ? FontWeight.bold
                                                   : FontWeight.w300,
                                             )),
                                         Switch(
                                             activeColor: Colors.lightBlue,
-                                            value: root,
+                                            value: fields.root,
                                             autofocus: true,
                                             focusNode: focus.root,
                                             onChanged: (_) {
                                               this.setState(() {
-                                                this.root = _;
+                                                fields.root = _;
                                               });
                                             }),
                                       ],
@@ -290,7 +313,7 @@ class _ProductEditState extends State<ProductEdit> {
                                   ],
                                 ),
                                 TextFormField(
-                                  controller: name,
+                                  controller: fields.name,
                                   obscureText: false,
                                   focusNode: focus.name,
                                   textInputAction: TextInputAction.next,
