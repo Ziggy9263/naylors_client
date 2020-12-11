@@ -78,12 +78,13 @@ class MainNavDrawer extends StatelessWidget {
             ),
             BlocProvider.of<AuthBloc>(context).isAdmin
                 ? Divider(
-                  color: Colors.grey,
-                  height: 20,
-                  thickness: 1,
-                  indent: 20,
-                  endIndent: 20,
-                ) : Container(),
+                    color: Colors.grey,
+                    height: 20,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                  )
+                : Container(),
             BlocProvider.of<AuthBloc>(context).isAdmin
                 ? ListTile(
                     leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
@@ -149,7 +150,7 @@ class MainNavDrawer extends StatelessWidget {
                       Navigator.of(context).pop();
                     })
                 : Container(),
-            BlocProvider.of<AuthBloc>(context).isAdmin
+            /*BlocProvider.of<AuthBloc>(context).isAdmin
                 ? ListTile(
                     leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
                     title: Text('Debugging Tools',
@@ -164,7 +165,7 @@ class MainNavDrawer extends StatelessWidget {
                       });
                       Navigator.of(context).pop();
                     })
-                : Container(),
+                : Container(),*/
             Divider(
               color: Colors.grey,
               height: 20,
@@ -206,7 +207,7 @@ class MainNavDrawer extends StatelessWidget {
                     colorBlendMode: BlendMode.lighten,
                   ),
                 ),
-                Text("Naylor's Farm and Ranch Supply",
+                Text("Naylor's Farm \& Ranch Supply",
                     style: parent.style.copyWith(fontSize: 16)),
               ],
             ),

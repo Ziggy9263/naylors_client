@@ -18,49 +18,154 @@ class CreateProduct extends StatelessWidget {
   }
 }
 
-class ProductEdit extends StatelessWidget {
+class ProductEditFocus {
+  var tag = new FocusNode();
+  var name = new FocusNode();
+  var description = new FocusNode();
+  var price = new FocusNode();
+  var taxExempt = new FocusNode();
+  var root = new FocusNode();
+  var category = new FocusNode();
+
+  ProductEditFocus({tag, name, description, price, taxExempt, root, category});
+
+  void dispose() {
+    tag.dispose();
+    name.dispose();
+    description.dispose();
+    price.dispose();
+    taxExempt.dispose();
+    root.dispose();
+    category.dispose();
+  }
+}
+
+class ProductEdit extends StatefulWidget {
+  final NaylorsHomePageState parent;
+  final int initProduct;
+  ProductEdit(this.parent, this.initProduct);
+
+  @override
+  _ProductEditState createState() => _ProductEditState(parent, initProduct);
+}
+
+class _ProductEditState extends State<ProductEdit> {
   final NaylorsHomePageState parent;
   final int initProduct;
 
-  ProductEdit(this.parent, this.initProduct);
+  _ProductEditState(this.parent, this.initProduct);
 
-  final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final TextStyle style = TextStyle(
+    fontFamily: 'Montserrat',
+    fontSize: 20.0,
+  );
   final _formKey = GlobalKey<FormState>();
-  var fields = {
-    'tag': new TextEditingController(),
-    'name': new TextEditingController(),
-    'description': new TextEditingController(),
-    'price': new TextEditingController(),
-    'taxExempt': false,
-    'root': false,
-    'category': new TextEditingController(),
-  };
+  OverlayEntry _overlayEntry;
+  bool menuToggle = false;
+  final LayerLink _layerLink = LayerLink();
+  TextEditingController tag;
+  TextEditingController name;
+  TextEditingController description;
+  TextEditingController price;
+  bool taxExempt = false;
   bool root = false;
-  final focus = {
-    'tag': new FocusNode(),
-    'name': new FocusNode(),
-    'description': new FocusNode(),
-    'price': new FocusNode(),
-    'taxExempt': new FocusNode(),
-    'root': new FocusNode(),
-    'category': new FocusNode(),
-  };
+  TextEditingController category;
+  ProductEditFocus focus = new ProductEditFocus();
+  ProductDetail product = new ProductDetail();
+
+  @override
+  initState() {
+    super.initState();
+    this.tag = TextEditingController(text: product.tag);
+    this.name = TextEditingController(text: product.name);
+    this.description = TextEditingController(text: product.description);
+    this.price = TextEditingController(text: product.price.toString());
+    this.taxExempt = product.taxExempt ?? false;
+    this.root = product.root ?? false;
+    this.category = TextEditingController(text: product.category);
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    tag.dispose();
+    name.dispose();
+    description.dispose();
+    price.dispose();
+    category.dispose();
+    focus.dispose();
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject();
+    var offset = renderBox.localToGlobal(Offset.zero);
+    return OverlayEntry(
+        builder: (context) => Positioned(
+              width: 100,
+              child: CompositedTransformFollower(
+                link: this._layerLink,
+                showWhenUnlinked: false,
+                offset: Offset(offset.dx - 50, offset.dy - 40),
+                child: Material(
+                  elevation: 4.0,
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.visibility),
+                        title: Text('View'),
+                        dense: true,
+                        visualDensity: VisualDensity(horizontal: -4),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        onTap: () {
+                          this.menuToggle = false;
+                          this._overlayEntry.remove();
+                          parent.setState(() {
+                            parent.headerTitle = "Naylor's Online: Products";
+                          });
+                          BlocProvider.of<ProductBloc>(parent.context)
+                              .add(ProductReset());
+                          BlocProvider.of<NavigatorBloc>(parent.context).add(
+                              NavigatorToProduct(
+                                  product: int.parse(this.tag.text)));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.delete),
+                        title: Text('Delete'),
+                        dense: true,
+                        visualDensity: VisualDensity(horizontal: -4),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        onTap: () {
+                          print('Delete');
+                          this.menuToggle = false;
+                          this._overlayEntry.remove();
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductBloc, ProductState>(
-      builder: (context, state) {
-        bool loading = false;
-        ProductDetail product = new ProductDetail();
-        if (state is ProductInitial) {
-          (initProduct != null)
-              ? BlocProvider.of<ProductBloc>(context).add(ProductEditEvent(
-                  step: ProductModify.Initialize, tag: initProduct.toString()))
-              : BlocProvider.of<ProductBloc>(context).add(
-                  ProductEditEvent(step: ProductModify.Initialize, tag: null));
-        }
-        if (state is ProductEditInitial) {
-          if (state.product != null) product = state.product;
+    return BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
+      bool loading = false;
+      if (state is ProductInitial) {
+        (initProduct != null)
+            ? BlocProvider.of<ProductBloc>(context).add(ProductEditEvent(
+                step: ProductModify.Initialize, tag: initProduct.toString()))
+            : BlocProvider.of<ProductBloc>(context).add(
+                ProductEditEvent(step: ProductModify.Initialize, tag: null));
+      }
+      if (state is ProductEditInitial) {
+        if (state.product != null) {
+          product = state.product;
+          SchedulerBinding.instance
+              .addPostFrameCallback((_) => {setState(() {})});
         }
         if (state is ProductEditLoading) {
           loading = true;
@@ -78,7 +183,7 @@ class ProductEdit extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                      "We're here for ${product.name}, which is a ${fields['root'] ? 'root' : 'non-root'} product in the ${product.category} category."),
+                      "We're here for ${product.name}, which is a ${root ? 'root' : 'non-root'} product in the ${product.category} category."),
                   Form(
                       key: _formKey,
                       child: Container(
@@ -86,42 +191,108 @@ class ProductEdit extends StatelessWidget {
                               padding: EdgeInsets.all(8.0),
                               child: FocusScope(
                                   child: Column(children: <Widget>[
-                                TextFormField(
-                                  controller: fields['tag'],
-                                  obscureText: false,
-                                  focusNode: focus['tag'],
-                                  textInputAction: TextInputAction.next,
-                                  style: style,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.fromLTRB(
-                                        10.0, 7.5, 10.0, 7.5),
-                                    hintText: "Product Tag (e.g. 36009)",
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    errorMaxLines: 3,
-                                  ),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Please enter a number';
-                                    }
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: tag,
+                                        obscureText: false,
+                                        focusNode: focus.tag,
+                                        textInputAction: TextInputAction.next,
+                                        style: style,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              10.0, 7.5, 10.0, 7.5),
+                                          hintText: "Product Tag (e.g. 36009)",
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          errorMaxLines: 3,
+                                        ),
+                                        validator: (value) {
+                                          if (value.isEmpty) {
+                                            return 'Please enter a number';
+                                          }
 
-                                    return null;
-                                  },
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        /// Inverse taxExempt means TAX yes/no
+                                        /// taxExempt status is true if !TAX
+                                        Text("TAX",
+                                            style: style.copyWith(
+                                              color: !taxExempt
+                                                  ? Colors.lightBlue
+                                                  : Colors.black,
+                                              fontSize: 14,
+                                              fontWeight: !taxExempt
+                                                  ? FontWeight.bold
+                                                  : FontWeight.w300,
+                                            )),
+                                        Switch(
+                                            activeColor: Colors.lightBlue,
+                                            value: !this.taxExempt,
+                                            focusNode: focus.taxExempt,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                this.taxExempt = !_;
+                                              });
+                                            }),
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text("ROOT",
+                                            style: style.copyWith(
+                                              color: root
+                                                  ? Colors.lightBlue
+                                                  : Colors.black,
+                                              fontSize: 14,
+                                              fontWeight: root
+                                                  ? FontWeight.bold
+                                                  : FontWeight.w300,
+                                            )),
+                                        Switch(
+                                            activeColor: Colors.lightBlue,
+                                            value: root,
+                                            autofocus: true,
+                                            focusNode: focus.root,
+                                            onChanged: (_) {
+                                              this.setState(() {
+                                                this.root = _;
+                                              });
+                                            }),
+                                      ],
+                                    ),
+                                    CompositedTransformTarget(
+                                      link: this._layerLink,
+                                      child: IconButton(
+                                        icon: Icon(Icons.more_horiz_outlined),
+                                        onPressed: () {
+                                          menuToggle = !menuToggle;
+                                          if (menuToggle) {
+                                            this._overlayEntry =
+                                                this._createOverlayEntry();
+                                            Overlay.of(context)
+                                                .insert(this._overlayEntry);
+                                          } else {
+                                            this._overlayEntry.remove();
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Switch(
-                                    value: root,
-                                    autofocus: true,
-                                    focusNode: focus['root'],
-                                    onChanged: (_) {
-                                      this.parent.setState(() {
-                                        root = _;
-                                      });
-                                    }),
                                 TextFormField(
-                                  controller: fields['name'],
+                                  controller: name,
                                   obscureText: false,
-                                  focusNode: focus['name'],
+                                  focusNode: focus.name,
                                   textInputAction: TextInputAction.next,
                                   style: style,
                                   decoration: InputDecoration(
@@ -129,7 +300,7 @@ class ProductEdit extends StatelessWidget {
                                         20.0, 15.0, 20.0, 15.0),
                                     hintText: "Product Name (e.g. Scratch)",
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(32.0),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     errorMaxLines: 3,
                                   ),
@@ -167,7 +338,9 @@ class ProductEdit extends StatelessWidget {
             ),
           ],
         );
-      },
-    );
+      }
+      return Center(
+          child: CircularProgressIndicator(backgroundColor: Colors.white));
+    });
   }
 }

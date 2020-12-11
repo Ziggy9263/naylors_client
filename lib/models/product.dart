@@ -14,6 +14,7 @@ class ProductDetail extends Equatable {
   final List images;
   final List sizes;
   final bool taxExempt;
+  final bool root;
 
   ProductDetail(
       {this.tag,
@@ -23,11 +24,12 @@ class ProductDetail extends Equatable {
       this.price,
       this.images,
       this.sizes,
-      this.taxExempt});
+      this.taxExempt,
+      this.root});
 
   @override
   List<Object> get props =>
-      [tag, name, description, category, price, images, sizes, taxExempt];
+      [tag, name, description, category, price, images, sizes, taxExempt, root];
 
   factory ProductDetail.fromJSON(Map<String, dynamic> json) {
     return ProductDetail(
@@ -38,7 +40,8 @@ class ProductDetail extends Equatable {
         price: json['price'].toDouble(),
         images: json['images'],
         sizes: json['sizes'],
-        taxExempt: json['taxExempt'] as bool);
+        taxExempt: json['taxExempt'] as bool,
+        root: json['root'] as bool);
   }
 }
 
