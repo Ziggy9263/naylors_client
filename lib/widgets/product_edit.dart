@@ -7,6 +7,7 @@ import 'package:naylors_client/widgets/widgets.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/util/util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CreateProduct extends StatelessWidget {
   final NaylorsHomePageState parent;
@@ -46,7 +47,7 @@ class ProductEdit extends StatefulWidget {
   ProductEdit(this.parent, this.initProduct);
 
   @override
-  _ProductEditState createState() => _ProductEditState(parent, initProduct);
+  ProductEditState createState() => ProductEditState(parent, initProduct);
 }
 
 class ProductEditFields {
@@ -87,18 +88,18 @@ class ProductEditFields {
   }
 }
 
-class _ProductEditState extends State<ProductEdit> {
+class ProductEditState extends State<ProductEdit> {
   final NaylorsHomePageState parent;
   final int initProduct;
 
-  _ProductEditState(this.parent, this.initProduct);
+  ProductEditState(this.parent, this.initProduct);
 
   final TextStyle style = TextStyle(
     fontFamily: 'Montserrat',
     fontSize: 20.0,
   );
   final _formKey = GlobalKey<FormState>();
-  OverlayEntry _overlayEntry;
+  OverlayEntry overlayEntry;
   bool menuToggle = false;
   final LayerLink _layerLink = LayerLink();
   ProductEditFields fields = new ProductEditFields();
@@ -118,7 +119,7 @@ class _ProductEditState extends State<ProductEdit> {
     focus.dispose();
   }
 
-  OverlayEntry _createOverlayEntry() {
+  OverlayEntry createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject();
     var offset = renderBox.localToGlobal(Offset.zero);
     return OverlayEntry(
@@ -142,7 +143,7 @@ class _ProductEditState extends State<ProductEdit> {
                         contentPadding: EdgeInsets.symmetric(horizontal: 8),
                         onTap: () {
                           this.menuToggle = false;
-                          this._overlayEntry.remove();
+                          this.overlayEntry.remove();
                           parent.setState(() {
                             parent.headerTitle = "Naylor's Online: Products";
                           });
@@ -162,7 +163,7 @@ class _ProductEditState extends State<ProductEdit> {
                         onTap: () {
                           print('Delete');
                           this.menuToggle = false;
-                          this._overlayEntry.remove();
+                          this.overlayEntry.remove();
                         },
                       )
                     ],
@@ -170,6 +171,14 @@ class _ProductEditState extends State<ProductEdit> {
                 ),
               ),
             ));
+  }
+
+  launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -202,148 +211,14 @@ class _ProductEditState extends State<ProductEdit> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(color: Colors.white),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                      "We're here for ${fields.name.text}, which is a ${fields.root ? 'root' : 'non-root'} product in the ${fields.category.text} category."),
-                  Form(
-                      key: _formKey,
-                      child: Container(
-                          child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: FocusScope(
-                                  child: Column(children: <Widget>[
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: fields.tag,
-                                        obscureText: false,
-                                        focusNode: focus.tag,
-                                        textInputAction: TextInputAction.next,
-                                        style: style,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.fromLTRB(
-                                              10.0, 7.5, 10.0, 7.5),
-                                          hintText: "Product Tag (e.g. 36009)",
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          errorMaxLines: 3,
-                                        ),
-                                        validator: (value) {
-                                          if (value.isEmpty) {
-                                            return 'Please enter a number';
-                                          }
-
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        /// Inverse taxExempt means TAX yes/no
-                                        /// taxExempt status is true if !TAX
-                                        Text("TAX",
-                                            style: style.copyWith(
-                                              color: !fields.taxExempt
-                                                  ? Colors.lightBlue
-                                                  : Colors.black,
-                                              fontSize: 14,
-                                              fontWeight: !fields.taxExempt
-                                                  ? FontWeight.bold
-                                                  : FontWeight.w300,
-                                            )),
-                                        Switch(
-                                            activeColor: Colors.lightBlue,
-                                            value: !fields.taxExempt,
-                                            focusNode: focus.taxExempt,
-                                            onChanged: (_) {
-                                              setState(() {
-                                                fields.taxExempt = !_;
-                                              });
-                                            }),
-                                      ],
-                                    ),
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text("ROOT",
-                                            style: style.copyWith(
-                                              color: fields.root
-                                                  ? Colors.lightBlue
-                                                  : Colors.black,
-                                              fontSize: 14,
-                                              fontWeight: fields.root
-                                                  ? FontWeight.bold
-                                                  : FontWeight.w300,
-                                            )),
-                                        Switch(
-                                            activeColor: Colors.lightBlue,
-                                            value: fields.root,
-                                            autofocus: true,
-                                            focusNode: focus.root,
-                                            onChanged: (_) {
-                                              this.setState(() {
-                                                fields.root = _;
-                                              });
-                                            }),
-                                      ],
-                                    ),
-                                    CompositedTransformTarget(
-                                      link: this._layerLink,
-                                      child: IconButton(
-                                        icon: Icon(Icons.more_horiz_outlined),
-                                        onPressed: () {
-                                          menuToggle = !menuToggle;
-                                          if (menuToggle) {
-                                            this._overlayEntry =
-                                                this._createOverlayEntry();
-                                            Overlay.of(context)
-                                                .insert(this._overlayEntry);
-                                          } else {
-                                            this._overlayEntry.remove();
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                TextFormField(
-                                  controller: fields.name,
-                                  obscureText: false,
-                                  focusNode: focus.name,
-                                  textInputAction: TextInputAction.next,
-                                  style: style,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.fromLTRB(
-                                        20.0, 15.0, 20.0, 15.0),
-                                    hintText: "Product Name (e.g. Scratch)",
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    errorMaxLines: 3,
-                                  ),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return 'Please enter your name';
-                                    }
-
-                                    return null;
-                                  },
-                                ),
-                              ]))))),
-                  IconButton(
-                      icon: Icon(Icons.send),
-                      onPressed: () {
-                        BlocProvider.of<ProductBloc>(context).add(
-                            ProductEditEvent(
-                                step: ProductModify.Initialize, tag: null));
-                      })
-                ],
+              child: ProductEditBody(
+                parent: this,
+                fields: fields,
+                formKey: _formKey,
+                focus: focus,
+                style: style,
+                layerLink: _layerLink,
+                overlayEntry: overlayEntry
               ),
             ),
             AnimatedOpacity(
