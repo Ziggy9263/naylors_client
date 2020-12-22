@@ -9,38 +9,6 @@ import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/util/util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CreateProduct extends StatelessWidget {
-  final NaylorsHomePageState parent;
-  CreateProduct(this.parent);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class ProductEditFocus {
-  var tag = new FocusNode();
-  var name = new FocusNode();
-  var description = new FocusNode();
-  var price = new FocusNode();
-  var taxExempt = new FocusNode();
-  var root = new FocusNode();
-  var category = new FocusNode();
-
-  ProductEditFocus({tag, name, description, price, taxExempt, root, category});
-
-  void dispose() {
-    tag.dispose();
-    name.dispose();
-    description.dispose();
-    price.dispose();
-    taxExempt.dispose();
-    root.dispose();
-    category.dispose();
-  }
-}
-
 class ProductEdit extends StatefulWidget {
   final NaylorsHomePageState parent;
   final int initProduct;
@@ -48,44 +16,6 @@ class ProductEdit extends StatefulWidget {
 
   @override
   ProductEditState createState() => ProductEditState(parent, initProduct);
-}
-
-class ProductEditFields {
-  TextEditingController tag;
-  TextEditingController name;
-  TextEditingController description;
-  TextEditingController price;
-  bool taxExempt = false;
-  bool root = false;
-  TextEditingController category;
-
-  ProductEditFields({tag, name, description, price, taxExempt, root, category});
-
-  init() {
-    this.tag = new TextEditingController();
-    this.name = new TextEditingController();
-    this.description = new TextEditingController();
-    this.price = new TextEditingController();
-    this.category = new TextEditingController();
-  }
-
-  dispose() {
-    this.tag.dispose();
-    this.name.dispose();
-    this.description.dispose();
-    this.price.dispose();
-    this.category.dispose();
-  }
-
-  set product(ProductDetail product) {
-    this.tag.value = TextEditingValue(text: product.tag);
-    this.name.value = TextEditingValue(text: product.name);
-    this.description.value = TextEditingValue(text: product.description);
-    this.price.value = TextEditingValue(text: product.price.toString());
-    this.taxExempt = product.taxExempt ?? false;
-    this.root = product.root ?? false;
-    this.category.value = TextEditingValue(text: product.category);
-  }
 }
 
 class ProductEditState extends State<ProductEdit> {
@@ -135,6 +65,29 @@ class ProductEditState extends State<ProductEdit> {
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.refresh),
+                        title: Text('Reload'),
+                        dense: true,
+                        visualDensity: VisualDensity(horizontal: -4),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        onTap: () {
+                          this.menuToggle = false;
+                          this.overlayEntry.remove();
+                          parent.setState(() {
+                            this.product = null;
+                          });
+                          (initProduct != null)
+                              ? BlocProvider.of<ProductBloc>(parent.context)
+                                  .add(ProductEditEvent(
+                                      step: ModifyStep.Initialize,
+                                      tag: initProduct.toString()))
+                              : BlocProvider.of<ProductBloc>(parent.context)
+                                  .add(ProductEditEvent(
+                                      step: ModifyStep.Initialize,
+                                      tag: null));
+                        },
+                      ),
                       ListTile(
                         leading: Icon(Icons.visibility),
                         title: Text('View'),
@@ -188,9 +141,9 @@ class ProductEditState extends State<ProductEdit> {
       if (state is ProductInitial) {
         (initProduct != null)
             ? BlocProvider.of<ProductBloc>(context).add(ProductEditEvent(
-                step: ProductModify.Initialize, tag: initProduct.toString()))
+                step: ModifyStep.Initialize, tag: initProduct.toString()))
             : BlocProvider.of<ProductBloc>(context).add(
-                ProductEditEvent(step: ProductModify.Initialize, tag: null));
+                ProductEditEvent(step: ModifyStep.Initialize, tag: null));
       }
       if (state is ProductEditInitial) {
         if (state.product != null && this.product == null) {
@@ -212,14 +165,12 @@ class ProductEditState extends State<ProductEdit> {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(color: Colors.white),
               child: ProductEditBody(
-                parent: this,
-                fields: fields,
-                formKey: _formKey,
-                focus: focus,
-                style: style,
-                layerLink: _layerLink,
-                overlayEntry: overlayEntry
-              ),
+                  parent: this,
+                  fields: fields,
+                  formKey: _formKey,
+                  focus: focus,
+                  style: style,
+                  layerLink: _layerLink),
             ),
             AnimatedOpacity(
               opacity: loading ? 1.0 : 0.0,

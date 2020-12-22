@@ -20,7 +20,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     if (event is ProductEditEvent) {
       yield ProductEditLoading();
       switch (event.step) {
-        case ProductModify.Initialize:
+        case ModifyStep.Initialize:
           try {
             final ProductDetail product =
                 await productRepository.getProduct(event.tag);
@@ -29,7 +29,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             yield ProductEditInitial(tag: event.tag);
           }
           break;
-        case ProductModify.Create:
+        case ModifyStep.Create:
           yield ProductEditLoading();
           try {
             final ProductDetail product =
@@ -39,7 +39,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             yield ProductEditFailure(error: _);
           }
           break;
-        case ProductModify.Update:
+        case ModifyStep.Update:
           yield ProductEditLoading();
           try {
             final ProductDetail product =
@@ -49,7 +49,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             yield ProductEditFailure(error: _);
           }
           break;
-        case ProductModify.Delete:
+        case ModifyStep.Delete:
           yield ProductEditLoading();
           try {
             final ProductDetail product =
@@ -60,7 +60,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           }
           break;
         default:
-          yield ProductEditFailure(error: "Foreign ProductModify Given");
+          yield ProductEditFailure(error: "Foreign ModifyStep Given");
           break;
       }
     }
@@ -92,7 +92,7 @@ class ProductListBloc extends Bloc<ProductEvent, ProductState> {
         final ProductList productList = await productRepository.getProducts();
         yield ProductListLoadSuccess(productList: productList);
       } catch (_) {
-        yield ProductListLoadFailure();
+        yield ProductListLoadFailure(error: _);
       }
     }
   }

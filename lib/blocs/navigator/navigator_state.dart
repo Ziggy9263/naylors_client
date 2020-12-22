@@ -14,6 +14,8 @@ class NavigatorAtHome extends NaylorsNavigatorState {}
 
 class NavigatorAtProducts extends NaylorsNavigatorState {}
 
+class NavigatorAtCategories extends NaylorsNavigatorState {}
+
 class NavigatorAtProduct extends NaylorsNavigatorState {
   final int product;
 

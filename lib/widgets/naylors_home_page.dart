@@ -131,6 +131,9 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           if (state is NavigatorInitial || state is NavigatorAtProducts) {
             return ProductListBody(this);
           }
+          if (state is NavigatorAtCategories) {
+            return CategoryPage(this);
+          }
           if (state is NavigatorAtOrders) {
             return OrderPage(this);
           }

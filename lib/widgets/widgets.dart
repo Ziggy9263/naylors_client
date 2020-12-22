@@ -8,6 +8,10 @@ export 'product_list.dart';
 export 'product_detail.dart';
 export 'product_edit.dart';
 export 'product/edit/product_edit_body.dart';
+export 'product/edit/product_edit_sizes.dart';
+
+/// Categories
+export 'category_page.dart';
 
 /// Cart
 export 'cart/cart.dart';

@@ -57,6 +57,8 @@ class MainNavDrawer extends StatelessWidget {
               title: Text('Categories',
                   style: parent.style.copyWith(fontSize: 16)),
               onTap: () {
+                BlocProvider.of<NavigatorBloc>(context)
+                    .add(NavigatorToCategories());
                 parent.setState(() {
                   parent.headerTitle = "Naylor's Online: Categories";
                 });

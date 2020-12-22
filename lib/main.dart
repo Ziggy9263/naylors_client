@@ -15,7 +15,7 @@ import 'package:naylors_client/widgets/widgets.dart';
 void main() {
   Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   Workmanager.initialize(
     // Top level function, aka callbackDispatcher
     callbackDispatcher,
@@ -47,6 +47,12 @@ void main() {
     ),
   );
 
+  final CategoryRepository categoryRepository = CategoryRepository(
+    categoryApiClient: CategoryApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
   final CartRepository cartRepository = CartRepository(
     detail: List<CartItem>(),
   );
@@ -63,6 +69,7 @@ void main() {
   runApp(MyApp(
       authRepository: authRepository,
       productRepository: productRepository,
+      categoryRepository: categoryRepository,
       cartRepository: cartRepository,
       orderRepository: orderRepository,
       navigatorKey: navigatorKey));
@@ -87,7 +94,8 @@ void callbackDispatcher() {
   });
 }
 
-Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) async {
+Future _showNotificationWithDefaultSound(
+    FlutterLocalNotificationsPlugin flip) async {
   // Show a notification after every 15 minutes with the first
   // appearance happening a minute after invoking the method
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
@@ -97,7 +105,8 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) a
 
   // Initialize channel platform for both Android and iOS
   var platformChannelSpecifics = new NotificationDetails(
-      android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics);
   await flip.show(0, 'Naylor\'s Farm & Ranch Supply',
       'The early worm catches a big bird!', platformChannelSpecifics,
       payload: 'Default_Sound');
@@ -106,6 +115,7 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) a
 class MyApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ProductRepository productRepository;
+  final CategoryRepository categoryRepository;
   final CartRepository cartRepository;
   final OrderRepository orderRepository;
   final GlobalKey<NavigatorState> navigatorKey;
@@ -114,11 +124,13 @@ class MyApp extends StatelessWidget {
       {Key key,
       @required this.authRepository,
       @required this.productRepository,
+      @required this.categoryRepository,
       @required this.cartRepository,
       @required this.orderRepository,
       @required this.navigatorKey})
       : assert(authRepository != null &&
             productRepository != null &&
+            categoryRepository != null &&
             cartRepository != null &&
             orderRepository != null &&
             navigatorKey != null),
@@ -166,6 +178,10 @@ class MyApp extends StatelessWidget {
                   BlocProvider<ProductListBloc>(
                     create: (BuildContext context) =>
                         ProductListBloc(productRepository: productRepository),
+                  ),
+                  BlocProvider<CategoryListBloc>(
+                    create: (BuildContext context) =>
+                        CategoryListBloc(categoryRepository: categoryRepository),
                   ),
                   BlocProvider<CartBloc>(
                     lazy: false,

@@ -13,6 +13,8 @@ class NavigatorToHome extends NavigatorEvent {}
 
 class NavigatorToProducts extends NavigatorEvent {}
 
+class NavigatorToCategories extends NavigatorEvent {}
+
 class NavigatorToProduct extends NavigatorEvent {
   final int product;
 

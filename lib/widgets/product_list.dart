@@ -81,12 +81,11 @@ class ProductListBody extends StatelessWidget {
                                               BorderRadius.circular(15.0),
                                         ),
                                         child: Text(
-                                          item.category,
+                                          "${item.category.department.name} > ${item.category.name}",
                                           style: style.copyWith(
                                             color: Colors.white,
-                                            fontSize: 14,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.w300,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
@@ -150,7 +149,7 @@ class ProductListBody extends StatelessWidget {
       }
       if (state is ProductListLoadFailure) {
         return Center(
-          child: Text('Something went wrong!',
+          child: Text('Something went wrong! ${state.error}',
               style: style.copyWith(color: Colors.red)),
         );
       }

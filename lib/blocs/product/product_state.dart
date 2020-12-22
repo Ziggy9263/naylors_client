@@ -41,7 +41,13 @@ class ProductListLoadSuccess extends ProductState {
   List<Object> get props => [productList];
 }
 
-class ProductListLoadFailure extends ProductState {}
+class ProductListLoadFailure extends ProductState {
+  final dynamic error;
+  ProductListLoadFailure({this.error});
+
+  @override
+  List<Object> get props => [error];
+}
 
 /// Product (Edit/Create)
 class ProductEditInitial extends ProductState {

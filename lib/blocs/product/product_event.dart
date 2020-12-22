@@ -21,7 +21,7 @@ class ProductReset extends ProductEvent {
 }
 
 class ProductEditEvent extends ProductEvent {
-  final ProductModify step;
+  final ModifyStep step;
   final String tag;
   final ProductDetail product;
 
