@@ -224,7 +224,8 @@ class ProductEditBody extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Text(
-                                    "\$${format(double.parse(fields.price.text))}${(fields.taxExempt) ? '' : ' +Tax'}",
+                                    "\$${format(double.parse(fields.price.text))}" +
+                                    "${(fields.taxExempt) ? '' : ' +Tax'}",
                                     style: style.copyWith(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w400,

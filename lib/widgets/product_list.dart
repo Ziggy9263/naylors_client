@@ -26,6 +26,62 @@ class ProductListBody extends StatelessWidget {
       }
       if (state is ProductListLoadSuccess) {
         final productList = state.productList.list;
+        if (productList.length == 0)
+          return RefreshIndicator(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Whoops!",
+                      style: style.copyWith(
+                        color: Colors.white,
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Looks like the server sent back 0 products.",
+                    style: style.copyWith(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                  RaisedButton(
+                    color: Colors.lightBlue[50],
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.refresh,
+                          color: Colors.lightBlue,
+                          size: 40.0,
+                        ),
+                        Text("Try Again",
+                          style: style.copyWith(
+                            color: Colors.lightBlue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onPressed: () async {
+                      BlocProvider.of<ProductListBloc>(context)
+                          .add(ProductListRequested());
+                    }
+                  ),
+                ],
+              ),
+            ),
+            onRefresh: () async {
+              BlocProvider.of<ProductListBloc>(context)
+                  .add(ProductListRequested());
+            }
+          );
 
         return RefreshIndicator(
             child: ListView.builder(
@@ -81,7 +137,7 @@ class ProductListBody extends StatelessWidget {
                                               BorderRadius.circular(15.0),
                                         ),
                                         child: Text(
-                                          "${item.category.department.name} > ${item.category.name}",
+                                          "TODO > ${item.category.name}",
                                           style: style.copyWith(
                                             color: Colors.white,
                                             fontSize: 16,

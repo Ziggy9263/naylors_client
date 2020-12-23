@@ -20,15 +20,15 @@ class CategoryRepository {
     return categoryApiClient.getCategory(id);
   }
 
-  Future<Category> createCategory(Category product) async {
-    return (product);
+  Future<Category> createCategory(Category category) async {
+    return (category);
   }
 
-  Future<Category> updateCategory(Category product) async {
-    return (product);
+  Future<Category> updateCategory(Category category) async {
+    return (category);
   }
 
-  Future<Category> deleteCategory(Category product) async {
-    return (product);
+  Future<Category> deleteCategory(Category category) async {
+    return (category);
   }
 }

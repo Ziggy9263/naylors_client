@@ -47,8 +47,8 @@ void main() {
     ),
   );
 
-  final CategoryRepository categoryRepository = CategoryRepository(
-    categoryApiClient: CategoryApiClient(
+  final DepartmentRepository departmentRepository = DepartmentRepository(
+    departmentApiClient: DepartmentApiClient(
       httpClient: http.Client(),
     ),
   );
@@ -69,7 +69,7 @@ void main() {
   runApp(MyApp(
       authRepository: authRepository,
       productRepository: productRepository,
-      categoryRepository: categoryRepository,
+      departmentRepository: departmentRepository,
       cartRepository: cartRepository,
       orderRepository: orderRepository,
       navigatorKey: navigatorKey));
@@ -115,7 +115,7 @@ Future _showNotificationWithDefaultSound(
 class MyApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ProductRepository productRepository;
-  final CategoryRepository categoryRepository;
+  final DepartmentRepository departmentRepository;
   final CartRepository cartRepository;
   final OrderRepository orderRepository;
   final GlobalKey<NavigatorState> navigatorKey;
@@ -124,13 +124,13 @@ class MyApp extends StatelessWidget {
       {Key key,
       @required this.authRepository,
       @required this.productRepository,
-      @required this.categoryRepository,
+      @required this.departmentRepository,
       @required this.cartRepository,
       @required this.orderRepository,
       @required this.navigatorKey})
       : assert(authRepository != null &&
             productRepository != null &&
-            categoryRepository != null &&
+            departmentRepository != null &&
             cartRepository != null &&
             orderRepository != null &&
             navigatorKey != null),
@@ -179,9 +179,9 @@ class MyApp extends StatelessWidget {
                     create: (BuildContext context) =>
                         ProductListBloc(productRepository: productRepository),
                   ),
-                  BlocProvider<CategoryListBloc>(
+                  BlocProvider<DepartmentListBloc>(
                     create: (BuildContext context) =>
-                        CategoryListBloc(categoryRepository: categoryRepository),
+                        DepartmentListBloc(departmentRepository: departmentRepository),
                   ),
                   BlocProvider<CartBloc>(
                     lazy: false,

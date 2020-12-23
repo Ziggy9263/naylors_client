@@ -6,51 +6,50 @@ import 'package:flutter/services.dart';
 /// ModifyStep used in (Product|Category|Department)EditEvent in blocs/product_bloc.dart
 enum ModifyStep { Initialize, Create, Update, Delete }
 
-class Department extends Equatable {
+class Category extends Equatable {
   final String id;
   final int code;
   final String name;
 
-  Department({@required this.id, @required this.code, @required this.name})
+  Category({@required this.id, @required this.code, @required this.name})
       : assert(id != null && code != null && name != null);
 
-  factory Department.fromJSON(Map<String, dynamic> json) {
-    return Department(
-      id: json['_id'].toString(),
-      code: json['code'],
-      name: json['name'].toString(),
-    );
+  factory Category.fromJSON(Map<String, dynamic> json) {
+    return Category(id: json['_id'], code: json['code'], name: json['name']);
+  }
+
+  factory Category.empty() {
+    return Category(id: '', code: 0, name: '');
   }
 
   @override
   List<Object> get props => [id, code, name];
 }
 
-class Category extends Equatable {
+class Department extends Equatable {
   final String id;
   final int code;
   final String name;
-  final Department department;
+  final List<dynamic> categories;
 
-  Category(
+  Department(
       {@required this.id,
       @required this.code,
       @required this.name,
-      @required this.department})
+      @required this.categories})
       : assert(
-            id != null && code != null && name != null && department != null);
+            id != null && code != null && name != null && categories != null);
 
-  factory Category.fromJSON(Map<String, dynamic> json) {
-    return Category(
-      id: json['_id'],
-      code: json['code'],
-      name: json['name'],
-      department: Department.fromJSON(json['department']),
-    );
+  factory Department.fromJSON(Map<String, dynamic> json) {
+    return Department(
+        id: json['_id'].toString(),
+        code: json['code'],
+        name: json['name'].toString(),
+        categories: json['categories'] as List);
   }
 
   @override
-  List<Object> get props => [id, code, name, department];
+  List<Object> get props => [id, code, name, categories];
 }
 
 class CategoryList {
@@ -67,6 +66,23 @@ class CategoryList {
       categories.add(c);
     });
     return CategoryList(list: categories);
+  }
+}
+
+class DepartmentList {
+  List<Department> list;
+
+  DepartmentList({this.list});
+
+  factory DepartmentList.fromJSON(String j) {
+    Map<String, dynamic> json = jsonDecode(j);
+    List<dynamic> dynamicList = json['departments'] as List;
+    List<Department> categories = List<Department>();
+    dynamicList.forEach((f) {
+      Department c = Department.fromJSON(f);
+      categories.add(c);
+    });
+    return DepartmentList(list: categories);
   }
 }
 
@@ -101,7 +117,9 @@ class ProductDetail extends Equatable {
         tag: json['tag'].toString(),
         name: json['name'] as String,
         description: json['description'] as String,
-        category: Category.fromJSON(json['category']),
+        category: (json['category'] != null)
+            ? Category.fromJSON(json['category'])
+            : Category.empty(),
         price: json['price'].toDouble(),
         images: json['images'],
         sizes: json['sizes'],
@@ -188,7 +206,7 @@ class ProductEditFields {
     this.tag = new TextEditingController();
     this.name = new TextEditingController();
     this.description = new TextEditingController();
-    this.price = new TextEditingController();
+    this.price = new TextEditingController(text: "0.00");
     this.department = new TextEditingController();
     this.category = new TextEditingController();
     this.sizes = new List<dynamic>();
@@ -214,8 +232,7 @@ class ProductEditFields {
     this.price.value = TextEditingValue(text: product.price.toString());
     this.taxExempt = product.taxExempt ?? false;
     this.root = product.root ?? false;
-    this.department.value =
-        TextEditingValue(text: product.category.department.name);
+    this.department.value = TextEditingValue(text: product.category.name);
     this.category.value = TextEditingValue(text: product.category.name);
     this.sizes = product.sizes;
   }

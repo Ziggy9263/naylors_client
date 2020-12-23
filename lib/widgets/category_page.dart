@@ -18,90 +18,99 @@ class CategoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CategoryListBloc, CategoryState>(
+    return BlocBuilder<DepartmentListBloc, DepartmentState>(
         builder: (context, state) {
-      if (state is CategoryListInitial) {
-        BlocProvider.of<CategoryListBloc>(context).add(CategoryListRequested());
+      if (state is DepartmentListInitial) {
+        BlocProvider.of<DepartmentListBloc>(context)
+            .add(DepartmentListRequested());
       }
-      if (state is CategoryListLoadInProgress) {
+      if (state is DepartmentListLoadInProgress) {
         return Center(
             child: CircularProgressIndicator(backgroundColor: Colors.white));
       }
-      if (state is CategoryListLoadSuccess) {
-        final categoryList = state.categoryList.list;
+      if (state is DepartmentListLoadSuccess) {
+        final departmentList = state.departmentList.list;
 
-        return RefreshIndicator(
-            child: ListView.builder(
-              itemCount: categoryList.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final item = categoryList[index];
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          child: RefreshIndicator(
+              child: ListView.builder(
+                itemCount: departmentList.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  final item = departmentList[index];
 
-                return Card(
-                  child: InkWell(
-                    onTap: () {
-                      /*BlocProvider.of<NavigatorBloc>(context).add(
-                          NavigatorToProduct(product: int.parse(item.tag)));
-                      BlocProvider.of<ProductBloc>(context).add(ProductReset());
-                      this.parent.setState(() {});*/
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: LimitedBox(
-                        maxHeight: 60,
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              "${item.department.name} ${formatCat(item.department.code)}-${formatCat(item.code)}",
-                              style: style.copyWith(
-                                color: Colors.lightBlue,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(
-                                  item.name,
-                                  style: style.copyWith(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ),
-                            /*Container(
-                                padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[400],
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Text(
-                                  "Department: ${item.department.name}",
-                                  style: style.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  softWrap: false,
-                                )),*/
-                          ],
-                        ),
+                  return ExpansionTile(
+                    backgroundColor: Colors.lightBlue[400],
+                    title: Text(
+                      "${formatCat(item.code)} ${item.name} ",
+                      style: style.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-            onRefresh: () async {
-              BlocProvider.of<CategoryListBloc>(context)
-                  .add(CategoryListRequested());
-            });
+                    children: [
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: item.categories.length,
+                        shrinkWrap: true,
+                        itemBuilder: (builder, index) {
+                          var category = item.categories[index];
+                          return Card(
+                            child: InkWell(
+                              onTap: () {
+                                /*BlocProvider.of<NavigatorBloc>(context).add(
+                            NavigatorToProduct(product: int.parse(item.tag)));
+                        BlocProvider.of<ProductBloc>(context).add(ProductReset());
+                        this.parent.setState(() {});*/
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                                child: LimitedBox(
+                                  maxHeight: 60,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "${item.code}-${formatCat(category['code'])}",
+                                        style: style.copyWith(
+                                          color: Colors.lightBlue,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 24,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Text(
+                                            category['name'],
+                                            style: style.copyWith(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    ],
+                  );
+                },
+              ),
+              onRefresh: () async {
+                BlocProvider.of<DepartmentListBloc>(context)
+                    .add(DepartmentListRequested());
+              }),
+        );
       }
-      if (state is CategoryListLoadFailure) {
+      if (state is DepartmentListLoadFailure) {
         return Center(
           child: Text('Something went wrong! ${state.error}',
               style: style.copyWith(color: Colors.red)),
