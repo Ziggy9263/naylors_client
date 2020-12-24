@@ -12,6 +12,10 @@ class ProductRepository {
     return productApiClient.fetchProducts();
   }
 
+  Future<ProductList> getProductsByCategory(Category category) async {
+    return productApiClient.fetchByCategory(category);
+  }
+
   Future<ProductList> searchProducts(String query) async {
     return productApiClient.searchProducts(query);
   }

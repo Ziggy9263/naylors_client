@@ -33,8 +33,10 @@ class ProductEditEvent extends ProductEvent {
 }
 
 class ProductListRequested extends ProductEvent {
-  const ProductListRequested();
+  final Category category;
+
+  const ProductListRequested({this.category});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [category];
 }

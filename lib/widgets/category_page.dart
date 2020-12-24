@@ -53,17 +53,18 @@ class CategoryPage extends StatelessWidget {
                     children: [
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: item.categories.length,
+                        itemCount: item.categories.list.length,
                         shrinkWrap: true,
                         itemBuilder: (builder, index) {
-                          var category = item.categories[index];
+                          var category = item.categories.list[index];
                           return Card(
                             child: InkWell(
                               onTap: () {
-                                /*BlocProvider.of<NavigatorBloc>(context).add(
-                            NavigatorToProduct(product: int.parse(item.tag)));
-                        BlocProvider.of<ProductBloc>(context).add(ProductReset());
-                        this.parent.setState(() {});*/
+                                BlocProvider.of<NavigatorBloc>(context)
+                                    .add(NavigatorToProducts());
+                                BlocProvider.of<ProductListBloc>(context).add(
+                                    ProductListRequested(
+                                        category: category));
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -73,7 +74,7 @@ class CategoryPage extends StatelessWidget {
                                   child: Row(
                                     children: <Widget>[
                                       Text(
-                                        "${item.code}-${formatCat(category['code'])}",
+                                        "${item.code}-${formatCat(category.code)}",
                                         style: style.copyWith(
                                           color: Colors.lightBlue,
                                           fontWeight: FontWeight.bold,
@@ -85,7 +86,7 @@ class CategoryPage extends StatelessWidget {
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8.0),
                                           child: Text(
-                                            category['name'],
+                                            category.name,
                                             style: style.copyWith(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w500),

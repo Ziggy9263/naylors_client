@@ -89,8 +89,11 @@ class ProductListBloc extends Bloc<ProductEvent, ProductState> {
     if (event is ProductListRequested) {
       yield ProductListLoadInProgress();
       try {
-        final ProductList productList = await productRepository.getProducts();
-        yield ProductListLoadSuccess(productList: productList);
+        final ProductList productList = 
+          (event.category != null)
+          ? await productRepository.getProductsByCategory(event.category)
+          : await productRepository.getProducts();
+        yield ProductListLoadSuccess(productList: productList, category: event.category);
       } catch (_) {
         yield ProductListLoadFailure(error: _);
       }

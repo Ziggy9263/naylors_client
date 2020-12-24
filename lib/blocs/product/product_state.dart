@@ -33,12 +33,13 @@ class ProductListLoadInProgress extends ProductState {}
 
 class ProductListLoadSuccess extends ProductState {
   final ProductList productList;
+  final Category category;
 
-  const ProductListLoadSuccess({@required this.productList})
+  const ProductListLoadSuccess({@required this.productList, this.category})
       : assert(productList != null);
 
   @override
-  List<Object> get props => [productList];
+  List<Object> get props => [productList, category];
 }
 
 class ProductListLoadFailure extends ProductState {

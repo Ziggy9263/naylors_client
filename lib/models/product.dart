@@ -22,15 +22,52 @@ class Category extends Equatable {
     return Category(id: '', code: 0, name: '');
   }
 
+  factory Category.idOnly(String id) {
+    return Category(id: id, code: 0, name: '');
+  }
+
   @override
   List<Object> get props => [id, code, name];
+}
+
+class CategoryList {
+  List<Category> list;
+
+  CategoryList({this.list});
+
+  factory CategoryList.fromJSON(Map<String, dynamic> json) {
+    List<dynamic> dynamicList = json as List;
+    List<Category> categories = List<Category>();
+    dynamicList.forEach((f) => {categories.add(Category.fromJSON(f))});
+    return CategoryList(list: categories);
+  }
+
+  factory CategoryList.fromList(List<dynamic> list) {
+    List<Category> categories = List<Category>();
+    list.forEach((f) {
+      Category c = Category.fromJSON(f);
+      categories.add(c);
+    });
+    return CategoryList(list: categories);
+  }
+
+  factory CategoryList.fromString(String j) {
+    Map<String, dynamic> json = jsonDecode(j);
+    List<dynamic> dynamicList = json['categories'] as List;
+    List<Category> categories = List<Category>();
+    dynamicList.forEach((f) {
+      Category c = Category.fromJSON(f);
+      categories.add(c);
+    });
+    return CategoryList(list: categories);
+  }
 }
 
 class Department extends Equatable {
   final String id;
   final int code;
   final String name;
-  final List<dynamic> categories;
+  final CategoryList categories;
 
   Department(
       {@required this.id,
@@ -45,28 +82,11 @@ class Department extends Equatable {
         id: json['_id'].toString(),
         code: json['code'],
         name: json['name'].toString(),
-        categories: json['categories'] as List);
+        categories: CategoryList.fromList(json['categories']));
   }
 
   @override
   List<Object> get props => [id, code, name, categories];
-}
-
-class CategoryList {
-  List<Category> list;
-
-  CategoryList({this.list});
-
-  factory CategoryList.fromJSON(String j) {
-    Map<String, dynamic> json = jsonDecode(j);
-    List<dynamic> dynamicList = json['categories'] as List;
-    List<Category> categories = List<Category>();
-    dynamicList.forEach((f) {
-      Category c = Category.fromJSON(f);
-      categories.add(c);
-    });
-    return CategoryList(list: categories);
-  }
 }
 
 class DepartmentList {
@@ -77,12 +97,12 @@ class DepartmentList {
   factory DepartmentList.fromJSON(String j) {
     Map<String, dynamic> json = jsonDecode(j);
     List<dynamic> dynamicList = json['departments'] as List;
-    List<Department> categories = List<Department>();
+    List<Department> departments = List<Department>();
     dynamicList.forEach((f) {
       Department c = Department.fromJSON(f);
-      categories.add(c);
+      departments.add(c);
     });
-    return DepartmentList(list: categories);
+    return DepartmentList(list: departments);
   }
 }
 
@@ -117,9 +137,12 @@ class ProductDetail extends Equatable {
         tag: json['tag'].toString(),
         name: json['name'] as String,
         description: json['description'] as String,
-        category: (json['category'] != null)
+        category: (json['category'] != null &&
+                json['category'] is Map<String, dynamic>)
             ? Category.fromJSON(json['category'])
-            : Category.empty(),
+            : (json['category'] is String)
+                ? Category.idOnly(json['category'])
+                : Category.empty(),
         price: json['price'].toDouble(),
         images: json['images'],
         sizes: json['sizes'],

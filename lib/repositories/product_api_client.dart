@@ -26,6 +26,22 @@ class ProductApiClient {
     }
   }
 
+  Future<ProductList> fetchByCategory(Category category) async {
+    final productsUrl = "$baseUrl/api/products/?q=${category.id}";
+    final response = await this.httpClient.get(productsUrl);
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      var data = ProductList.fromJSON(response.body);
+      return data;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to Get Products');
+    }
+  }
+
   Future<ProductDetail> getProduct(String tag) async {
     final productUrl = "$baseUrl/api/products/$tag";
     final response = await this.httpClient.get(productUrl);
@@ -53,8 +69,8 @@ class ProductApiClient {
   Future<List<CartItem>> populate(List<CartItem> detail) async {
     for (int index = 0; index < detail.length; index++) {
       if (detail[index].detail == null) {
-        detail[index].detail = await this
-            .getProduct(detail[index].product.toString());
+        detail[index].detail =
+            await this.getProduct(detail[index].product.toString());
       }
     }
     return detail;

@@ -17,7 +17,7 @@ class CategoryApiClient {
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      var data = CategoryList.fromJSON(response.body);
+      var data = CategoryList.fromString(response.body);
       return data;
     } else {
       // If the server did not return a 200 OK response,
@@ -43,7 +43,7 @@ class CategoryApiClient {
     final response = await this.httpClient.get(categoryUrl);
 
     if (response.statusCode == 200) {
-      var data = CategoryList.fromJSON(response.body);
+      var data = CategoryList.fromString(response.body);
       return data;
     } else {
       throw Exception('Search for $query failed!');
