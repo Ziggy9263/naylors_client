@@ -42,9 +42,9 @@ class CategoryPage extends StatelessWidget {
             departmentList.forEach((department) {
               var catList = department.categories.list;
               catList.forEach((category) => {
-                if (product.category.id == category.id)
-                  populatedDepartments.add(department)
-              });
+                    if (product.category.id == category.id)
+                      populatedDepartments.add(department)
+                  });
             });
           });
         }
@@ -77,50 +77,67 @@ class CategoryPage extends StatelessWidget {
                           var category = item.categories.list[index];
                           var numProducts = 0;
                           products.forEach((product) => {
-                            if (product.category.id == category.id)
-                              numProducts += 1
-                          });
-                          return numProducts > 0 ? Card(
-                            child: InkWell(
-                              onTap: () {
-                                BlocProvider.of<NavigatorBloc>(context)
-                                    .add(NavigatorToProducts());
-                                BlocProvider.of<ProductListBloc>(context).add(
-                                    ProductListRequested(category: category));
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 8),
-                                child: LimitedBox(
-                                  maxHeight: 60,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text(
-                                        "${item.code}-${formatCat(category.code)}",
-                                        style: style.copyWith(
-                                          color: Colors.lightBlue,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 24,
+                                if (product.category.id == category.id)
+                                  numProducts += 1
+                              });
+                          return numProducts > 0
+                              ? Card(
+                                  child: InkWell(
+                                    onTap: () {
+                                      BlocProvider.of<NavigatorBloc>(context)
+                                          .add(NavigatorToProducts());
+                                      BlocProvider.of<ProductListBloc>(context)
+                                          .add(ProductListRequested(
+                                              category: category));
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 8),
+                                      child: LimitedBox(
+                                        maxHeight: 60,
+                                        child: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "${item.code}-${formatCat(category.code)}",
+                                              style: style.copyWith(
+                                                color: Colors.lightBlue,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.0),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      category.name,
+                                                      style: style.copyWith(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        numProducts.toString(),
+                                                        style: style.copyWith(
+                                                          color: Colors.grey,
+                                                        ),
+                                                        textAlign: TextAlign.end,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: Text(
-                                            category.name,
-                                            style: style.copyWith(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ) : Container();
+                                )
+                              : Container();
                         },
                       )
                     ],

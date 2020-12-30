@@ -88,129 +88,198 @@ class ProductListBody extends StatelessWidget {
             child: Column(
               children: [
                 (category != null)
-                    ? Text("Products in ${category.name}",
-                        style: style.copyWith(color: Colors.white))
+                    ? Material(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.elliptical(32, 16),
+                          topRight: Radius.elliptical(32, 16),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        type: MaterialType.transparency,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.lightBlue[600],
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          height: 40,
+                          alignment: Alignment.center,
+                          child: Text("Products in ${category.name}",
+                              style: style.copyWith(color: Colors.white)),
+                        ),
+                      )
                     : Container(),
-                ListView.builder(
-                  itemCount: productList.length,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    final item = productList[index];
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.lightBlue[600],
+                  ),
+                  child: ListView.builder(
+                    itemCount: productList.length,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final item = productList[index];
+                      var priceChildren = <Widget>[
+                        Text(
+                          "\$${format(item.price)}",
+                          style: style.copyWith(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                          child: Text((item.taxExempt) ? '' : '+Tax',
+                              style: style.copyWith(
+                                fontWeight: FontWeight.w200,
+                                fontSize: 12,
+                              )),
+                        ),
+                      ];
 
-                    return Card(
-                      child: InkWell(
-                        onTap: () {
-                          BlocProvider.of<NavigatorBloc>(context).add(
-                              NavigatorToProduct(product: int.parse(item.tag)));
-                          BlocProvider.of<ProductBloc>(context)
-                              .add(ProductReset());
-                          this.parent.setState(() {});
-                        },
-                        child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          child: LimitedBox(
-                            maxHeight: 64,
-                            child: Row(
-                              children: <Widget>[
-                                AspectRatio(
-                                    aspectRatio: 487 / 451,
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      alignment: FractionalOffset.center,
-                                      image: AssetImage((item.images.isNotEmpty)
-                                          ? item.images[0]
-                                          : 'no-image.png'),
-                                    )))),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(item.name,
-                                          style: style.copyWith(
-                                              fontWeight: FontWeight.w500)),
-                                      Expanded(
-                                        child: Align(
-                                          alignment:
-                                              FractionalOffset.centerLeft,
+                      return Card(
+                        child: InkWell(
+                          onTap: () {
+                            BlocProvider.of<NavigatorBloc>(context).add(
+                                NavigatorToProduct(
+                                    product: int.parse(item.tag)));
+                            BlocProvider.of<ProductBloc>(context)
+                                .add(ProductReset());
+                            this.parent.setState(() {});
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 8),
+                            child: LimitedBox(
+                              maxHeight: category == null ? 64 : 48,
+                              child: Row(
+                                children: <Widget>[
+                                  category == null
+                                      ? AspectRatio(
+                                          aspectRatio: 487 / 451,
                                           child: Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(8, 2, 8, 2),
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue[400],
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                            ),
-                                            child: Text(
-                                              "> ${item.category.code.toString().padLeft(2, '0')}-${item.category.name}",
-                                              style: style.copyWith(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              softWrap: false,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                            fit: BoxFit.fitWidth,
+                                            alignment: FractionalOffset.center,
+                                            image: AssetImage(
+                                                (item.images.isNotEmpty)
+                                                    ? item.images[0]
+                                                    : 'no-image.png'),
+                                          ))))
+                                      : Container(),
+                                  category == null
+                                      ? SizedBox(width: 12)
+                                      : Container(),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(item.name,
+                                            style: style.copyWith(
+                                                fontWeight: FontWeight.w500)),
+                                        category == null
+                                            ? Expanded(
+                                                child: Align(
+                                                  alignment: FractionalOffset
+                                                      .centerLeft,
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            8, 2, 8, 2),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.blue[400],
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15.0),
+                                                    ),
+                                                    child: Text(
+                                                      "> ${item.category.code.toString().padLeft(2, '0')}-${item.category.name}",
+                                                      style: style.copyWith(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      softWrap: false,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: <Widget>[
-                                    Text(
-                                      "\$${format(item.price)}",
-                                      style: style.copyWith(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 32,
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-                                      child:
-                                          Text((item.taxExempt) ? '' : '+Tax',
-                                              style: style.copyWith(
-                                                fontWeight: FontWeight.w200,
-                                                fontSize: 12,
-                                              )),
-                                    ),
-                                  ],
-                                ),
-                                BlocProvider.of<AuthBloc>(context).isAdmin
-                                    ? IconButton(
-                                        icon: Icon(Icons.edit),
-                                        padding: EdgeInsets.all(2),
-                                        onPressed: () {
-                                          BlocProvider.of<ProductBloc>(context)
-                                              .add(ProductReset());
-                                          BlocProvider.of<NavigatorBloc>(
-                                                  context)
-                                              .add(NavigatorToProductEdit(
-                                                  product:
-                                                      int.parse(item.tag)));
-                                          parent.setState(() {
-                                            parent.headerTitle =
-                                                "Naylor's Online: Product Edit";
-                                          });
-                                        })
-                                    : Container(),
-                              ],
+                                  category == null
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: priceChildren,
+                                        )
+                                      : Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                          children: priceChildren,
+                                        ),
+                                  BlocProvider.of<AuthBloc>(context).isAdmin
+                                      ? IconButton(
+                                          icon: Icon(Icons.edit),
+                                          padding: EdgeInsets.all(2),
+                                          onPressed: () {
+                                            BlocProvider.of<ProductBloc>(
+                                                    context)
+                                                .add(ProductReset());
+                                            BlocProvider.of<NavigatorBloc>(
+                                                    context)
+                                                .add(NavigatorToProductEdit(
+                                                    product:
+                                                        int.parse(item.tag)));
+                                            parent.setState(() {
+                                              parent.headerTitle =
+                                                  "Naylor's Online: Product Edit";
+                                            });
+                                          })
+                                      : Container(),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
+                category != null
+                    ? Material(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.elliptical(32, 16),
+                          bottomRight: Radius.elliptical(32, 16),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        type: MaterialType.transparency,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.lightBlue[600],
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          child: FlatButton(
+                            padding: EdgeInsets.all(8.0),
+                            color: Colors.lightBlue[700],
+                            child: Text(
+                              'Return to Categories',
+                              style: style.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
             onRefresh: () async {

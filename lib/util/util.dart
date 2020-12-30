@@ -1,5 +1,6 @@
 export 'format.dart';
 export 'card_utils.dart';
+export 'currency.dart';
 
 import 'package:naylors_client/models/models.dart';
 

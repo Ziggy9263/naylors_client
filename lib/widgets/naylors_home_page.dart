@@ -62,9 +62,10 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        floatingActionButton: 
-        (BlocProvider.of<NavigatorBloc>(context).floatingButton != null)
-        ? BlocProvider.of<NavigatorBloc>(context).floatingButton : null,
+        floatingActionButton:
+            (BlocProvider.of<NavigatorBloc>(context).floatingButton != null)
+                ? BlocProvider.of<NavigatorBloc>(context).floatingButton
+                : null,
         backgroundColor: Colors.lightBlue,
         appBar: BlocProvider.of<NavigatorBloc>(context).appBarToggle
             ? AppBar(
@@ -206,6 +207,11 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
                         payload: 'Default_Sound');
                   })
             ]);
+          }
+          if (state is NavigatorLoading) {
+            return Center(
+                child:
+                    CircularProgressIndicator(backgroundColor: Colors.white));
           }
           return Center(child: CircularProgressIndicator());
         }),

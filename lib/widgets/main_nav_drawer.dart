@@ -50,6 +50,8 @@ class MainNavDrawer extends StatelessWidget {
                       style: parent.style.copyWith(fontSize: 16)),
                   onTap: () {
                     BlocProvider.of<ProductBloc>(context).add(ProductReset());
+                    BlocProvider.of<ProductListBloc>(context)
+                        .add(ProductListRequested());
                     BlocProvider.of<NavigatorBloc>(context)
                         .add(NavigatorToProducts());
                     parent.setState(() {

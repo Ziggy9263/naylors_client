@@ -63,67 +63,74 @@ class _DepartmentCategoryDropdownsState
             if (departments[i].categories.list.indexOf(fields.category) != -1)
               fields.department = departments[i];
           }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Expanded(
+              child: DropdownButton(
+                isExpanded: true,
+                value: departments[departmentSelectionIndex],
+                items: departments.map<DropdownMenuItem<dynamic>>((item) {
+                  return DropdownMenuItem<dynamic>(
+                    value: item,
+                    child: Text('${item.code} - ${item.name}',
+                        style: style, overflow: TextOverflow.ellipsis),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  SchedulerBinding.instance.addPostFrameCallback((t) {
+                    parent.setState(() {
+                      departmentSelectionIndex = departments.indexOf(value);
+                      fields.department = value;
+                      fields.category = departments[departmentSelectionIndex]
+                          .categories
+                          .list[0];
+                      categorySelectionIndex = 0;
+                    });
+                  });
+                },
+              ),
+            ),
+            SizedBox(width: 4.0),
+            Expanded(
+              child: DropdownButton(
+                isExpanded: true,
+                value: departments[departmentSelectionIndex]
+                    .categories
+                    .list[categorySelectionIndex],
+                items: departments[departmentSelectionIndex]
+                    .categories
+                    .list
+                    .map<DropdownMenuItem<dynamic>>((item) {
+                  return DropdownMenuItem<dynamic>(
+                    value: item,
+                    child: Text('${item.code} - ${item.name}',
+                        style: style, overflow: TextOverflow.ellipsis),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  SchedulerBinding.instance.addPostFrameCallback((t) {
+                    parent.setState(() {
+                      categorySelectionIndex =
+                          departments[departmentSelectionIndex]
+                              .categories
+                              .list
+                              .indexOf(value);
+                      fields.category = value;
+                    });
+                  });
+                },
+              ),
+            ),
+          ],
+        );
       }
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Expanded(
-            child: DropdownButton(
-              isExpanded: true,
-              value: departments[departmentSelectionIndex],
-              items: departments.map<DropdownMenuItem<dynamic>>((item) {
-                return DropdownMenuItem<dynamic>(
-                  value: item,
-                  child: Text('${item.code} - ${item.name}',
-                      style: style, overflow: TextOverflow.ellipsis),
-                );
-              }).toList(),
-              onChanged: (value) {
-                SchedulerBinding.instance.addPostFrameCallback((t) {
-                  parent.setState(() {
-                    departmentSelectionIndex = departments.indexOf(value);
-                    fields.department = value;
-                    fields.category = departments[departmentSelectionIndex]
-                        .categories
-                        .list[0];
-                    categorySelectionIndex = 0;
-                  });
-                });
-              },
-            ),
-          ),
-          SizedBox(width: 4.0),
-          Expanded(
-            child: DropdownButton(
-              isExpanded: true,
-              value: departments[departmentSelectionIndex]
-                  .categories
-                  .list[categorySelectionIndex],
-              items: departments[departmentSelectionIndex]
-                  .categories
-                  .list
-                  .map<DropdownMenuItem<dynamic>>((item) {
-                return DropdownMenuItem<dynamic>(
-                  value: item,
-                  child: Text('${item.code} - ${item.name}',
-                      style: style, overflow: TextOverflow.ellipsis),
-                );
-              }).toList(),
-              onChanged: (value) {
-                SchedulerBinding.instance.addPostFrameCallback((t) {
-                  parent.setState(() {
-                    categorySelectionIndex =
-                        departments[departmentSelectionIndex]
-                            .categories
-                            .list
-                            .indexOf(value);
-                    fields.category = value;
-                  });
-                });
-              },
-            ),
-          ),
+          CircularProgressIndicator(backgroundColor: Colors.lightBlue),
         ],
       );
     });

@@ -10,6 +10,8 @@ abstract class NaylorsNavigatorState extends Equatable {
 
 class NavigatorInitial extends NaylorsNavigatorState {}
 
+class NavigatorLoading extends NaylorsNavigatorState {}
+
 class NavigatorAtHome extends NaylorsNavigatorState {}
 
 class NavigatorAtProducts extends NaylorsNavigatorState {}

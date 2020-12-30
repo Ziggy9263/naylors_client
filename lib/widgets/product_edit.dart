@@ -36,6 +36,7 @@ class ProductEditState extends State<ProductEdit> {
   ProductEditFocus focus = new ProductEditFocus();
   ProductDetail product;
   ProductList products;
+  bool initialized = false;
 
   @override
   initState() {
@@ -108,7 +109,6 @@ class ProductEditState extends State<ProductEdit> {
                           this.menuToggle = false;
                           this.overlayEntry.remove();
                           parent.setState(() {
-                            this.product = null;
                           });
                           (initProduct != null)
                               ? BlocProvider.of<ProductBloc>(parent.context)
@@ -118,6 +118,24 @@ class ProductEditState extends State<ProductEdit> {
                               : BlocProvider.of<ProductBloc>(parent.context)
                                   .add(ProductEditEvent(
                                       step: ModifyStep.Initialize, tag: null));
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.clear),
+                        title: Text('Clear'),
+                        dense: true,
+                        visualDensity: VisualDensity(horizontal: -4),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        onTap: () {
+                          this.menuToggle = false;
+                          this.overlayEntry.remove();
+                          parent.setState(() {
+                            this.product = null;
+                            this.fields.product = this.product;
+                          });
+                          BlocProvider.of<ProductBloc>(parent.context).add(
+                              ProductEditEvent(
+                                  step: ModifyStep.Initialize, tag: null));
                         },
                       ),
                       ListTile(
@@ -179,55 +197,66 @@ class ProductEditState extends State<ProductEdit> {
                 .add(ProductEditEvent(step: ModifyStep.Initialize, tag: null));
       }
       if (state is ProductEditInitial) {
-        if (state.product != null && this.product == null) {
-          product = state.product;
-          fields.product = product;
-          SchedulerBinding.instance
-              .addPostFrameCallback((_) => {setState(() {})});
+        if (state.product != null &&
+            this.product == null &&
+            initialized == false) {
+          SchedulerBinding.instance.addPostFrameCallback((_) => {
+                setState(() {
+                  product = state.product;
+                  fields.product = product;
+                  initialized = true;
+                })
+              });
+        } else if (state.product == null && initialized == false) {
+          SchedulerBinding.instance.addPostFrameCallback((_) => {
+                setState(() {
+                  product = null;
+                  fields.product = product;
+                  initialized = true;
+                })
+              });
         }
-        if (state is ProductEditLoading) {
-          loading = true;
-        } else
-          loading = false;
-        if (state is ProductEditSuccess) {}
-        if (state is ProductEditFailure) {}
-        var productListState = BlocProvider.of<ProductListBloc>(context).state;
-        if (productListState is ProductListLoadSuccess) {
-          products = productListState.productList;
-        }
-        return Stack(
-          children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(color: Colors.white),
-              child: ProductEditBody(
-                  parent: this,
-                  products: products,
-                  fields: fields,
-                  formKey: _formKey,
-                  focus: focus,
-                  style: style,
-                  layerLink: _layerLink),
-            ),
-            AnimatedOpacity(
-              opacity: loading ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 500),
-              child: loading
-                  ? Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(color: Colors.black54),
-                      child: Center(
-                          child: CircularProgressIndicator(
-                              backgroundColor: Colors.white)))
-                  : Container(),
-            ),
-          ],
-        );
       }
-      return Center(
-          child: CircularProgressIndicator(backgroundColor: Colors.white));
+      if (state is ProductEditLoading) {
+        loading = true;
+      } else
+        loading = false;
+      if (state is ProductEditSuccess) {}
+      if (state is ProductEditFailure) {}
+      var productListState = BlocProvider.of<ProductListBloc>(context).state;
+      if (productListState is ProductListLoadSuccess) {
+        products = productListState.productList;
+      }
+      return Stack(
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(color: Colors.white),
+            child: ProductEditBody(
+                parent: this,
+                products: products,
+                fields: fields,
+                formKey: _formKey,
+                focus: focus,
+                style: style,
+                layerLink: _layerLink),
+          ),
+          AnimatedOpacity(
+            opacity: loading ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 500),
+            child: loading
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(color: Colors.black54),
+                    child: Center(
+                        child: CircularProgressIndicator(
+                            backgroundColor: Colors.white)))
+                : Container(),
+          ),
+        ],
+      );
     });
   }
 }

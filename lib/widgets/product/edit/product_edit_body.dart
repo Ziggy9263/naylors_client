@@ -166,6 +166,9 @@ class ProductEditBody extends StatelessWidget {
                             enabled: (fields.tag.text.isNotEmpty),
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              new CurrencyTextInputFormatter(symbol: '\$')
+                            ],
                             style: style,
                             decoration: InputDecoration(
                               contentPadding:
@@ -231,7 +234,7 @@ class ProductEditBody extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Text(
-                                    "\$${format(double.parse(fields.price.text == '' ? '0.0' : fields.price.text))}" +
+                                    "${fields.price.text}" +
                                         "${(fields.taxExempt) ? '' : ' +Tax'}",
                                     style: style.copyWith(
                                       fontSize: 18,
@@ -242,7 +245,7 @@ class ProductEditBody extends StatelessWidget {
                                         ..color = Colors.lightGreen[800],
                                     )),
                                 Text(
-                                    "\$${format(double.parse(fields.price.text == '' ? '0.0' : fields.price.text))}${(fields.taxExempt) ? '' : ' +Tax'}",
+                                    "${fields.price.text}${(fields.taxExempt) ? '' : ' +Tax'}",
                                     style: style.copyWith(
                                       color: Colors.lightGreen[600],
                                       fontSize: 18,

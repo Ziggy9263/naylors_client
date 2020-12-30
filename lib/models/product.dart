@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:naylors_client/util/util.dart';
 
 /// ModifyStep used in (Product|Category|Department)EditEvent in blocs/product_bloc.dart
 enum ModifyStep { Initialize, Create, Update, Delete }
@@ -278,21 +279,33 @@ class ProductEditFields {
   }
 
   set product(ProductDetail product) {
-    this.tag.value = TextEditingValue(text: product.tag);
-    this.name.value = TextEditingValue(text: product.name);
-    this.description.value = TextEditingValue(text: product.description);
-    this.price.value = TextEditingValue(text: product.price.toString());
-    this.taxExempt = product.taxExempt ?? false;
-    this.root = product.root ?? false;
-    this.department = product.department;
-    this.category = product.category;
-    this.sizes = product.sizes;
+    if (product == null) {
+      this.tag.value = TextEditingValue(text: '');
+      this.name.value = TextEditingValue(text: '');
+      this.description.value = TextEditingValue(text: '');
+      this.price.value = TextEditingValue(text: '\$${format(0.0)}');
+      this.taxExempt = true;
+      this.root = true;
+      this.department = new Department.empty();
+      this.category = new Category.empty();
+      this.sizes = new List<dynamic>();
+    } else {
+      this.tag.value = TextEditingValue(text: product.tag);
+      this.name.value = TextEditingValue(text: product.name);
+      this.description.value = TextEditingValue(text: product.description);
+      this.price.value = TextEditingValue(text: '\$${format(product.price)}');
+      this.taxExempt = product.taxExempt ?? true;
+      this.root = product.root ?? true;
+      this.department = product.department;
+      this.category = product.category;
+      this.sizes = product.sizes;
+    }
   }
 
   set tagless(ProductDetail product) {
     this.name.value = TextEditingValue(text: product.name);
     this.description.value = TextEditingValue(text: product.description);
-    this.price.value = TextEditingValue(text: product.price.toString());
+    this.price.value = TextEditingValue(text: '\$${format(product.price)}');
     this.taxExempt = product.taxExempt ?? false;
     this.root = product.root ?? false;
     this.department = product.department;
@@ -302,6 +315,6 @@ class ProductEditFields {
 
   @override
   String toString() {
-    return 'Fields: {tag: ${tag.text}, name: \"${name.text}\", description: \"${description.text}\", price: ${price.text}, taxExempt: $taxExempt, root: $root, department: ${department.toString()}, category: ${category.toString()} }';
+    return 'Fields: {tag: ${tag.text}, name: \"${name.text}\", description: \"${description.text}\", price: ${price.text}, taxExempt: $taxExempt, root: $root, department: ${department.toString()}, category: ${category.toString()}, sizes: $sizes }';
   }
 }

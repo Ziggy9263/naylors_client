@@ -30,6 +30,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       floatingButton = null;
     }
     if (event is NavigatorToProducts) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
@@ -37,6 +38,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtProducts();
     }
     if (event is NavigatorToCategories) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
@@ -44,6 +46,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtCategories();
     }
     if (event is NavigatorToProduct) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
@@ -51,6 +54,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtProduct(product: event.product);
     }
     if (event is NavigatorToProductEdit) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
@@ -58,6 +62,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtProductEdit(product: event.product);
     }
     if (event is NavigatorToOrders) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
@@ -65,6 +70,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtOrders();
     }
     if (event is NavigatorToProfile) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
@@ -72,6 +78,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtProfile();
     }
     if (event is NavigatorToCart) {
+      yield NavigatorLoading();
       appBarToggle = true;
       searchToggle = false;
       floatingButton = null;
@@ -82,6 +89,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
         yield NavigatorAtProducts();
     }
     if (event is NavigatorToCheckout) {
+      yield NavigatorLoading();
       appBarToggle = false;
       cartToggle = false;
       searchToggle = false;
@@ -89,11 +97,13 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       yield NavigatorAtCheckout();
     }
     if (event is NavigatorToPayment) {
+      yield NavigatorLoading();
       appBarToggle = false;
       floatingButton = null;
       yield NavigatorAtPayment(payOption: event.payOption);
     }
     if (event is NavigatorToSearch) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       floatingButton = null;
@@ -104,6 +114,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
         yield NavigatorAtProducts();
     }
     if (event is NavigatorToDebug) {
+      yield NavigatorLoading();
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
