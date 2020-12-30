@@ -35,11 +35,13 @@ class ProductEditState extends State<ProductEdit> {
   ProductEditFields fields = new ProductEditFields();
   ProductEditFocus focus = new ProductEditFocus();
   ProductDetail product;
+  ProductList products;
 
   @override
   initState() {
     super.initState();
     fields.init();
+    initSaveButton();
   }
 
   @override
@@ -47,6 +49,37 @@ class ProductEditState extends State<ProductEdit> {
     super.dispose();
     fields.dispose();
     focus.dispose();
+    disposeSaveButton();
+  }
+
+  initSaveButton() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      this.parent.setState(() {
+        BlocProvider.of<NavigatorBloc>(context).floatingButton =
+            FloatingActionButton(
+          onPressed: saveEdits,
+          backgroundColor: Colors.green,
+          child: Icon(Icons.save),
+        );
+      });
+    });
+  }
+
+  disposeSaveButton() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      this.parent.setState(() {
+        BlocProvider.of<NavigatorBloc>(context).floatingButton = null;
+      });
+    });
+  }
+
+  saveEdits() {
+    // TODO: Interface with API, create/edit products appropriately.
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      this.parent.setState(() {
+        BlocProvider.of<NavigatorBloc>(context).floatingButton = null;
+      });
+    });
   }
 
   OverlayEntry createOverlayEntry() {
@@ -84,8 +117,7 @@ class ProductEditState extends State<ProductEdit> {
                                       tag: initProduct.toString()))
                               : BlocProvider.of<ProductBloc>(parent.context)
                                   .add(ProductEditEvent(
-                                      step: ModifyStep.Initialize,
-                                      tag: null));
+                                      step: ModifyStep.Initialize, tag: null));
                         },
                       ),
                       ListTile(
@@ -139,11 +171,12 @@ class ProductEditState extends State<ProductEdit> {
     return BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
       bool loading = false;
       if (state is ProductInitial) {
+        BlocProvider.of<ProductListBloc>(context).add(ProductListRequested());
         (initProduct != null)
             ? BlocProvider.of<ProductBloc>(context).add(ProductEditEvent(
                 step: ModifyStep.Initialize, tag: initProduct.toString()))
-            : BlocProvider.of<ProductBloc>(context).add(
-                ProductEditEvent(step: ModifyStep.Initialize, tag: null));
+            : BlocProvider.of<ProductBloc>(context)
+                .add(ProductEditEvent(step: ModifyStep.Initialize, tag: null));
       }
       if (state is ProductEditInitial) {
         if (state.product != null && this.product == null) {
@@ -158,6 +191,10 @@ class ProductEditState extends State<ProductEdit> {
           loading = false;
         if (state is ProductEditSuccess) {}
         if (state is ProductEditFailure) {}
+        var productListState = BlocProvider.of<ProductListBloc>(context).state;
+        if (productListState is ProductListLoadSuccess) {
+          products = productListState.productList;
+        }
         return Stack(
           children: <Widget>[
             Container(
@@ -166,6 +203,7 @@ class ProductEditState extends State<ProductEdit> {
               decoration: BoxDecoration(color: Colors.white),
               child: ProductEditBody(
                   parent: this,
+                  products: products,
                   fields: fields,
                   formKey: _formKey,
                   focus: focus,

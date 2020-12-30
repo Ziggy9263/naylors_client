@@ -115,7 +115,7 @@ class ProductEditSizes extends StatelessWidget {
             ),
           ],
         ),
-        Container(
+        (fields.sizes.length > 0) ? Container(
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: 40,
@@ -158,10 +158,10 @@ class ProductEditSizes extends StatelessWidget {
               },
             ),
           ),
-        ),
+        ) : Container(),
         SizedBox(height: 8.0),
         Container(
-          height: 40,
+          height: (fields.sizeSelected != null) ? 40 : 0,
           child: (fields.sizeSelected != null)
               ? Row(
                   children: [

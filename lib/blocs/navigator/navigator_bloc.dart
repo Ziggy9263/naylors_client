@@ -16,6 +16,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
   bool appBarToggle = true;
   bool cartToggle = false;
   bool searchToggle = false;
+  FloatingActionButton floatingButton;
 
   @override
   Stream<NaylorsNavigatorState> mapEventToState(NavigatorEvent event) async* {
@@ -26,46 +27,54 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
     }
     if (event is NavigatorToProducts) {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtProducts();
     }
     if (event is NavigatorToCategories) {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtCategories();
     }
     if (event is NavigatorToProduct) {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtProduct(product: event.product);
     }
     if (event is NavigatorToProductEdit) {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtProductEdit(product: event.product);
     }
     if (event is NavigatorToOrders) {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtOrders();
     }
     if (event is NavigatorToProfile) {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtProfile();
     }
     if (event is NavigatorToCart) {
       appBarToggle = true;
       searchToggle = false;
+      floatingButton = null;
       cartToggle = !cartToggle;
       if (cartToggle)
         yield NavigatorAtCart();
@@ -76,15 +85,18 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       appBarToggle = false;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtCheckout();
     }
     if (event is NavigatorToPayment) {
       appBarToggle = false;
+      floatingButton = null;
       yield NavigatorAtPayment(payOption: event.payOption);
     }
     if (event is NavigatorToSearch) {
       appBarToggle = true;
       cartToggle = false;
+      floatingButton = null;
       searchToggle = !searchToggle;
       if (searchToggle)
         yield NavigatorAtSearch();
@@ -95,6 +107,7 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       appBarToggle = true;
       cartToggle = false;
       searchToggle = false;
+      floatingButton = null;
       yield NavigatorAtDebug();
     }
   }

@@ -8,6 +8,7 @@ class ProductEditBody extends StatelessWidget {
   const ProductEditBody({
     Key key,
     @required this.parent,
+    @required this.products,
     @required this.fields,
     @required GlobalKey<FormState> formKey,
     @required this.focus,
@@ -18,6 +19,7 @@ class ProductEditBody extends StatelessWidget {
         super(key: key);
 
   final ProductEditFields fields;
+  final ProductList products;
   final ProductEditState parent;
   final GlobalKey<FormState> _formKey;
   final ProductEditFocus focus;
@@ -59,7 +61,12 @@ class ProductEditBody extends StatelessWidget {
                               errorMaxLines: 3,
                             ),
                             onChanged: (_) {
-                              parent.setState(() {});
+                              parent.setState(() {
+                                if (_.length >= 5) {
+                                  products.list.forEach((p) =>
+                                      {if (p.tag == _) fields.tagless = p});
+                                }
+                              });
                             },
                             onTap: () {
                               parent.setState(() {});
@@ -224,8 +231,8 @@ class ProductEditBody extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Text(
-                                    "\$${format(double.parse(fields.price.text))}" +
-                                    "${(fields.taxExempt) ? '' : ' +Tax'}",
+                                    "\$${format(double.parse(fields.price.text == '' ? '0.0' : fields.price.text))}" +
+                                        "${(fields.taxExempt) ? '' : ' +Tax'}",
                                     style: style.copyWith(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w400,
@@ -235,7 +242,7 @@ class ProductEditBody extends StatelessWidget {
                                         ..color = Colors.lightGreen[800],
                                     )),
                                 Text(
-                                    "\$${fields.price.text}${(fields.taxExempt) ? '' : ' +Tax'}",
+                                    "\$${format(double.parse(fields.price.text == '' ? '0.0' : fields.price.text))}${(fields.taxExempt) ? '' : ' +Tax'}",
                                     style: style.copyWith(
                                       color: Colors.lightGreen[600],
                                       fontSize: 18,
@@ -248,79 +255,11 @@ class ProductEditBody extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 8.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: fields.department,
-                            obscureText: false,
-                            focusNode: focus.department,
-                            enabled: (fields.tag.text.isNotEmpty),
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            style: style,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              hintText: "Product Department (e.g. 10 - Feed)",
-                              labelText: "Department",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              errorMaxLines: 3,
-                            ),
-                            onChanged: (_) {
-                              parent.setState(() {});
-                            },
-                            onTap: () {
-                              parent.setState(() {});
-                            },
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter a department';
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 8.0),
-                        Expanded(
-                          child: TextFormField(
-                            controller: fields.category,
-                            obscureText: false,
-                            focusNode: focus.category,
-                            enabled: (fields.tag.text.isNotEmpty),
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.text,
-                            style: style,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              hintText: "Product Category (e.g. 05 - Poultry)",
-                              labelText: "Category",
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              errorMaxLines: 3,
-                            ),
-                            onChanged: (_) {
-                              parent.setState(() {});
-                            },
-                            onTap: () {
-                              parent.setState(() {});
-                            },
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter a category';
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                    DepartmentCategoryDropdowns(
+                        fields: fields,
+                        focus: focus,
+                        style: style,
+                        parent: parent),
                     (focus.description.hasFocus)
                         ? Row(
                             children: [
@@ -390,7 +329,11 @@ class ProductEditBody extends StatelessWidget {
                         return null;
                       },
                     ),
-                    ProductEditSizes(style: style, fields: fields, parent: parent),
+                    SizedBox(height: 4),
+                    ProductEditSizes(
+                        style: style, fields: fields, parent: parent),
+                    ImageUploadButton(style: style, parent: parent),
+                    Text(fields.toString())
                   ],
                 ),
               ),

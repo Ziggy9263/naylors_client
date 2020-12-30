@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
+import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class MainNavDrawer extends StatelessWidget {
@@ -38,121 +39,140 @@ class MainNavDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.store, color: Colors.blueGrey),
-              title:
-                  Text('Products', style: parent.style.copyWith(fontSize: 16)),
-              onTap: () {
-                BlocProvider.of<ProductBloc>(context).add(ProductReset());
-                BlocProvider.of<NavigatorBloc>(context)
-                    .add(NavigatorToProducts());
-                parent.setState(() {
-                  parent.headerTitle = "Naylor's Online: Products";
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.filter_list, color: Colors.blueGrey),
-              title: Text('Categories',
-                  style: parent.style.copyWith(fontSize: 16)),
-              onTap: () {
-                BlocProvider.of<NavigatorBloc>(context)
-                    .add(NavigatorToCategories());
-                parent.setState(() {
-                  parent.headerTitle = "Naylor's Online: Categories";
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card, color: Colors.blueGrey),
-              title: Text('Orders', style: parent.style.copyWith(fontSize: 16)),
-              onTap: () {
-                BlocProvider.of<NavigatorBloc>(context)
-                    .add(NavigatorToOrders());
-                BlocProvider.of<OrderBloc>(context).add(OrderReset());
-                parent.setState(() {
-                  parent.headerTitle = "Naylor's Online: Your Orders";
-                });
-                Navigator.pop(context);
-              },
-            ),
-            BlocProvider.of<AuthBloc>(context).isAdmin
-                ? Divider(
-                    color: Colors.grey,
-                    height: 20,
-                    thickness: 1,
-                    indent: 20,
-                    endIndent: 20,
-                  )
-                : Container(),
-            BlocProvider.of<AuthBloc>(context).isAdmin
-                ? ListTile(
-                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                    title: Text('Manage Products',
-                        style: parent.style
-                            .copyWith(fontSize: 16, color: Colors.white)),
-                    tileColor: Colors.blueGrey,
-                    onTap: () {
-                      BlocProvider.of<ProductBloc>(context).add(ProductReset());
-                      BlocProvider.of<NavigatorBloc>(context)
-                          .add(NavigatorToProductEdit());
-                      parent.setState(() {
-                        parent.headerTitle = "Naylor's Online: Product Edit";
-                      });
-                      Navigator.of(context).pop();
-                    })
-                : Container(),
-            BlocProvider.of<AuthBloc>(context).isAdmin
-                ? ListTile(
-                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                    title: Text('Manage Categories',
-                        style: parent.style
-                            .copyWith(fontSize: 16, color: Colors.white)),
-                    tileColor: Colors.blueGrey,
-                    onTap: () {
-                      BlocProvider.of<NavigatorBloc>(context)
-                          .add(NavigatorToProductEdit());
-                      parent.setState(() {
-                        parent.headerTitle = "Naylor's Online: Category Edit";
-                      });
-                      Navigator.of(context).pop();
-                    })
-                : Container(),
-            BlocProvider.of<AuthBloc>(context).isAdmin
-                ? ListTile(
-                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                    title: Text('Manage Orders',
-                        style: parent.style
-                            .copyWith(fontSize: 16, color: Colors.white)),
-                    tileColor: Colors.blueGrey,
-                    onTap: () {
-                      BlocProvider.of<NavigatorBloc>(context)
-                          .add(NavigatorToProductEdit());
-                      parent.setState(() {
-                        parent.headerTitle = "Naylor's Online: Manage Orders";
-                      });
-                      Navigator.of(context).pop();
-                    })
-                : Container(),
-            BlocProvider.of<AuthBloc>(context).isAdmin
-                ? ListTile(
-                    leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                    title: Text('Manage Users',
-                        style: parent.style
-                            .copyWith(fontSize: 16, color: Colors.white)),
-                    tileColor: Colors.blueGrey,
-                    onTap: () {
-                      BlocProvider.of<NavigatorBloc>(context)
-                          .add(NavigatorToProductEdit());
-                      parent.setState(() {
-                        parent.headerTitle = "Naylor's Online: Manage Users";
-                      });
-                      Navigator.of(context).pop();
-                    })
-                : Container(),
-            /*BlocProvider.of<AuthBloc>(context).isAdmin
+            ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              addRepaintBoundaries: false,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.store, color: Colors.blueGrey),
+                  title: Text('Products',
+                      style: parent.style.copyWith(fontSize: 16)),
+                  onTap: () {
+                    BlocProvider.of<ProductBloc>(context).add(ProductReset());
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToProducts());
+                    parent.setState(() {
+                      parent.headerTitle = "Naylor's Online: Products";
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.filter_list, color: Colors.blueGrey),
+                  title: Text('Categories',
+                      style: parent.style.copyWith(fontSize: 16)),
+                  onTap: () {
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToCategories());
+                    parent.setState(() {
+                      parent.headerTitle = "Naylor's Online: Categories";
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.credit_card, color: Colors.blueGrey),
+                  title: Text('Orders',
+                      style: parent.style.copyWith(fontSize: 16)),
+                  onTap: () {
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToOrders());
+                    BlocProvider.of<OrderBloc>(context).add(OrderReset());
+                    parent.setState(() {
+                      parent.headerTitle = "Naylor's Online: Your Orders";
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                BlocProvider.of<AuthBloc>(context).isAdmin
+                    ? Divider(
+                        color: Colors.grey,
+                        height: 20,
+                        thickness: 1,
+                        indent: 20,
+                        endIndent: 20,
+                      )
+                    : Container(),
+                BlocProvider.of<AuthBloc>(context).isAdmin
+                    ? ListTile(
+                        dense: true,
+                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                        title: Text('Manage Products',
+                            style: parent.style
+                                .copyWith(fontSize: 16, color: Colors.white)),
+                        tileColor: Colors.blueGrey,
+                        onTap: () {
+                          BlocProvider.of<ProductBloc>(context)
+                              .add(ProductReset());
+                          BlocProvider.of<ProductBloc>(context).add(
+                              ProductEditEvent(
+                                  step: ModifyStep.Initialize, tag: null));
+                          BlocProvider.of<NavigatorBloc>(context)
+                              .add(NavigatorToProductEdit());
+
+                          parent.setState(() {
+                            parent.headerTitle =
+                                "Naylor's Online: Product Edit";
+                          });
+                          Navigator.of(context).pop();
+                        })
+                    : Container(),
+                BlocProvider.of<AuthBloc>(context).isAdmin
+                    ? ListTile(
+                        dense: true,
+                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                        title: Text('Manage Categories',
+                            style: parent.style
+                                .copyWith(fontSize: 16, color: Colors.white)),
+                        tileColor: Colors.blueGrey,
+                        onTap: () {
+                          BlocProvider.of<NavigatorBloc>(context)
+                              .add(NavigatorToProductEdit());
+                          parent.setState(() {
+                            parent.headerTitle =
+                                "Naylor's Online: Category Edit";
+                          });
+                          Navigator.of(context).pop();
+                        })
+                    : Container(),
+                BlocProvider.of<AuthBloc>(context).isAdmin
+                    ? ListTile(
+                        dense: true,
+                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                        title: Text('Manage Orders',
+                            style: parent.style
+                                .copyWith(fontSize: 16, color: Colors.white)),
+                        tileColor: Colors.blueGrey,
+                        onTap: () {
+                          BlocProvider.of<NavigatorBloc>(context)
+                              .add(NavigatorToProductEdit());
+                          parent.setState(() {
+                            parent.headerTitle =
+                                "Naylor's Online: Manage Orders";
+                          });
+                          Navigator.of(context).pop();
+                        })
+                    : Container(),
+                BlocProvider.of<AuthBloc>(context).isAdmin
+                    ? ListTile(
+                        dense: true,
+                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
+                        title: Text('Manage Users',
+                            style: parent.style
+                                .copyWith(fontSize: 16, color: Colors.white)),
+                        tileColor: Colors.blueGrey,
+                        onTap: () {
+                          BlocProvider.of<NavigatorBloc>(context)
+                              .add(NavigatorToProductEdit());
+                          parent.setState(() {
+                            parent.headerTitle =
+                                "Naylor's Online: Manage Users";
+                          });
+                          Navigator.of(context).pop();
+                        })
+                    : Container(),
+                /*BlocProvider.of<AuthBloc>(context).isAdmin
                 ? ListTile(
                     leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
                     title: Text('Debugging Tools',
@@ -168,33 +188,38 @@ class MainNavDrawer extends StatelessWidget {
                       Navigator.of(context).pop();
                     })
                 : Container(),*/
-            Divider(
-              color: Colors.grey,
-              height: 20,
-              thickness: 1,
-              indent: 20,
-              endIndent: 20,
-            ),
-            ListTile(
-              leading: Icon(Icons.account_box, color: Colors.blueGrey),
-              title:
-                  Text('Profile', style: parent.style.copyWith(fontSize: 16)),
-              onTap: () {
-                BlocProvider.of<NavigatorBloc>(context)
-                    .add(NavigatorToProfile());
-                parent.setState(() {
-                  parent.headerTitle = "Naylor's Online: Your Profile";
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app, color: Colors.blueGrey),
-              title: Text('Logout', style: parent.style.copyWith(fontSize: 16)),
-              onTap: () {
-                BlocProvider.of<AuthBloc>(context).add(AuthLogout());
-                Navigator.of(context).pushReplacementNamed('/login');
-              },
+                Divider(
+                  color: Colors.grey,
+                  height: 20,
+                  thickness: 1,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                ListTile(
+                  dense: true,
+                  leading: Icon(Icons.account_box, color: Colors.blueGrey),
+                  title: Text('Profile',
+                      style: parent.style.copyWith(fontSize: 16)),
+                  onTap: () {
+                    BlocProvider.of<NavigatorBloc>(context)
+                        .add(NavigatorToProfile());
+                    parent.setState(() {
+                      parent.headerTitle = "Naylor's Online: Your Profile";
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  dense: true,
+                  leading: Icon(Icons.exit_to_app, color: Colors.blueGrey),
+                  title: Text('Logout',
+                      style: parent.style.copyWith(fontSize: 16)),
+                  onTap: () {
+                    BlocProvider.of<AuthBloc>(context).add(AuthLogout());
+                    Navigator.of(context).pushReplacementNamed('/login');
+                  },
+                ),
+              ],
             ),
             Expanded(child: SizedBox()),
             Row(

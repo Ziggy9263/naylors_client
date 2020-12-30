@@ -31,3 +31,5 @@ export 'search/search_page.dart';
 /// Misc. Reusable
 export 'quantity_incremental_buttons.dart';
 export 'main_nav_drawer.dart';
+export 'image_upload_button.dart';
+export 'department_category_dropdowns.dart';

@@ -62,6 +62,9 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
+        floatingActionButton: 
+        (BlocProvider.of<NavigatorBloc>(context).floatingButton != null)
+        ? BlocProvider.of<NavigatorBloc>(context).floatingButton : null,
         backgroundColor: Colors.lightBlue,
         appBar: BlocProvider.of<NavigatorBloc>(context).appBarToggle
             ? AppBar(

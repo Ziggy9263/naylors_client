@@ -27,6 +27,11 @@ class Category extends Equatable {
   }
 
   @override
+  String toString() {
+    return 'Category: {id: $id, code: $code, name: \"$name\" }';
+  }
+
+  @override
   List<Object> get props => [id, code, name];
 }
 
@@ -40,6 +45,10 @@ class CategoryList {
     List<Category> categories = List<Category>();
     dynamicList.forEach((f) => {categories.add(Category.fromJSON(f))});
     return CategoryList(list: categories);
+  }
+
+  factory CategoryList.empty() {
+    return CategoryList(list: new List<Category>());
   }
 
   factory CategoryList.fromList(List<dynamic> list) {
@@ -85,6 +94,16 @@ class Department extends Equatable {
         categories: CategoryList.fromList(json['categories']));
   }
 
+  factory Department.empty() {
+    return Department(
+        id: '', code: 0, name: '', categories: new CategoryList.empty());
+  }
+
+  @override
+  String toString() {
+    return 'Department: {id: $id, code: $code, name: \"$name\", categories: [${categories.list.length}] }';
+  }
+
   @override
   List<Object> get props => [id, code, name, categories];
 }
@@ -110,6 +129,7 @@ class ProductDetail extends Equatable {
   final String tag;
   final String name;
   final String description;
+  final Department department;
   final Category category;
   final double price;
   final List images;
@@ -121,6 +141,7 @@ class ProductDetail extends Equatable {
       {this.tag,
       this.name,
       this.description,
+      this.department,
       this.category,
       this.price,
       this.images,
@@ -129,8 +150,18 @@ class ProductDetail extends Equatable {
       this.root});
 
   @override
-  List<Object> get props =>
-      [tag, name, description, category, price, images, sizes, taxExempt, root];
+  List<Object> get props => [
+        tag,
+        name,
+        description,
+        department,
+        category,
+        price,
+        images,
+        sizes,
+        taxExempt,
+        root
+      ];
 
   factory ProductDetail.fromJSON(Map<String, dynamic> json) {
     return ProductDetail(
@@ -200,8 +231,8 @@ class ProductEditFields {
   TextEditingController price;
   bool taxExempt = false;
   bool root = false;
-  TextEditingController department;
-  TextEditingController category;
+  Department department;
+  Category category;
   TextEditingController sizeTag;
   TextEditingController sizeSize;
   List<dynamic> sizes;
@@ -230,8 +261,8 @@ class ProductEditFields {
     this.name = new TextEditingController();
     this.description = new TextEditingController();
     this.price = new TextEditingController(text: "0.00");
-    this.department = new TextEditingController();
-    this.category = new TextEditingController();
+    this.department = new Department.empty();
+    this.category = new Category.empty();
     this.sizes = new List<dynamic>();
     this.sizeTag = new TextEditingController();
     this.sizeSize = new TextEditingController();
@@ -242,8 +273,6 @@ class ProductEditFields {
     this.name.dispose();
     this.description.dispose();
     this.price.dispose();
-    this.department.dispose();
-    this.category.dispose();
     this.sizeTag.dispose();
     this.sizeSize.dispose();
   }
@@ -255,8 +284,24 @@ class ProductEditFields {
     this.price.value = TextEditingValue(text: product.price.toString());
     this.taxExempt = product.taxExempt ?? false;
     this.root = product.root ?? false;
-    this.department.value = TextEditingValue(text: product.category.name);
-    this.category.value = TextEditingValue(text: product.category.name);
+    this.department = product.department;
+    this.category = product.category;
     this.sizes = product.sizes;
+  }
+
+  set tagless(ProductDetail product) {
+    this.name.value = TextEditingValue(text: product.name);
+    this.description.value = TextEditingValue(text: product.description);
+    this.price.value = TextEditingValue(text: product.price.toString());
+    this.taxExempt = product.taxExempt ?? false;
+    this.root = product.root ?? false;
+    this.department = product.department;
+    this.category = product.category;
+    this.sizes = product.sizes;
+  }
+
+  @override
+  String toString() {
+    return 'Fields: {tag: ${tag.text}, name: \"${name.text}\", description: \"${description.text}\", price: ${price.text}, taxExempt: $taxExempt, root: $root, department: ${department.toString()}, category: ${category.toString()} }';
   }
 }

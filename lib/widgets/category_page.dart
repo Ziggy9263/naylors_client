@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naylors_client/blocs/blocs.dart';
+import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class CategoryPage extends StatelessWidget {
@@ -23,6 +24,7 @@ class CategoryPage extends StatelessWidget {
       if (state is DepartmentListInitial) {
         BlocProvider.of<DepartmentListBloc>(context)
             .add(DepartmentListRequested());
+        BlocProvider.of<ProductListBloc>(context).add(ProductListRequested());
       }
       if (state is DepartmentListLoadInProgress) {
         return Center(
@@ -30,15 +32,31 @@ class CategoryPage extends StatelessWidget {
       }
       if (state is DepartmentListLoadSuccess) {
         final departmentList = state.departmentList.list;
+        final productState = BlocProvider.of<ProductListBloc>(context).state;
+        var populatedDepartments = new List<Department>();
+
+        var products = new List<ProductDetail>();
+        if (productState is ProductListLoadSuccess) {
+          products = productState.productList.list;
+          products.forEach((product) {
+            departmentList.forEach((department) {
+              var catList = department.categories.list;
+              catList.forEach((category) => {
+                if (product.category.id == category.id)
+                  populatedDepartments.add(department)
+              });
+            });
+          });
+        }
 
         return Container(
           height: MediaQuery.of(context).size.height,
           child: RefreshIndicator(
               child: ListView.builder(
-                itemCount: departmentList.length,
+                itemCount: populatedDepartments.length,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
-                  final item = departmentList[index];
+                  final item = populatedDepartments[index];
 
                   return ExpansionTile(
                     backgroundColor: Colors.lightBlue[400],
@@ -57,14 +75,18 @@ class CategoryPage extends StatelessWidget {
                         shrinkWrap: true,
                         itemBuilder: (builder, index) {
                           var category = item.categories.list[index];
-                          return Card(
+                          var numProducts = 0;
+                          products.forEach((product) => {
+                            if (product.category.id == category.id)
+                              numProducts += 1
+                          });
+                          return numProducts > 0 ? Card(
                             child: InkWell(
                               onTap: () {
                                 BlocProvider.of<NavigatorBloc>(context)
                                     .add(NavigatorToProducts());
                                 BlocProvider.of<ProductListBloc>(context).add(
-                                    ProductListRequested(
-                                        category: category));
+                                    ProductListRequested(category: category));
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -98,7 +120,7 @@ class CategoryPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          );
+                          ) : Container();
                         },
                       )
                     ],
