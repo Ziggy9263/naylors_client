@@ -7,6 +7,7 @@ import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/util/util.dart';
 
+// ignore: must_be_immutable
 class CartDetailCards extends StatelessWidget {
   CartBodyState parent;
   List<CartItem> cart;
@@ -29,7 +30,9 @@ class CartDetailCards extends StatelessWidget {
       itemBuilder: (context, index) {
         _deleteItemFromCart() {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+            // ignore: invalid_use_of_protected_member
             this.parent.parent.setState(() {
+              // ignore: invalid_use_of_protected_member
               this.parent.setState(() {
                 BlocProvider.of<CartBloc>(context)
                     .add(CartRemove(product: cart[index].product));
@@ -42,6 +45,7 @@ class CartDetailCards extends StatelessWidget {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             cart[index].quantity = cart[index].quantity + 1;
             var q = cart[index].quantity;
+            // ignore: invalid_use_of_protected_member
             this.parent.setState(() {
               quantityList[index].text = (q).toString();
             });
@@ -51,6 +55,7 @@ class CartDetailCards extends StatelessWidget {
         _setQuantity(String value) {
           if (value != null) {
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              // ignore: invalid_use_of_protected_member
               this.parent.setState(() {
                 cart[index].quantity = int.parse(value);
               });
@@ -64,6 +69,7 @@ class CartDetailCards extends StatelessWidget {
             if (cart[index].quantity >= 2)
               cart[index].quantity = cart[index].quantity - 1;
             var q = cart[index].quantity;
+            // ignore: invalid_use_of_protected_member
             this.parent.setState(() {
               quantityList[index].text = (q).toString();
             });
@@ -212,9 +218,11 @@ class CartDetailCards extends StatelessWidget {
                                           product: int.parse(item.detail.tag)));
                                   BlocProvider.of<ProductBloc>(context)
                                       .add(ProductReset());
+                                  // ignore: invalid_use_of_protected_member
                                   this.parent.setState(() {
                                     item.quantity = cart[index].quantity;
                                   });
+                                  // ignore: invalid_use_of_protected_member
                                   this.parent.parent.setState(() {
                                     this.parent.parent.headerTitle =
                                         "Naylor's Online: Product Detail";

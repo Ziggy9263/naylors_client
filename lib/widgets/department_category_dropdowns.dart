@@ -3,7 +3,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
-import 'package:naylors_client/util/util.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class DepartmentCategoryDropdowns extends StatefulWidget {

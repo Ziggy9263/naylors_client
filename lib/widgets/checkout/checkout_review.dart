@@ -30,6 +30,7 @@ class CheckoutReview extends StatelessWidget {
       itemBuilder: (context, index) {
         _deleteItemFromCart() {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+            // ignore: invalid_use_of_protected_member
             parent.setState(() {
               BlocProvider.of<CartBloc>(context)
                   .add(CartRemove(product: cart[index].product));
@@ -41,6 +42,7 @@ class CheckoutReview extends StatelessWidget {
           FocusScope.of(context).unfocus();
           if (value != null) {
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              // ignore: invalid_use_of_protected_member
               parent.setState(() {
                 cart[index].quantity = int.parse(value);
               });

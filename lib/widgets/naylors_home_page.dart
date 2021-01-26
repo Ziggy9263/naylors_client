@@ -21,6 +21,7 @@ class NaylorsHomePage extends StatefulWidget {
 
 class NaylorsHomePageState extends State<NaylorsHomePage> {
   final String title;
+  // ignore: unused_field
   String _email;
   String headerTitle = "Naylor's Online: Products";
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -42,6 +43,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
     });
   }
 
+  // ignore: unused_element
   _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {

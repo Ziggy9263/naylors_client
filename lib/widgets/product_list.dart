@@ -5,7 +5,7 @@ import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 class ProductListBody extends StatelessWidget {
-  NaylorsHomePageState parent;
+  final NaylorsHomePageState parent;
   ProductListBody(this.parent);
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
@@ -144,6 +144,7 @@ class ProductListBody extends StatelessWidget {
                                     product: int.parse(item.tag)));
                             BlocProvider.of<ProductBloc>(context)
                                 .add(ProductReset());
+                            // ignore: invalid_use_of_protected_member
                             this.parent.setState(() {});
                           },
                           child: Padding(
@@ -237,6 +238,7 @@ class ProductListBody extends StatelessWidget {
                                                 .add(NavigatorToProductEdit(
                                                     product:
                                                         int.parse(item.tag)));
+                                            // ignore: invalid_use_of_protected_member
                                             parent.setState(() {
                                               parent.headerTitle =
                                                   "Naylor's Online: Product Edit";

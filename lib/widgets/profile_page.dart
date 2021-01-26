@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
-import 'package:naylors_client/models/models.dart';
 
 // TODO: Check for tax exemption automatically, fill in name and address in payment
 
@@ -12,8 +11,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final _formKey = GlobalKey<FormState>();
+  //final _formKey = GlobalKey<FormState>();
   final name = TextEditingController();
   final email = TextEditingController();
   final password = TextEditingController();

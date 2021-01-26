@@ -32,6 +32,10 @@ class Category extends Equatable {
     return 'Category: {id: $id, code: $code, name: \"$name\" }';
   }
 
+  String toJSONString() {
+    return '{id: $id, code: $code, name: \"$name\" }';
+  }
+
   @override
   List<Object> get props => [id, code, name];
 }
@@ -103,6 +107,10 @@ class Department extends Equatable {
   @override
   String toString() {
     return 'Department: {id: $id, code: $code, name: \"$name\", categories: [${categories.list.length}] }';
+  }
+
+  String toJSONString() {
+    return '{id: $id, code: $code, name: \"$name\", categories: [${categories.list.length}] }';
   }
 
   @override
@@ -180,6 +188,26 @@ class ProductDetail extends Equatable {
         sizes: json['sizes'],
         taxExempt: json['taxExempt'] as bool,
         root: json['root'] as bool);
+  }
+
+  Map<String, dynamic> toJSON() {
+    Map<String, dynamic> json = {
+      "tag": this.tag,
+      "name": this.name,
+      "description": this.description,
+      "category": this.category,
+      "price": this.price,
+      "images": this.images.toList(),
+      "sizes": this.sizes.toList(),
+      "taxExempt": this.taxExempt,
+      "root": this.root,
+    };
+    return json;
+  }
+
+  @override
+  String toString() {
+    return "{tag: ${this.tag}, name: \"${this.name}\", description: \"${this.description}\", price: ${this.price}, taxExempt: ${this.taxExempt}, root: ${this.root}, department: ${this.department.toJSONString()}, category: ${this.category.toJSONString()}, sizes: ${this.sizes.toString()} }";
   }
 }
 

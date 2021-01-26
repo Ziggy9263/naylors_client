@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:naylors_client/models/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductApiClient {
   static const baseUrl = 'https://order.naylorsfeed.com';
@@ -51,6 +52,71 @@ class ProductApiClient {
       return data;
     } else {
       throw Exception('Failed to Get Product $tag');
+    }
+  }
+
+  Future<ProductDetail> createProduct(ProductDetail product) async {
+    final productUrl = "$baseUrl/api/products/";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    final response = await this.httpClient.post(
+          productUrl,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+          body: product.toString(),
+        );
+
+    if (response.statusCode == 200) {
+      var data = ProductDetail.fromJSON(jsonDecode(response.body));
+      return data;
+    } else {
+      throw Exception(
+          'Failed to Create Product ${product.tag}: ${product.name}');
+    }
+  }
+
+  Future<ProductDetail> updateProduct(String tag, ProductDetail product) async {
+    final productUrl = "$baseUrl/api/products/$tag";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    final response = await this.httpClient.put(
+          productUrl,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+          body: product.toString(),
+        );
+
+    if (response.statusCode == 200) {
+      var data = ProductDetail.fromJSON(jsonDecode(response.body));
+      return data;
+    } else {
+      throw Exception(
+          'Failed to Update Product $tag: ${product.name}');
+    }
+  }
+
+  Future<ProductDetail> deleteProduct(String tag, ProductDetail product) async {
+    final productUrl = "$baseUrl/api/products/$tag";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    final response = await this.httpClient.delete(
+          productUrl,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        );
+
+    if (response.statusCode == 200) {
+      var data = ProductDetail.fromJSON(jsonDecode(response.body));
+      return data;
+    } else {
+      throw Exception(
+          'Failed to Delete Product $tag: ${product.name}');
     }
   }
 

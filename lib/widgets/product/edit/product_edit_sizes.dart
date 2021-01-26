@@ -55,13 +55,15 @@ class ProductEditSizes extends StatelessWidget {
               ),
               onPressed: () {
                 SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                  // ignore: invalid_use_of_protected_member
                   parent.setState(() {
                     fields.sizes.add({'tag': '', 'size': ''});
                     fields.size = fields.sizes.length - 1;
                     for (int i = 0; i < fields.sizes.length; i++) {
                       if (fields.sizeSelected == i) {
-                        sizeController.animateTo(
-                          i * 80.0, duration: new Duration(seconds: 1), curve: Curves.ease);
+                        sizeController.animateTo(i * 80.0,
+                            duration: new Duration(seconds: 1),
+                            curve: Curves.ease);
                         break;
                       }
                     }
@@ -86,16 +88,17 @@ class ProductEditSizes extends StatelessWidget {
                   ? () {
                       SchedulerBinding.instance
                           .addPostFrameCallback((timeStamp) {
+                        // ignore: invalid_use_of_protected_member
                         parent.setState(() {
                           fields.sizes.removeAt(fields.sizeSelected);
-                          var alg = 
-                          (fields.sizeSelected ?? -1) + 1 > fields.sizes.length;
-                          if (alg)
-                            fields.size = (fields.sizes.length - 1);
+                          var alg = (fields.sizeSelected ?? -1) + 1 >
+                              fields.sizes.length;
+                          if (alg) fields.size = (fields.sizes.length - 1);
                         });
                       });
                     }
                   : () {
+                      // ignore: invalid_use_of_protected_member
                       parent.setState(() {});
                     },
             ),
@@ -108,6 +111,7 @@ class ProductEditSizes extends StatelessWidget {
                 ),
               ),
               onPressed: () {
+                // ignore: invalid_use_of_protected_member
                 parent.setState(() {
                   fields.sizeSelected = null;
                 });
@@ -115,50 +119,55 @@ class ProductEditSizes extends StatelessWidget {
             ),
           ],
         ),
-        (fields.sizes.length > 0) ? Container(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: 40,
-              maxHeight: 80,
-            ),
-            child: ListView.builder(
-              controller: sizeController,
-              scrollDirection: Axis.horizontal,
-              itemCount: fields.sizes.length,
-              itemBuilder: (context, index) {
-                return Material(
-                  child: InkWell(
-                    highlightColor: Colors.lightBlue,
-                    onTap: () {
-                      parent.setState(() {
-                        fields.size = index;
-                      });
-                    },
-                    child: Container(
-                      width: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: (fields.sizeSelected == index)
-                            ? Colors.lightBlue[100]
-                            : Colors.lightBlue[50],
-                      ),
-                      padding: EdgeInsets.all(4.0),
-                      margin: EdgeInsets.all(2.0),
-                      child: Column(
-                        children: <Widget>[
-                          Text("Tag"),
-                          Text("${fields.sizes[index]['tag']}", style: style),
-                          Text("Size"),
-                          Text("${fields.sizes[index]['size']}", style: style),
-                        ],
-                      ),
-                    ),
+        (fields.sizes.length > 0)
+            ? Container(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: 40,
+                    maxHeight: 80,
                   ),
-                );
-              },
-            ),
-          ),
-        ) : Container(),
+                  child: ListView.builder(
+                    controller: sizeController,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: fields.sizes.length,
+                    itemBuilder: (context, index) {
+                      return Material(
+                        child: InkWell(
+                          highlightColor: Colors.lightBlue,
+                          onTap: () {
+                            // ignore: invalid_use_of_protected_member
+                            parent.setState(() {
+                              fields.size = index;
+                            });
+                          },
+                          child: Container(
+                            width: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: (fields.sizeSelected == index)
+                                  ? Colors.lightBlue[100]
+                                  : Colors.lightBlue[50],
+                            ),
+                            padding: EdgeInsets.all(4.0),
+                            margin: EdgeInsets.all(2.0),
+                            child: Column(
+                              children: <Widget>[
+                                Text("Tag"),
+                                Text("${fields.sizes[index]['tag']}",
+                                    style: style),
+                                Text("Size"),
+                                Text("${fields.sizes[index]['size']}",
+                                    style: style),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : Container(),
         SizedBox(height: 8.0),
         Container(
           height: (fields.sizeSelected != null) ? 40 : 0,
@@ -185,12 +194,14 @@ class ProductEditSizes extends StatelessWidget {
                           errorMaxLines: 3,
                         ),
                         onChanged: (_) {
+                          // ignore: invalid_use_of_protected_member
                           parent.setState(() {
                             fields.sizes[fields.sizeSelected]['tag'] =
                                 fields.sizeTag.text;
                           });
                         },
                         onTap: () {
+                          // ignore: invalid_use_of_protected_member
                           parent.setState(() {});
                         },
                         validator: (value) {
@@ -223,12 +234,14 @@ class ProductEditSizes extends StatelessWidget {
                           errorMaxLines: 3,
                         ),
                         onChanged: (_) {
+                          // ignore: invalid_use_of_protected_member
                           parent.setState(() {
                             fields.sizes[fields.sizeSelected]['size'] =
                                 fields.sizeSize.text;
                           });
                         },
                         onTap: () {
+                          // ignore: invalid_use_of_protected_member
                           parent.setState(() {});
                         },
                         validator: (value) {

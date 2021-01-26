@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/widgets/widgets.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
-import 'package:naylors_client/util/util.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductEdit extends StatefulWidget {
@@ -75,7 +73,24 @@ class ProductEditState extends State<ProductEdit> {
   }
 
   saveEdits() {
-    // TODO: Interface with API, create/edit products appropriately.
+    ProductState productState = BlocProvider.of<ProductBloc>(parent.context).state;
+    ModifyStep modifyStep;
+    if (productState is ProductEditInitial) {
+      modifyStep = productState.modifyStep;
+
+      if (modifyStep == ModifyStep.Create) {
+        BlocProvider.of<ProductBloc>(parent.context).add(ProductEditEvent(
+            tag: initProduct.toString(),
+            product: this.product,
+            step: modifyStep));
+      } else if (modifyStep == ModifyStep.Update) {
+        BlocProvider.of<ProductBloc>(parent.context).add(ProductEditEvent(
+            tag: initProduct.toString(),
+            product: this.product,
+            step: modifyStep));
+      }
+    }
+    
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       this.parent.setState(() {
         BlocProvider.of<NavigatorBloc>(context).floatingButton = null;
@@ -108,8 +123,7 @@ class ProductEditState extends State<ProductEdit> {
                         onTap: () {
                           this.menuToggle = false;
                           this.overlayEntry.remove();
-                          parent.setState(() {
-                          });
+                          parent.setState(() {});
                           (initProduct != null)
                               ? BlocProvider.of<ProductBloc>(parent.context)
                                   .add(ProductEditEvent(
@@ -167,6 +181,11 @@ class ProductEditState extends State<ProductEdit> {
                           print('Delete');
                           this.menuToggle = false;
                           this.overlayEntry.remove();
+                          BlocProvider.of<ProductBloc>(context)
+                              .add(ProductEditEvent(
+                            tag: initProduct.toString(),
+                            step: ModifyStep.Delete,
+                          ));
                         },
                       )
                     ],
@@ -221,8 +240,28 @@ class ProductEditState extends State<ProductEdit> {
         loading = true;
       } else
         loading = false;
-      if (state is ProductEditSuccess) {}
-      if (state is ProductEditFailure) {}
+      if (state is ProductEditSuccess) {
+        ModifyStep step = state.step;
+        switch (step) {
+          case ModifyStep.Initialize:
+            // This should never happen.
+            break;
+          case ModifyStep.Create:
+            // TODO: Display box that says 'Creation Successful'
+            break;
+          case ModifyStep.Update:
+            // TODO: Display box that says 'Update Successful'
+            break;
+          case ModifyStep.Delete:
+            // TODO: Display box that says 'Delete Successful'
+            // Clear edit page
+            break;
+        }
+        
+      }
+      if (state is ProductEditFailure) {
+        // TODO: Display error screen.
+      }
       var productListState = BlocProvider.of<ProductListBloc>(context).state;
       if (productListState is ProductListLoadSuccess) {
         products = productListState.productList;

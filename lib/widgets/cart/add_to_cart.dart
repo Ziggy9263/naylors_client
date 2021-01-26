@@ -37,6 +37,7 @@ class AddToCartButton extends StatelessWidget {
                 var _q = int.parse(quantity.text);
                 BlocProvider.of<CartBloc>(context)
                     .add(CartModify(product: _p, quantity: _q));
+                // ignore: invalid_use_of_protected_member
                 parent.parent.setState(() {});
               },
             ),

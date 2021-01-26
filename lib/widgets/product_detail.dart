@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'dart:async';
 
 import 'package:naylors_client/widgets/widgets.dart';
-import 'package:naylors_client/models/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 
@@ -13,7 +11,7 @@ class ProductDetailBody extends StatelessWidget {
   final NaylorsHomePageState parent;
   final int initProduct;
   ProductDetailBody(this.parent, this.initProduct);
-  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final quantity = TextEditingController();
 
   String format(double n) {

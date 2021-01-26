@@ -48,8 +48,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield AuthInProgress();
       try {
         final AuthInfo auth = await authRepository.register(event.auth);
-        final AuthLoginInfo login =
-            AuthLoginInfo(event.auth.email, event.auth.password);
         yield AuthSuccess(auth: auth);
       } catch (_) {
         yield AuthFailure(error: _);

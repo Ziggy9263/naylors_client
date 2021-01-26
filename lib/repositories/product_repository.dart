@@ -25,14 +25,14 @@ class ProductRepository {
   }
 
   Future<ProductDetail> createProduct(ProductDetail product) async {
-    return (product);
+    return productApiClient.createProduct(product);
   }
 
-  Future<ProductDetail> updateProduct(ProductDetail product) async {
-    return (product);
+  Future<ProductDetail> updateProduct(String tag, ProductDetail product) async {
+    return productApiClient.updateProduct(tag, product);
   }
 
-  Future<ProductDetail> deleteProduct(ProductDetail product) async {
-    return (product);
+  Future<ProductDetail> deleteProduct(String tag, ProductDetail product) async {
+    return productApiClient.deleteProduct(tag, product);
   }
 }

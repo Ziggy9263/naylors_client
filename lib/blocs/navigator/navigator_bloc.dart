@@ -2,8 +2,6 @@ import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 
-import 'package:naylors_client/repositories/repositories.dart';
-import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 
 class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {

@@ -24,9 +24,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           try {
             final ProductDetail product =
                 await productRepository.getProduct(event.tag);
-            yield ProductEditInitial(tag: event.tag, product: product);
+            yield ProductEditInitial(tag: event.tag, product: product, modifyStep: ModifyStep.Update);
           } catch (_) {
-            yield ProductEditInitial(tag: event.tag);
+            yield ProductEditInitial(tag: event.tag, modifyStep: ModifyStep.Create);
           }
           break;
         case ModifyStep.Create:
@@ -34,29 +34,29 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           try {
             final ProductDetail product =
                 await productRepository.createProduct(event.product);
-            yield ProductEditSuccess(tag: product.tag);
+            yield ProductEditSuccess(tag: product.tag, step: ModifyStep.Create);
           } catch (_) {
-            yield ProductEditFailure(error: _);
+            yield ProductEditFailure(error: '$_');
           }
           break;
         case ModifyStep.Update:
           yield ProductEditLoading();
           try {
             final ProductDetail product =
-                await productRepository.updateProduct(event.product);
-            yield ProductEditSuccess(tag: product.tag);
+                await productRepository.updateProduct(event.tag, event.product);
+            yield ProductEditSuccess(tag: product.tag, step: ModifyStep.Update);
           } catch (_) {
-            yield ProductEditFailure(error: _);
+            yield ProductEditFailure(error: '$_');
           }
           break;
         case ModifyStep.Delete:
           yield ProductEditLoading();
           try {
             final ProductDetail product =
-                await productRepository.deleteProduct(event.product);
-            yield ProductEditSuccess(tag: product.tag);
+                await productRepository.deleteProduct(event.tag, event.product);
+            yield ProductEditSuccess(tag: product.tag, step: ModifyStep.Delete);
           } catch (_) {
-            yield ProductEditFailure(error: _);
+            yield ProductEditFailure(error: '$_');
           }
           break;
         default:

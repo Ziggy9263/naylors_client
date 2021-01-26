@@ -61,6 +61,7 @@ class ProductEditBody extends StatelessWidget {
                               errorMaxLines: 3,
                             ),
                             onChanged: (_) {
+                              // ignore: invalid_use_of_protected_member
                               parent.setState(() {
                                 if (_.length >= 5) {
                                   products.list.forEach((p) =>
@@ -69,6 +70,7 @@ class ProductEditBody extends StatelessWidget {
                               });
                             },
                             onTap: () {
+                              // ignore: invalid_use_of_protected_member
                               parent.setState(() {});
                             },
                             validator: (value) {
@@ -99,6 +101,7 @@ class ProductEditBody extends StatelessWidget {
                                 autofocus: true,
                                 focusNode: focus.root,
                                 onChanged: (_) {
+                                  // ignore: invalid_use_of_protected_member
                                   this.parent.setState(() {
                                     fields.root = _;
                                   });
@@ -142,9 +145,11 @@ class ProductEditBody extends StatelessWidget {
                         errorMaxLines: 3,
                       ),
                       onChanged: (_) {
+                        // ignore: invalid_use_of_protected_member
                         parent.setState(() {});
                       },
                       onTap: () {
+                        // ignore: invalid_use_of_protected_member
                         parent.setState(() {});
                       },
                       validator: (value) {
@@ -181,9 +186,11 @@ class ProductEditBody extends StatelessWidget {
                               errorMaxLines: 3,
                             ),
                             onChanged: (_) {
+                              // ignore: invalid_use_of_protected_member
                               parent.setState(() {});
                             },
                             onTap: () {
+                              // ignore: invalid_use_of_protected_member
                               parent.setState(() {});
                             },
                             validator: (value) {
@@ -217,6 +224,7 @@ class ProductEditBody extends StatelessWidget {
                                 value: !fields.taxExempt,
                                 focusNode: focus.taxExempt,
                                 onChanged: (_) {
+                                  // ignore: invalid_use_of_protected_member
                                   parent.setState(() {
                                     fields.taxExempt = !_;
                                   });
@@ -319,9 +327,11 @@ class ProductEditBody extends StatelessWidget {
                         errorMaxLines: 3,
                       ),
                       onChanged: (_) {
+                        // ignore: invalid_use_of_protected_member
                         parent.setState(() {});
                       },
                       onTap: () {
+                        // ignore: invalid_use_of_protected_member
                         parent.setState(() {});
                       },
                       validator: (value) {

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';

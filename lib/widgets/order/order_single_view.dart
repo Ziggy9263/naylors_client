@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/scheduler.dart';
@@ -41,6 +39,7 @@ class OrderSingleView extends StatelessWidget {
       }
       if (state is OrderCancelSuccess) {
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          // ignore: invalid_use_of_protected_member
           this.parent.setState(() {
             this.parent.showSnackBar(SnackBar(
                 content: Text(
@@ -53,7 +52,9 @@ class OrderSingleView extends StatelessWidget {
       }
       if (state is OrderCancelFailure) {
         BlocProvider.of<OrderBloc>(context).add(OrderReset());
+          // ignore: invalid_use_of_protected_member
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          // ignore: invalid_use_of_protected_member
           this.parent.setState(() {
             this.parent.showSnackBar(SnackBar(
                 content:
@@ -62,6 +63,7 @@ class OrderSingleView extends StatelessWidget {
         });
       }
       if (state is OrderInitial) {
+        // ignore: close_sinks
         CartBloc cart = BlocProvider.of<CartBloc>(context);
         return Container(
           padding: EdgeInsets.all(4),
@@ -255,6 +257,7 @@ class OrderSingleView extends StatelessWidget {
                             ],
                           ),
                           onPressed: () {
+                            // ignore: invalid_use_of_protected_member
                             this.parent.setState(() {
                               this.parent.showSnackBar(SnackBar(
                                   content: Text(
@@ -380,6 +383,7 @@ class OrderSingleView extends StatelessWidget {
                                                   SchedulerBinding.instance
                                                       .addPostFrameCallback(
                                                           (timeStamp) {
+                                                    // ignore: invalid_use_of_protected_member
                                                     this.parent.setState(() {
                                                       for (int i = 0;
                                                           i <
