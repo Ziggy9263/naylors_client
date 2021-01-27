@@ -35,6 +35,7 @@ class ProductEditState extends State<ProductEdit> {
   ProductDetail product;
   ProductList products;
   bool initialized = false;
+  bool errorDialogOpen = false;
 
   @override
   initState() {
@@ -73,7 +74,8 @@ class ProductEditState extends State<ProductEdit> {
   }
 
   saveEdits() {
-    ProductState productState = BlocProvider.of<ProductBloc>(parent.context).state;
+    ProductState productState =
+        BlocProvider.of<ProductBloc>(parent.context).state;
     ModifyStep modifyStep;
     if (productState is ProductEditInitial) {
       modifyStep = productState.modifyStep;
@@ -90,7 +92,7 @@ class ProductEditState extends State<ProductEdit> {
             step: modifyStep));
       }
     }
-    
+
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       this.parent.setState(() {
         BlocProvider.of<NavigatorBloc>(context).floatingButton = null;
@@ -257,10 +259,87 @@ class ProductEditState extends State<ProductEdit> {
             // Clear edit page
             break;
         }
-        
       }
       if (state is ProductEditFailure) {
-        // TODO: Display error screen.
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          setState(() {
+            if (!errorDialogOpen) {
+              errorDialogOpen = true;
+              showDialog(
+                context: context,
+                useRootNavigator: false,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 1.4,
+                      height: MediaQuery.of(context).size.height / 2.8,
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: const Color(0xFFFFFF),
+                        borderRadius:
+                            new BorderRadius.all(new Radius.circular(32.0)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width / 1.4,
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.lightBlue,
+                              shape: BoxShape.rectangle,
+                              borderRadius: new BorderRadius.vertical(
+                                top: Radius.circular(4.0),
+                                bottom: Radius.zero,
+                              ),
+                            ),
+                            child: Text("An Error Occurred",
+                                textAlign: TextAlign.center,
+                                style: style.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Divider(
+                            height: 4,
+                            color: Colors.lightBlue,
+                          ),
+                          Expanded(child: Text(state.error)),
+                          Divider(
+                            height: 4,
+                            color: Colors.lightBlue,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              FlatButton(
+                                  color: Colors.green,
+                                  child: Text("OK",
+                                      style:
+                                          style.copyWith(color: Colors.white)),
+                                  onPressed: () {
+                                    initSaveButton();
+                                    errorDialogOpen = false;
+                                    Navigator.of(context).pop();
+                                    BlocProvider.of<ProductBloc>(context).add(
+                                        ProductEditEvent(
+                                            tag: "$initProduct",
+                                            step: ModifyStep.Initialize,
+                                            product: product));
+                                  }),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          });
+        });
       }
       var productListState = BlocProvider.of<ProductListBloc>(context).state;
       if (productListState is ProductListLoadSuccess) {
