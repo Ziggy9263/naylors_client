@@ -62,6 +62,10 @@ class _DepartmentCategoryDropdownsState
             if (departments[i].categories.list.indexOf(fields.category) != -1)
               fields.department = departments[i];
           }
+        if (fields.department.id == '' && fields.category.id == '') {
+          fields.department = departments[0];
+          fields.category = departments[0].categories.list[0];
+        }
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,

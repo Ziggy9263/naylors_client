@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +18,8 @@ class ProductEdit extends StatefulWidget {
   ProductEditState createState() => ProductEditState(parent, initProduct);
 }
 
-class ProductEditState extends State<ProductEdit> {
+class ProductEditState extends State<ProductEdit>
+    with TickerProviderStateMixin {
   final NaylorsHomePageState parent;
   final int initProduct;
 
@@ -36,12 +39,24 @@ class ProductEditState extends State<ProductEdit> {
   ProductList products;
   bool initialized = false;
   bool errorDialogOpen = false;
+  AnimationController _statusPopupAnimationController;
+  Animation<double> _animation;
+  bool successTrigger = false;
+  bool failureTrigger = false;
 
   @override
   initState() {
     super.initState();
     fields.init();
     initSaveButton();
+    _statusPopupAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = CurvedAnimation(
+      parent: _statusPopupAnimationController,
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   @override
@@ -50,6 +65,7 @@ class ProductEditState extends State<ProductEdit> {
     fields.dispose();
     focus.dispose();
     disposeSaveButton();
+    _statusPopupAnimationController.dispose();
   }
 
   initSaveButton() {
@@ -66,11 +82,7 @@ class ProductEditState extends State<ProductEdit> {
   }
 
   disposeSaveButton() {
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      this.parent.setState(() {
-        BlocProvider.of<NavigatorBloc>(context).floatingButton = null;
-      });
-    });
+    BlocProvider.of<NavigatorBloc>(context).floatingButton = null;
   }
 
   saveEdits() {
@@ -83,9 +95,7 @@ class ProductEditState extends State<ProductEdit> {
 
       if (modifyStep == ModifyStep.Create) {
         BlocProvider.of<ProductBloc>(parent.context).add(ProductEditEvent(
-            tag: initProduct.toString(),
-            product: this.product,
-            step: modifyStep));
+            tag: this.product.tag, product: this.product, step: modifyStep));
       } else if (modifyStep == ModifyStep.Update) {
         BlocProvider.of<ProductBloc>(parent.context).add(ProductEditEvent(
             tag: initProduct.toString(),
@@ -210,6 +220,7 @@ class ProductEditState extends State<ProductEdit> {
   Widget build(BuildContext context) {
     return BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
       bool loading = false;
+      String overlayAnimationMessage;
       if (state is ProductInitial) {
         BlocProvider.of<ProductListBloc>(context).add(ProductListRequested());
         (initProduct != null)
@@ -244,6 +255,18 @@ class ProductEditState extends State<ProductEdit> {
       } else
         loading = false;
       if (state is ProductEditSuccess) {
+        successTrigger = true;
+        _statusPopupAnimationController.reset();
+        _statusPopupAnimationController.forward();
+        new Timer(new Duration(milliseconds: 1000), () {
+          successTrigger = false;
+          _statusPopupAnimationController.stop();
+          BlocProvider.of<ProductBloc>(context).add(ProductEditEvent(
+            step: ModifyStep.Initialize,
+            tag: initProduct.toString(),
+          ));
+          initSaveButton();
+        });
         ModifyStep step = state.step;
         switch (step) {
           case ModifyStep.Initialize:
@@ -251,12 +274,15 @@ class ProductEditState extends State<ProductEdit> {
             break;
           case ModifyStep.Create:
             // TODO: Display box that says 'Creation Successful'
+            overlayAnimationMessage = "Creation Successful";
             break;
           case ModifyStep.Update:
             // TODO: Display box that says 'Update Successful'
+            overlayAnimationMessage = "Update Successful";
             break;
           case ModifyStep.Delete:
             // TODO: Display box that says 'Delete Successful'
+            overlayAnimationMessage = "Delete Successful";
             // Clear edit page
             break;
         }
@@ -324,8 +350,8 @@ class ProductEditState extends State<ProductEdit> {
                                     initSaveButton();
                                     errorDialogOpen = false;
                                     Navigator.of(context).pop();
-                                    BlocProvider.of<ProductBloc>(parent.context).add(
-                                        ProductEditEvent(
+                                    BlocProvider.of<ProductBloc>(parent.context)
+                                        .add(ProductEditEvent(
                                             tag: "$initProduct",
                                             step: ModifyStep.Initialize,
                                             product: product));
@@ -372,6 +398,42 @@ class ProductEditState extends State<ProductEdit> {
                     child: Center(
                         child: CircularProgressIndicator(
                             backgroundColor: Colors.white)))
+                : Container(),
+          ),
+          AnimatedOpacity(
+            opacity: (successTrigger || failureTrigger) ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 500),
+            child: (successTrigger || failureTrigger)
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(color: Colors.black54),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ScaleTransition(
+                            scale: _animation,
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.check_circle,
+                                  size: 150.00, color: Colors.white60),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              overlayAnimationMessage,
+                              style: style.copyWith(
+                                  color: Colors.white, fontSize: 16.0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 : Container(),
           ),
         ],
