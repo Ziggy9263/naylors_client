@@ -76,6 +76,7 @@ class ProductEditState extends State<ProductEdit> {
   saveEdits() {
     ProductState productState =
         BlocProvider.of<ProductBloc>(parent.context).state;
+    this.product = this.fields.product;
     ModifyStep modifyStep;
     if (productState is ProductEditInitial) {
       modifyStep = productState.modifyStep;
@@ -323,7 +324,7 @@ class ProductEditState extends State<ProductEdit> {
                                     initSaveButton();
                                     errorDialogOpen = false;
                                     Navigator.of(context).pop();
-                                    BlocProvider.of<ProductBloc>(context).add(
+                                    BlocProvider.of<ProductBloc>(parent.context).add(
                                         ProductEditEvent(
                                             tag: "$initProduct",
                                             step: ModifyStep.Initialize,

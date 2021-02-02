@@ -65,7 +65,7 @@ class ProductApiClient {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
           },
-          body: product.toString(),
+          body: product.toJSON(),
         );
 
     if (response.statusCode == 200) {
@@ -87,7 +87,7 @@ class ProductApiClient {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
           },
-          body: product.toString(),
+          body: product.toJSON(),
         );
 
     if (response.statusCode == 200) {

@@ -16,7 +16,7 @@ void main() {
   Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
 
-  Workmanager.initialize(
+  /*Workmanager.initialize(
     // Top level function, aka callbackDispatcher
     callbackDispatcher,
     // If enabled will post a notification whenever task is running
@@ -33,7 +33,7 @@ void main() {
     // frequency to 15 minutes if you have configured a lower frequency.
     frequency: Duration(minutes: 30),
     initialDelay: Duration(minutes: -30),
-  );
+  );*/
 
   final AuthRepository authRepository = AuthRepository(
     authApiClient: AuthApiClient(

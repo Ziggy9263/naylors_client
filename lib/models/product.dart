@@ -32,7 +32,7 @@ class Category extends Equatable {
     return 'Category: {id: $id, code: $code, name: \"$name\" }';
   }
 
-  String toJSONString() {
+  String catToJSONString() {
     return '{id: $id, code: $code, name: \"$name\" }';
   }
 
@@ -109,7 +109,7 @@ class Department extends Equatable {
     return 'Department: {id: $id, code: $code, name: \"$name\", categories: [${categories.list.length}] }';
   }
 
-  String toJSONString() {
+  String deptToJSONString() {
     return '{id: $id, code: $code, name: \"$name\", categories: [${categories.list.length}] }';
   }
 
@@ -190,24 +190,25 @@ class ProductDetail extends Equatable {
         root: json['root'] as bool);
   }
 
-  Map<String, dynamic> toJSON() {
-    Map<String, dynamic> json = {
+  String toJSON() {
+    Map<String, dynamic> mapped = {
       "tag": this.tag,
       "name": this.name,
       "description": this.description,
-      "category": this.category,
+      "category": this.category.id,
       "price": this.price,
-      "images": this.images.toList(),
-      "sizes": this.sizes.toList(),
+      "images": this.images.toList() ?? null,
+      "sizes": this.sizes.toList() ?? null,
       "taxExempt": this.taxExempt,
       "root": this.root,
     };
+    String json = jsonEncode(mapped);
     return json;
   }
 
   @override
   String toString() {
-    return "{tag: ${this.tag}, name: \"${this.name}\", description: \"${this.description}\", price: ${this.price}, taxExempt: ${this.taxExempt}, root: ${this.root}, department: ${this.department.toJSONString()}, category: ${this.category.toJSONString()}, sizes: ${this.sizes.toString()} }";
+    return "{tag: ${this.tag}, name: \"${this.name}\", description: \"${this.description}\", price: ${this.price}, taxExempt: ${this.taxExempt}, root: ${this.root}, department: ${this.department.deptToJSONString()}, category: ${this.category.catToJSONString()}, sizes: ${this.sizes.toString()} }";
   }
 }
 
@@ -304,6 +305,21 @@ class ProductEditFields {
     this.price.dispose();
     this.sizeTag.dispose();
     this.sizeSize.dispose();
+  }
+
+  ProductDetail get product {
+    ProductDetail product = new ProductDetail(
+        tag: this.tag.text,
+        name: this.name.text,
+        description: this.description.text,
+        price: double.parse(this.price.text.substring(1)),
+        taxExempt: this.taxExempt,
+        root: this.root,
+        images: new List<dynamic>(),
+        department: this.department,
+        category: this.category,
+        sizes: this.sizes);
+    return product;
   }
 
   set product(ProductDetail product) {
