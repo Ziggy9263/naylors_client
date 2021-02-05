@@ -33,14 +33,14 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   @override
   void initState() {
     super.initState();
-    _loadAuthInfo();
+    _loadAuthInfo().then((value) => {
+      _email = value;
+    });
   }
 
-  _loadAuthInfo() async {
+  Future<String> _loadAuthInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _email = prefs.getString('email');
-    });
+    return prefs.getString('email') ?? 'Guest';
   }
 
   // ignore: unused_element

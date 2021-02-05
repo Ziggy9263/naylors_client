@@ -5,12 +5,98 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
+import 'package:naylors_client/util/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
+class _LoginPageState extends State<LoginPage> {
+  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+
+  @override
+  initState() {
+    super.initState();
+    _loadAuthInfo().then((value) =>
+        {if (value != null) Navigator.pushReplacementNamed(context, '/')});
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+  }
+
+  Future<String> _loadAuthInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return (prefs.getString('token') ?? null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 205.0,
+                  child: Image.asset(
+                    "assets/logo.jpg",
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                SizedBox(height: 45.0),
+                OutlineButton(
+                  splashColor: Colors.grey,
+                  onPressed: () {
+                    signInWithGoogle().then((result) {
+                      if (result != null) {
+                        Navigator.pushReplacementNamed(context, '/');
+                      }
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                  highlightElevation: 0,
+                  borderSide: BorderSide(color: Colors.grey),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image(
+                            image: AssetImage('google_logo.png'), height: 35.0),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Sign in with Google',
+                            style: style.copyWith(
+                              fontSize: 20,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/*
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final email = TextEditingController();
@@ -155,6 +241,42 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+                        OutlineButton(
+                          splashColor: Colors.grey,
+                          onPressed: () {
+                            signInWithGoogle().then((result) {
+                              if (result != null) {
+                                Navigator.pushReplacementNamed(context, '/');
+                              }
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                          highlightElevation: 0,
+                          borderSide: BorderSide(color: Colors.grey),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Image(
+                                    image: AssetImage('google_logo.png'),
+                                    height: 35.0),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    'Sign in with Google',
+                                    style: style.copyWith(
+                                      fontSize: 20,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -186,3 +308,4 @@ class _LoginPageState extends State<LoginPage> {
         }));
   }
 }
+*/

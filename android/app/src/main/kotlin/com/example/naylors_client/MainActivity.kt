@@ -1,4 +1,4 @@
-package com.example.naylors_client
+package com.naylorsfeed.naylorsonline
 
 import io.flutter.embedding.android.FlutterActivity
 

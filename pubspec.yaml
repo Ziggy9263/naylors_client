@@ -31,6 +31,11 @@ dependencies:
   flutter_bloc: "^6.0.6"
   equatable: "^1.2.5"
 
+  # Firebase Dependencies
+  firebase_core: ^0.5.0
+  firebase_auth: ^0.18.0+1
+  google_sign_in: ^4.5.3
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -68,6 +73,7 @@ flutter:
     - visa.png
     - card_cvv.png
     - calendar.png
+    - google_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

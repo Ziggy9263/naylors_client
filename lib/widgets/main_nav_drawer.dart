@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
+import 'package:naylors_client/util/google_sign_in.dart';
 import 'package:naylors_client/widgets/widgets.dart';
 
 bool enEsToggle = false;
@@ -241,7 +242,7 @@ class MainNavDrawer extends StatelessWidget {
                   title: Text(enEsToggle ? spanishItems[4] : englishItems[4],
                       style: parent.style.copyWith(fontSize: 16)),
                   onTap: () {
-                    BlocProvider.of<AuthBloc>(context).add(AuthLogout());
+                    signOutGoogle();
                     Navigator.of(context).pushReplacementNamed('/login');
                   },
                 ),
