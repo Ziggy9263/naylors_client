@@ -28,7 +28,7 @@ class ProductApiClient {
   }
 
   Future<ProductList> fetchByCategory(Category category) async {
-    final productsUrl = "$baseUrl/api/products/?q=${category.id}";
+    final productsUrl = "$baseUrl/api/products/?category=${category.id}";
     final response = await this.httpClient.get(productsUrl);
 
     if (response.statusCode == 200) {

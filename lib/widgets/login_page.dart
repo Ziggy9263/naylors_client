@@ -35,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Container(
           color: Colors.white,
@@ -52,44 +53,81 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 45.0),
-                OutlineButton(
-                  splashColor: Colors.grey,
-                  onPressed: () {
-                    signInWithGoogle().then((result) {
-                      if (result != null) {
-                        Navigator.pushReplacementNamed(context, '/');
-                      }
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                  highlightElevation: 0,
-                  borderSide: BorderSide(color: Colors.grey),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Image(
-                            image: AssetImage('google_logo.png'), height: 35.0),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Sign in with Google',
-                            style: style.copyWith(
-                              fontSize: 20,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                LoginBody(style: style),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class LoginBody extends StatelessWidget {
+  const LoginBody({Key key, @required this.style}) : super(key: key);
+
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthInitial) {
+        return GoogleSignInButton(style: style);
+      }
+      if (state is AuthInProgress) {
+        return Center(child: CircularProgressIndicator());
+      }
+      if (state is AuthSuccess) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          Navigator.pushReplacementNamed(context, '/');
+        });
+      }
+      if (state is AuthFailure) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          BlocProvider.of<AuthBloc>(context).add(AuthReset());
+        });
+      }
+      return Center(child: CircularProgressIndicator());
+    });
+  }
+}
+
+class GoogleSignInButton extends StatelessWidget {
+  const GoogleSignInButton({
+    Key key,
+    @required this.style,
+  }) : super(key: key);
+
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () {
+        BlocProvider.of<AuthBloc>(context).add(AuthGoogle());
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      highlightElevation: 0,
+      borderSide: BorderSide(color: Colors.grey),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image(image: AssetImage('google_logo.png'), height: 35.0),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                'Sign in with Google',
+                style: style.copyWith(
+                  fontSize: 20,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

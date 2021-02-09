@@ -44,6 +44,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield AuthFailure(error: _);
       }
     }
+    if (event is AuthGoogle) {
+      yield AuthInProgress();
+      try {
+        final AuthInfo auth = await authRepository.loginGoogle();
+        yield AuthSuccess(auth: auth);
+      } catch (_) {
+        yield AuthFailure(error: _);
+      }
+    }
     if (event is AuthRegister) {
       yield AuthInProgress();
       try {

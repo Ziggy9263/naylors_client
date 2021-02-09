@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:naylors_client/models/models.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
-Future<String> signInWithGoogle() async {
+Future<AuthInfo> signInWithGoogle() async {
   await Firebase.initializeApp();
 
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
@@ -42,13 +43,18 @@ Future<String> signInWithGoogle() async {
 
     print('signInWithGoogle Succeeded: $user');
 
-    return '$user';
+    AuthInfo authInfo =
+        new AuthInfo(token: token, email: user.email, isAdmin: false);
+
+    return authInfo;
   }
 
   return null;
 }
 
 Future<void> signOutGoogle() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.clear();
   await googleSignIn.signOut();
 
   print('signOutOfGoogle Succeeded');

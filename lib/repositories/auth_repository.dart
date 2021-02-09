@@ -2,16 +2,22 @@ import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:naylors_client/repositories/repositories.dart';
 import 'package:naylors_client/models/models.dart';
+import 'package:naylors_client/util/google_sign_in.dart';
 
 class AuthRepository {
   final AuthApiClient authApiClient;
-  AuthInfo auth = new AuthInfo(token: '', email: '', isAdmin: false);
+  AuthInfo auth = new AuthInfo(token: null, email: null, isAdmin: false);
 
   AuthRepository({@required this.authApiClient})
       : assert(authApiClient != null);
 
   Future<AuthInfo> login(AuthLoginInfo data) async {
     auth = await authApiClient.login(data);
+    return auth;
+  }
+
+  Future<AuthInfo> loginGoogle() async {
+    auth = await signInWithGoogle().then((result) => result);
     return auth;
   }
 

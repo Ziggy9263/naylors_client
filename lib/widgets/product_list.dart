@@ -102,7 +102,8 @@ class ProductListBody extends StatelessWidget {
                           width: MediaQuery.of(context).size.width,
                           height: 40,
                           alignment: Alignment.center,
-                          child: Text("Products in ${category.name}",
+                          child: Text(
+                              "${productList.length} Product${(productList.length > 1) ? 's' : ''} in ${category.name}",
                               style: style.copyWith(color: Colors.white)),
                         ),
                       )
@@ -222,7 +223,8 @@ class ProductListBody extends StatelessWidget {
                                           children: priceChildren,
                                         )
                                       : Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                           children: priceChildren,
                                         ),
                                   BlocProvider.of<AuthBloc>(context).isAdmin

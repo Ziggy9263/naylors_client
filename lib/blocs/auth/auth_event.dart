@@ -40,6 +40,13 @@ class AuthLogin extends AuthEvent {
   List<Object> get props => [auth];
 }
 
+class AuthGoogle extends AuthEvent {
+  const AuthGoogle();
+
+  @override
+  List<Object> get props => [];
+}
+
 /// Send register data
 class AuthRegister extends AuthEvent {
   final AuthRegisterInfo auth;

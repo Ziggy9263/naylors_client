@@ -33,9 +33,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   @override
   void initState() {
     super.initState();
-    _loadAuthInfo().then((value) => {
-      _email = value;
-    });
+    _loadAuthInfo().then((value) => {_email = value});
   }
 
   Future<String> _loadAuthInfo() async {

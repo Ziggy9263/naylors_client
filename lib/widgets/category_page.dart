@@ -43,7 +43,8 @@ class CategoryPage extends StatelessWidget {
               var catList = department.categories.list;
               catList.forEach((category) => {
                     if (product.category.id == category.id)
-                      populatedDepartments.add(department)
+                      if (populatedDepartments.indexOf(department) == -1)
+                        populatedDepartments.add(department)
                   });
             });
           });
@@ -78,7 +79,7 @@ class CategoryPage extends StatelessWidget {
                           var numProducts = 0;
                           products.forEach((product) => {
                                 if (product.category.id == category.id)
-                                  numProducts += 1
+                                  numProducts = numProducts + 1
                               });
                           return numProducts > 0
                               ? Card(
@@ -124,7 +125,8 @@ class CategoryPage extends StatelessWidget {
                                                         style: style.copyWith(
                                                           color: Colors.grey,
                                                         ),
-                                                        textAlign: TextAlign.end,
+                                                        textAlign:
+                                                            TextAlign.end,
                                                       ),
                                                     ),
                                                   ],
