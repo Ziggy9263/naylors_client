@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naylors_client/widgets/widgets.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ImageUploadButton extends StatelessWidget {
   const ImageUploadButton(
@@ -43,14 +44,16 @@ class ImageUploadButton extends StatelessWidget {
                   onTap: () {},
                   child: Padding(
                     padding: EdgeInsets.all(32.0),
-                    child: Icon(Icons.camera_alt, size: 48, color: Colors.white),
+                    child:
+                        Icon(Icons.camera_alt, size: 48, color: Colors.white),
                   ),
                 ),
               ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text("Image uploads are currently unavailable.",
+                  child: Text(
+                    "Image uploads are currently unavailable.",
                     style: style,
                     textAlign: TextAlign.center,
                   ),

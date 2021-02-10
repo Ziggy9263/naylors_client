@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<String> _loadAuthInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return (prefs.getString('token') ?? null);
+    return (prefs.getString('email') ?? null);
   }
 
   @override
@@ -76,6 +76,11 @@ class LoginBody extends StatelessWidget {
       }
       if (state is AuthInProgress) {
         return Center(child: CircularProgressIndicator());
+      }
+      if (state is AuthNeedsRegistration) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          Navigator.pushNamed(context, '/register', arguments: state.auth);
+        });
       }
       if (state is AuthSuccess) {
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

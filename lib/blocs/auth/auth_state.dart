@@ -23,6 +23,15 @@ class AuthSuccess extends AuthState {
   List<Object> get props => [auth];
 }
 
+class AuthNeedsRegistration extends AuthState {
+  final AuthInfo auth;
+
+  const AuthNeedsRegistration({@required this.auth}) : assert(auth != null);
+
+  @override
+  List<Object> get props => [auth];
+}
+
 class AuthRegisterSuccess extends AuthState {
   final AuthInfo auth;
 

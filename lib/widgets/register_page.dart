@@ -5,40 +5,47 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
 
-// TODO: Auto-login after registration.
-
 class RegisterPage extends StatefulWidget {
+  final AuthInfo auth;
+  RegisterPage(this.auth) : assert(auth != null);
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _RegisterPageState createState() => _RegisterPageState(auth);
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final AuthInfo auth;
+  _RegisterPageState(this.auth);
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final name = TextEditingController();
-  final email = TextEditingController();
-  final password = TextEditingController();
-  final passCheck = TextEditingController();
-  FocusNode nameFocus, emailFocus, passFocus, passCheckFocus;
-  /*final phone = TextEditingController();
+  final phone = TextEditingController();
   final business = TextEditingController();
   final address = TextEditingController();
-  final taxExempt = TextEditingController();*/
+  final addrState = TextEditingController();
+  final addrZip = TextEditingController();
+  FocusNode nameFocus,
+      phoneFocus,
+      businessFocus,
+      addressFocus,
+      addrStateFocus,
+      addrZipFocus;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   @override
   void dispose() {
-    email.dispose();
-    password.dispose();
     name.dispose();
-    nameFocus.dispose();
-    emailFocus.dispose();
-    passFocus.dispose();
-    passCheckFocus.dispose();
-    /*phone.dispose();
+    phone.dispose();
     business.dispose();
     address.dispose();
-    taxExempt.dispose();*/
+    addrState.dispose();
+    addrZip.dispose();
+    nameFocus.dispose();
+    phoneFocus.dispose();
+    businessFocus.dispose();
+    addressFocus.dispose();
+    addrStateFocus.dispose();
+    addrZipFocus.dispose();
     super.dispose();
   }
 
@@ -46,9 +53,11 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     nameFocus = FocusNode();
-    emailFocus = FocusNode();
-    passFocus = FocusNode();
-    passCheckFocus = FocusNode();
+    phoneFocus = FocusNode();
+    businessFocus = FocusNode();
+    addressFocus = FocusNode();
+    addrStateFocus = FocusNode();
+    addrZipFocus = FocusNode();
   }
 
   @override
@@ -57,8 +66,31 @@ class _RegisterPageState extends State<RegisterPage> {
         key: _scaffoldKey,
         body: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
-            if (state is AuthInitial) {
+            if (state is AuthInProgress) {
               return Center(
+                  child: CircularProgressIndicator(
+                backgroundColor: Colors.lightBlue,
+              ));
+            }
+            if (state is AuthSuccess) {
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                Navigator.pushReplacementNamed(context, '/');
+              });
+            }
+            if (state is AuthFailure) {
+              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Text('Registration Failed, ${state.error}'),
+                  action: SnackBarAction(
+                    label: 'Dismiss',
+                    onPressed: () {},
+                  ),
+                ));
+                BlocProvider.of<AuthBloc>(context).add(AuthReset());
+              });
+            }
+            return Center(
+              child: Container(
                 child: Form(
                   key: _formKey,
                   child: Container(
@@ -95,55 +127,23 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
-                              controller: email,
+                              controller: phone,
                               obscureText: false,
-                              focusNode: emailFocus,
+                              focusNode: phoneFocus,
                               textInputAction: TextInputAction.next,
                               style: style,
                               decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                hintText: "Email",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(32.0),
-                                ),
-                              ),
-                              validator: (value) {
-                                RegExp emailExp = new RegExp(
-                                    r"^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$");
-                                if (value.isEmpty) {
-                                  return 'Please enter your email';
-                                }
-                                if (!emailExp.hasMatch(value)) {
-                                  return 'Please enter a valid email';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 20.0),
-                            TextFormField(
-                              controller: password,
-                              obscureText: true,
-                              focusNode: passFocus,
-                              textInputAction: TextInputAction.next,
-                              style: style,
-                              decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                hintText: "Password",
+                                hintText: "Phone Number",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(32.0),
                                 ),
                                 errorMaxLines: 3,
                               ),
                               validator: (value) {
-                                RegExp passExp = new RegExp(
-                                    r"^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$");
                                 if (value.isEmpty) {
-                                  return 'Please enter a password';
-                                }
-                                if (!passExp.hasMatch(value)) {
-                                  return 'Must have a minimum of 6 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number with no spaces';
+                                  return 'Please enter your phone number';
                                 }
 
                                 return null;
@@ -151,28 +151,74 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             SizedBox(height: 20.0),
                             TextFormField(
-                              controller: passCheck,
-                              obscureText: true,
-                              focusNode: passCheckFocus,
-                              textInputAction: TextInputAction.done,
+                                controller: business,
+                                obscureText: false,
+                                focusNode: businessFocus,
+                                textInputAction: TextInputAction.next,
+                                style: style,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      20.0, 15.0, 20.0, 15.0),
+                                  hintText: "Business Name (Optional)",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(32.0),
+                                  ),
+                                  errorMaxLines: 3,
+                                ),
+                                validator: (_) => null),
+                            SizedBox(height: 20.0),
+                            TextFormField(
+                              controller: address,
+                              obscureText: false,
+                              focusNode: addressFocus,
+                              textInputAction: TextInputAction.next,
                               style: style,
                               decoration: InputDecoration(
                                 contentPadding:
                                     EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                hintText: "Confirm Password",
+                                hintText: "Billing Address (Optional)",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(32.0),
                                 ),
+                                errorMaxLines: 3,
                               ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please confirm your password';
-                                }
-                                if (value != password.text) {
-                                  return 'Passwords must match';
-                                }
-                                return null;
-                              },
+                              validator: (_) => null,
+                            ),
+                            SizedBox(height: 20.0),
+                            TextFormField(
+                              controller: addrState,
+                              obscureText: false,
+                              focusNode: addrStateFocus,
+                              textInputAction: TextInputAction.next,
+                              style: style,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                hintText: "State",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(32.0),
+                                ),
+                                errorMaxLines: 3,
+                              ),
+                              validator: (_) => null,
+                            ),
+                            SizedBox(height: 20.0),
+                            TextFormField(
+                              controller: addrZip,
+                              obscureText: false,
+                              focusNode: addrZipFocus,
+                              textInputAction: TextInputAction.next,
+                              style: style,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                                hintText: "Zip Code",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(32.0),
+                                ),
+                                errorMaxLines: 3,
+                              ),
+                              validator: (_) => null,
                             ),
                             SizedBox(height: 35.0),
                             Material(
@@ -186,13 +232,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                 onPressed: () async {
                                   if (_formKey.currentState.validate()) {
                                     var registerInfo = AuthRegisterInfo(
-                                        email.text, password.text, name.text);
+                                        auth.email, name.text,
+                                        phone: phone.text,
+                                        business: business.text,
+                                        address: address.text,
+                                        addrState: addrState.text,
+                                        addrZip: addrZip.text);
                                     BlocProvider.of<AuthBloc>(context)
                                         .add(AuthRegister(auth: registerInfo));
                                   }
                                 },
                                 child: Text(
-                                  "Create Account",
+                                  "Register",
                                   textAlign: TextAlign.center,
                                   style: style.copyWith(
                                       color: Colors.white,
@@ -206,29 +257,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-              );
-            }
-            if (state is AuthInProgress) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (state is AuthSuccess) {
-              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                Navigator.pushReplacementNamed(context, '/');
-              });
-            }
-            if (state is AuthFailure) {
-              SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                  content: Text('Registration Failed'),
-                  action: SnackBarAction(
-                    label: 'Dismiss',
-                    onPressed: () {},
-                  ),
-                ));
-                BlocProvider.of<AuthBloc>(context).add(AuthReset());
-              });
-            }
-            return Center(child: CircularProgressIndicator());
+              ),
+            );
           },
         ));
   }

@@ -30,13 +30,7 @@ Future<AuthInfo> signInWithGoogle() async {
     assert(user.email != null);
     assert(user.displayName != null);
     assert(user.photoURL != null);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = await user.getIdToken(true);
-    prefs.setString('email', user.email);
-    prefs.setString('name', user.displayName);
-    prefs.setString('imageUrl', user.photoURL);
-    prefs.setString('token', token);
 
     final User currentUser = _auth.currentUser;
     assert(user.uid == currentUser.uid);

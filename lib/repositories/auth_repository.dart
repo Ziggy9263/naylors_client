@@ -6,7 +6,8 @@ import 'package:naylors_client/util/google_sign_in.dart';
 
 class AuthRepository {
   final AuthApiClient authApiClient;
-  AuthInfo auth = new AuthInfo(token: null, email: null, isAdmin: false);
+  AuthInfo auth = new AuthInfo(
+      token: null, email: null, isAdmin: false, needsRegistration: null);
 
   AuthRepository({@required this.authApiClient})
       : assert(authApiClient != null);
@@ -17,7 +18,18 @@ class AuthRepository {
   }
 
   Future<AuthInfo> loginGoogle() async {
-    auth = await signInWithGoogle().then((result) => result);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    auth = await signInWithGoogle().then((result) async {
+      return await authApiClient.googleLoginAuthentication(result);
+    });
+    if (auth != null && !auth.needsRegistration) {
+      // Placed here to prevent unauthorized logins with fake info
+      prefs.setString('email', auth.email);
+      prefs.setString('token', auth.token);
+      prefs.setBool('isAdmin', auth.isAdmin);
+    } else if (auth != null && auth.needsRegistration) {
+      prefs.setString('token', auth.token);
+    }
     return auth;
   }
 

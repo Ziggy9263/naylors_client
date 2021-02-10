@@ -167,7 +167,7 @@ class MyApp extends StatelessWidget {
                         AuthBloc(authRepository: authRepository),
                   ),
                 ],
-                child: RegisterPage(),
+                child: RegisterPage(settings.arguments),
               ),
           '/': (context) => MultiBlocProvider(
                 providers: [
