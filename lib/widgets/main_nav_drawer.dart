@@ -34,6 +34,7 @@ class MainNavDrawer extends StatelessWidget {
           color: Colors.white,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
@@ -60,11 +61,33 @@ class MainNavDrawer extends StatelessWidget {
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               addRepaintBoundaries: false,
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 ListTile(
                   leading: Icon(Icons.store, color: Colors.blueGrey),
                   title: Text(enEsToggle ? spanishItems[0] : englishItems[0],
                       style: parent.style.copyWith(fontSize: 16)),
+                  trailing: BlocProvider.of<AuthBloc>(context).isAdmin
+                      ? IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blueGrey),
+                          onPressed: () {
+                            BlocProvider.of<ProductBloc>(context)
+                                .add(ProductReset());
+                            BlocProvider.of<ProductBloc>(context).add(
+                                ProductEditEvent(
+                                    step: ModifyStep.Initialize, tag: null));
+                            BlocProvider.of<NavigatorBloc>(context)
+                                .add(NavigatorToProductEdit());
+
+                            // ignore: invalid_use_of_protected_member
+                            parent.setState(() {
+                              parent.headerTitle =
+                                  "Naylor's Online: Product Edit";
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      : Container(),
                   onTap: () {
                     BlocProvider.of<ProductBloc>(context).add(ProductReset());
                     BlocProvider.of<ProductListBloc>(context)
@@ -96,6 +119,21 @@ class MainNavDrawer extends StatelessWidget {
                   leading: Icon(Icons.credit_card, color: Colors.blueGrey),
                   title: Text(enEsToggle ? spanishItems[2] : englishItems[2],
                       style: parent.style.copyWith(fontSize: 16)),
+                  trailing: BlocProvider.of<AuthBloc>(context).isAdmin
+                      ? IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blueGrey),
+                          onPressed: () {
+                            BlocProvider.of<NavigatorBloc>(context)
+                                .add(NavigatorToProductEdit());
+                            // ignore: invalid_use_of_protected_member
+                            parent.setState(() {
+                              parent.headerTitle =
+                                  "Naylor's Online: Manage Orders";
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      : Container(),
                   onTap: () {
                     BlocProvider.of<NavigatorBloc>(context)
                         .add(NavigatorToOrders());
@@ -115,69 +153,6 @@ class MainNavDrawer extends StatelessWidget {
                         indent: 20,
                         endIndent: 20,
                       )
-                    : Container(),
-                BlocProvider.of<AuthBloc>(context).isAdmin
-                    ? ListTile(
-                        dense: true,
-                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                        title: Text('Manage Products',
-                            style: parent.style
-                                .copyWith(fontSize: 16, color: Colors.white)),
-                        tileColor: Colors.blueGrey,
-                        onTap: () {
-                          BlocProvider.of<ProductBloc>(context)
-                              .add(ProductReset());
-                          BlocProvider.of<ProductBloc>(context).add(
-                              ProductEditEvent(
-                                  step: ModifyStep.Initialize, tag: null));
-                          BlocProvider.of<NavigatorBloc>(context)
-                              .add(NavigatorToProductEdit());
-
-                          // ignore: invalid_use_of_protected_member
-                          parent.setState(() {
-                            parent.headerTitle =
-                                "Naylor's Online: Product Edit";
-                          });
-                          Navigator.of(context).pop();
-                        })
-                    : Container(),
-                BlocProvider.of<AuthBloc>(context).isAdmin
-                    ? ListTile(
-                        dense: true,
-                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                        title: Text('Manage Categories',
-                            style: parent.style
-                                .copyWith(fontSize: 16, color: Colors.white)),
-                        tileColor: Colors.blueGrey,
-                        onTap: () {
-                          BlocProvider.of<NavigatorBloc>(context)
-                              .add(NavigatorToProductEdit());
-                          // ignore: invalid_use_of_protected_member
-                          parent.setState(() {
-                            parent.headerTitle =
-                                "Naylor's Online: Category Edit";
-                          });
-                          Navigator.of(context).pop();
-                        })
-                    : Container(),
-                BlocProvider.of<AuthBloc>(context).isAdmin
-                    ? ListTile(
-                        dense: true,
-                        leading: Icon(Icons.edit, color: Colors.blueGrey[50]),
-                        title: Text('Manage Orders',
-                            style: parent.style
-                                .copyWith(fontSize: 16, color: Colors.white)),
-                        tileColor: Colors.blueGrey,
-                        onTap: () {
-                          BlocProvider.of<NavigatorBloc>(context)
-                              .add(NavigatorToProductEdit());
-                          // ignore: invalid_use_of_protected_member
-                          parent.setState(() {
-                            parent.headerTitle =
-                                "Naylor's Online: Manage Orders";
-                          });
-                          Navigator.of(context).pop();
-                        })
                     : Container(),
                 BlocProvider.of<AuthBloc>(context).isAdmin
                     ? ListTile(

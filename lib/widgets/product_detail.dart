@@ -62,7 +62,9 @@ class ProductDetailBody extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black38,
             ),
-            child: Center(child: CircularProgressIndicator(backgroundColor: Colors.white)),
+            child: Center(
+                child:
+                    CircularProgressIndicator(backgroundColor: Colors.white)),
           );
         }
         if (state is ProductLoadSuccess) {
@@ -114,11 +116,11 @@ class ProductDetailBody extends StatelessWidget {
                           Align(
                             alignment: FractionalOffset(1, 0.0),
                             child: Text("Tag: ${product.tag}",
-                              style: style.copyWith(
-                                color: Colors.blue,
-                                fontSize: 14,
-                                fontFamily: "Monospace",
-                                backgroundColor: Colors.white)),
+                                style: style.copyWith(
+                                    color: Colors.blue,
+                                    fontSize: 14,
+                                    fontFamily: "Monospace",
+                                    backgroundColor: Colors.white)),
                           ),
                           Align(
                             child: Padding(
@@ -278,7 +280,8 @@ class ProductDetailBody extends StatelessWidget {
         if (state is ProductLoadFailure) {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
             Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text("An Error Occurred While Loading this Product")));
+                content: Text(
+                    "An Error Occurred While Loading this Product, ${state.error}")));
           });
           BlocProvider.of<NavigatorBloc>(context).add(NavigatorToProducts());
           return Center(
@@ -286,7 +289,8 @@ class ProductDetailBody extends StatelessWidget {
           );
         }
 
-        return Center(child: CircularProgressIndicator(backgroundColor: Colors.white));
+        return Center(
+            child: CircularProgressIndicator(backgroundColor: Colors.white));
       },
     );
   }

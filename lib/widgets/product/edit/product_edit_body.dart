@@ -346,7 +346,7 @@ class ProductEditBody extends StatelessWidget {
                     ProductEditSizes(
                         style: style, fields: fields, parent: parent),
                     ImageUploadButton(style: style, parent: parent),
-                    Text(fields.toString() + )
+                    Text(fields.toString())
                   ],
                 ),
               ),

@@ -24,7 +24,14 @@ class ProductLoadSuccess extends ProductState {
   List<Object> get props => [product];
 }
 
-class ProductLoadFailure extends ProductState {}
+class ProductLoadFailure extends ProductState {
+  final dynamic error;
+
+  const ProductLoadFailure({@required this.error}) : assert(error != null);
+
+  @override
+  List<Object> get props => [error];
+}
 
 /// Product (List)
 class ProductListInitial extends ProductState {}
@@ -64,7 +71,8 @@ class ProductEditInitial extends ProductState {
 class ProductEditSuccess extends ProductState {
   final String tag;
   final ModifyStep step;
-  const ProductEditSuccess({@required this.tag, @required this.step}) : assert(tag != null && step != null);
+  const ProductEditSuccess({@required this.tag, @required this.step})
+      : assert(tag != null && step != null);
 
   @override
   List<Object> get props => [tag];

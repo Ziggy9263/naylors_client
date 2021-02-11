@@ -24,9 +24,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           try {
             final ProductDetail product =
                 await productRepository.getProduct(event.tag);
-            yield ProductEditInitial(tag: event.tag, product: product, modifyStep: ModifyStep.Update);
+            yield ProductEditInitial(
+                tag: event.tag,
+                product: product,
+                modifyStep: ModifyStep.Update);
           } catch (_) {
-            yield ProductEditInitial(tag: event.tag, modifyStep: ModifyStep.Create);
+            yield ProductEditInitial(
+                tag: event.tag, modifyStep: ModifyStep.Create);
           }
           break;
         case ModifyStep.Create:
@@ -71,7 +75,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             await productRepository.getProduct(event.tag);
         yield ProductLoadSuccess(product: product);
       } catch (_) {
-        yield ProductLoadFailure();
+        yield ProductLoadFailure(error: _);
       }
     }
   }
@@ -89,11 +93,11 @@ class ProductListBloc extends Bloc<ProductEvent, ProductState> {
     if (event is ProductListRequested) {
       yield ProductListLoadInProgress();
       try {
-        final ProductList productList = 
-          (event.category != null)
-          ? await productRepository.getProductsByCategory(event.category)
-          : await productRepository.getProducts();
-        yield ProductListLoadSuccess(productList: productList, category: event.category);
+        final ProductList productList = (event.category != null)
+            ? await productRepository.getProductsByCategory(event.category)
+            : await productRepository.getProducts();
+        yield ProductListLoadSuccess(
+            productList: productList, category: event.category);
       } catch (_) {
         yield ProductListLoadFailure(error: _);
       }
