@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
 import 'package:naylors_client/models/models.dart';
@@ -27,7 +28,8 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrderListBloc, OrderListState>(builder: (context, state) {
+    return BlocBuilder<OrderListBloc, OrderListState>(
+        builder: (context, state) {
       if (state is OrderListInitial) {
         BlocProvider.of<OrderListBloc>(context).add(OrderListRequested());
       }
@@ -61,7 +63,8 @@ class _OrderPageState extends State<OrderPage> {
       }
       if (state is OrderListLoadSuccess) {
         List<OrderRes> orders = state.orderList.formattedList;
-        int currentChoice = BlocProvider.of<OrderListBloc>(context).currentChoice;
+        int currentChoice =
+            BlocProvider.of<OrderListBloc>(context).currentChoice;
         OrderRes currentOrder = orders[currentChoice];
         return Center(
           child: Column(
@@ -122,16 +125,22 @@ class _OrderPageState extends State<OrderPage> {
                   itemBuilder: (context, index) {
                     return Card(
                       color: (index ==
-                              BlocProvider.of<OrderListBloc>(context).currentChoice)
+                              BlocProvider.of<OrderListBloc>(context)
+                                  .currentChoice)
                           ? Colors.lightBlue[100]
                           : Colors.white,
                       elevation: 0.5,
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            BlocProvider.of<OrderListBloc>(context).currentChoice =
-                                index;
+                            BlocProvider.of<OrderListBloc>(context)
+                                .currentChoice = index;
                           });
+                        },
+                        onLongPress: () {
+                          Clipboard.setData(new ClipboardData(
+                              text:
+                                  "Naylor's Order UUID: ${orders[index].uuid}"));
                         },
                         child: Container(
                           padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 2.0),

@@ -79,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
             }
             if (state is AuthFailure) {
               SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Registration Failed, ${state.error}'),
                   action: SnackBarAction(
                     label: 'Dismiss',

@@ -4,8 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:naylors_client/blocs/blocs.dart';
-import 'package:naylors_client/models/models.dart';
-import 'package:naylors_client/util/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   @override

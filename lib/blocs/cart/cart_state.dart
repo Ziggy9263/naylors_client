@@ -26,4 +26,11 @@ class CartNotEmpty extends CartState {
   List<Object> get props => [cart];
 }
 
-class CartLoadFailure extends CartState {}
+class CartLoadFailure extends CartState {
+  final dynamic error;
+
+  const CartLoadFailure({@required this.error}) : assert(error != null);
+
+  @override
+  List<Object> get props => [error];
+}

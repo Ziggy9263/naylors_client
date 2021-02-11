@@ -68,8 +68,8 @@ class OrderRes extends Equatable {
   OrderRes({this.cartDetail, this.userComments, this.payHistory, this.uuid});
 
   factory OrderRes.fromJSON(Map<String, dynamic> json) {
-    List<CartItem> cart = new List<CartItem>();
-    List<PayHistory> payments = new List<PayHistory>();
+    List<CartItem> cart = new List<CartItem>.empty(growable: true);
+    List<PayHistory> payments = new List<PayHistory>.empty(growable: true);
     json['payHistory'].forEach((value) {
       payments.add(PayHistory.fromMap(value));
     });
@@ -85,7 +85,7 @@ class OrderRes extends Equatable {
   }
 
   List<String> get itemList {
-    List<String> items = new List<String>();
+    List<String> items = new List<String>.empty(growable: true);
     cartDetail.forEach((value) {
       items.add(value.detail.name);
     });
@@ -113,8 +113,7 @@ class OrderRes extends Equatable {
     double tax = 0;
     for (int i = 0; i < cartDetail.length; i++) {
       double subtotal = (cartDetail[i].quantity * cartDetail[i].detail.price);
-      tax = (tax +
-          (!cartDetail[i].detail.taxExempt ? subtotal * 0.0825 : 0));
+      tax = (tax + (!cartDetail[i].detail.taxExempt ? subtotal * 0.0825 : 0));
     }
     return tax;
   }
@@ -139,7 +138,7 @@ class OrderListRes extends Equatable {
   OrderListRes({this.list});
 
   factory OrderListRes.fromJSON(List<dynamic> json) {
-    List<OrderRes> orders = List<OrderRes>();
+    List<OrderRes> orders = List<OrderRes>.empty(growable: true);
     json.forEach((dynamic value) {
       orders.add(OrderRes.fromJSON(value));
     });
@@ -149,7 +148,7 @@ class OrderListRes extends Equatable {
   }
 
   List<OrderRes> get formattedList {
-    List<OrderRes> orders = List<OrderRes>();
+    List<OrderRes> orders = List<OrderRes>.empty(growable: true);
     failedOrders = 0;
     this.list.forEach((value) {
       if (value.recentStatus == "Placed") {

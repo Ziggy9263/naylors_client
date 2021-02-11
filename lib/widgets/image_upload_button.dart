@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:naylors_client/widgets/widgets.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class ImageUploadButton extends StatelessWidget {
   const ImageUploadButton(

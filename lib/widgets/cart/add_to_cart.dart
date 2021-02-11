@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naylors_client/models/models.dart';
 import 'package:naylors_client/blocs/blocs.dart';
@@ -19,6 +20,13 @@ class AddToCartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+      if (state is CartLoadFailure) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Error adding product to cart, ${state.error}'),
+          ));
+        });
+      }
       return Padding(
         padding: EdgeInsets.all(0),
         child: Material(

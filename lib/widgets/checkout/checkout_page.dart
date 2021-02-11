@@ -19,9 +19,10 @@ class CheckoutPageState extends State<CheckoutPage> {
   final NaylorsHomePageState parent;
   CheckoutPageState(this.parent) : assert(parent != null);
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  List<TextEditingController> quantityList = new List<TextEditingController>();
+  List<TextEditingController> quantityList =
+      new List<TextEditingController>.empty(growable: true);
   String _email;
-  List<CartItem> cart = List<CartItem>();
+  List<CartItem> cart = List<CartItem>.empty(growable: true);
   OrderReq order;
   String headerTitle = "Review Your Cart";
   PayOption payOption = PayOption.withCard;
@@ -184,9 +185,7 @@ class CheckoutPageState extends State<CheckoutPage> {
               children: <Widget>[
                 FlatButton(
                   //highlightColor: Colors.lightBlue[100],
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
+                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     Radio(
                       value: PayOption.inStore,
                       groupValue: payOption,
@@ -206,9 +205,7 @@ class CheckoutPageState extends State<CheckoutPage> {
                 ),
                 FlatButton(
                   //highlightColor: Colors.lightBlue[100],
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
+                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     Radio(
                       value: PayOption.withCard,
                       groupValue: payOption,
@@ -294,41 +291,43 @@ class CheckoutPageState extends State<CheckoutPage> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: (payOption == PayOption.withCard) ? <Widget>[
-                              Text(
-                                "CONTINUE TO",
-                                style: style.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                "PAYMENT",
-                                style: style.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ] : <Widget>[
-                              Text(
-                                "PLACE",
-                                style: style.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                "ORDER",
-                                style: style.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ]),
+                            children: (payOption == PayOption.withCard)
+                                ? <Widget>[
+                                    Text(
+                                      "CONTINUE TO",
+                                      style: style.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      "PAYMENT",
+                                      style: style.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ]
+                                : <Widget>[
+                                    Text(
+                                      "PLACE",
+                                      style: style.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Text(
+                                      "ORDER",
+                                      style: style.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ]),
                       ),
                       VerticalDivider(
                         color: Colors.white,

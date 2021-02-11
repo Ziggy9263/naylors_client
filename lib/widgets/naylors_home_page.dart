@@ -55,7 +55,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   }
 
   showSnackBar(SnackBar data) async {
-    this.scaffoldKey.currentState.showSnackBar(data);
+    ScaffoldMessenger.of(context).showSnackBar(data);
   }
 
   @override

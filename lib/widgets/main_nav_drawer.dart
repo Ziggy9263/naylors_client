@@ -87,7 +87,7 @@ class MainNavDrawer extends StatelessWidget {
                             Navigator.of(context).pop();
                           },
                         )
-                      : Container(),
+                      : null,
                   onTap: () {
                     BlocProvider.of<ProductBloc>(context).add(ProductReset());
                     BlocProvider.of<ProductListBloc>(context)
@@ -133,7 +133,7 @@ class MainNavDrawer extends StatelessWidget {
                             Navigator.of(context).pop();
                           },
                         )
-                      : Container(),
+                      : null,
                   onTap: () {
                     BlocProvider.of<NavigatorBloc>(context)
                         .add(NavigatorToOrders());

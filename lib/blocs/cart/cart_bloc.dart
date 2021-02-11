@@ -23,7 +23,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         else
           throw Exception("How did this happen?");
       } catch (_) {
-        yield CartLoadFailure();
+        yield CartLoadFailure(error: _);
       }
     }
     if (event is CartModify) {
@@ -35,7 +35,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         if (cartDetail.isNotEmpty) yield CartNotEmpty(cart: cartDetail);
         if (cartDetail.isEmpty) yield CartEmpty();
       } catch (_) {
-        yield CartLoadFailure();
+        yield CartLoadFailure(error: _);
       }
     }
     if (event is CartRemove) {
@@ -46,7 +46,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         if (cartDetail.isNotEmpty) yield CartNotEmpty(cart: cartDetail);
         if (cartDetail.isEmpty) yield CartEmpty();
       } catch (_) {
-        yield CartLoadFailure();
+        yield CartLoadFailure(error: _);
       }
     }
     if (event is CartRequested) {
@@ -55,7 +55,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         if (cartDetail.isNotEmpty) yield CartNotEmpty(cart: cartDetail);
         if (cartDetail.isEmpty) yield CartEmpty();
       } catch (_) {
-        yield CartLoadFailure();
+        yield CartLoadFailure(error: _);
       }
     }
   }

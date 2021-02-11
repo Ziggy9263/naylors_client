@@ -54,7 +54,7 @@ void main() {
   );
 
   final CartRepository cartRepository = CartRepository(
-    detail: List<CartItem>(),
+    detail: List<CartItem>.empty(growable: true),
   );
 
   final OrderRepository orderRepository = OrderRepository(
@@ -180,8 +180,8 @@ class MyApp extends StatelessWidget {
                         ProductListBloc(productRepository: productRepository),
                   ),
                   BlocProvider<DepartmentListBloc>(
-                    create: (BuildContext context) =>
-                        DepartmentListBloc(departmentRepository: departmentRepository),
+                    create: (BuildContext context) => DepartmentListBloc(
+                        departmentRepository: departmentRepository),
                   ),
                   BlocProvider<CartBloc>(
                     lazy: false,

@@ -70,7 +70,7 @@ class ProductDetailBody extends StatelessWidget {
         if (state is ProductLoadSuccess) {
           final product = state.product;
           List<DropdownMenuItem<String>> dropdownItems =
-              List<DropdownMenuItem<String>>();
+              List<DropdownMenuItem<String>>.empty(growable: true);
 
           product.sizes.forEach((value) {
             dropdownItems.add(DropdownMenuItem(
@@ -279,7 +279,7 @@ class ProductDetailBody extends StatelessWidget {
         }
         if (state is ProductLoadFailure) {
           SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-            Scaffold.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(
                     "An Error Occurred While Loading this Product, ${state.error}")));
           });

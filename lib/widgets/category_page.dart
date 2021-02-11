@@ -33,9 +33,9 @@ class CategoryPage extends StatelessWidget {
       if (state is DepartmentListLoadSuccess) {
         final departmentList = state.departmentList.list;
         final productState = BlocProvider.of<ProductListBloc>(context).state;
-        var populatedDepartments = new List<Department>();
+        var populatedDepartments = new List<Department>.empty(growable: true);
 
-        var products = new List<ProductDetail>();
+        var products = new List<ProductDetail>.empty(growable: true);
         if (productState is ProductListLoadSuccess) {
           products = productState.productList.list;
           products.forEach((product) {

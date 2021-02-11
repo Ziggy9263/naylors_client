@@ -273,15 +273,12 @@ class ProductEditState extends State<ProductEdit>
             // This should never happen.
             break;
           case ModifyStep.Create:
-            // TODO: Display box that says 'Creation Successful'
             overlayAnimationMessage = "Creation Successful";
             break;
           case ModifyStep.Update:
-            // TODO: Display box that says 'Update Successful'
             overlayAnimationMessage = "Update Successful";
             break;
           case ModifyStep.Delete:
-            // TODO: Display box that says 'Delete Successful'
             overlayAnimationMessage = "Delete Successful";
             // Clear edit page
             break;

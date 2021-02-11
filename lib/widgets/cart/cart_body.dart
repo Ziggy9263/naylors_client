@@ -18,7 +18,8 @@ class CartBody extends StatefulWidget {
 class CartBodyState extends State<CartBody> {
   NaylorsHomePageState parent;
   CartBodyState({this.parent});
-  List<TextEditingController> quantityList = List<TextEditingController>();
+  List<TextEditingController> quantityList =
+      List<TextEditingController>.empty(growable: true);
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   List<CartItem> cart;
 

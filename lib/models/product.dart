@@ -47,17 +47,17 @@ class CategoryList {
 
   factory CategoryList.fromJSON(Map<String, dynamic> json) {
     List<dynamic> dynamicList = json as List;
-    List<Category> categories = List<Category>();
+    List<Category> categories = List<Category>.empty(growable: true);
     dynamicList.forEach((f) => {categories.add(Category.fromJSON(f))});
     return CategoryList(list: categories);
   }
 
   factory CategoryList.empty() {
-    return CategoryList(list: new List<Category>());
+    return CategoryList(list: new List<Category>.empty(growable: true));
   }
 
   factory CategoryList.fromList(List<dynamic> list) {
-    List<Category> categories = List<Category>();
+    List<Category> categories = List<Category>.empty(growable: true);
     list.forEach((f) {
       Category c = Category.fromJSON(f);
       categories.add(c);
@@ -68,7 +68,7 @@ class CategoryList {
   factory CategoryList.fromString(String j) {
     Map<String, dynamic> json = jsonDecode(j);
     List<dynamic> dynamicList = json['categories'] as List;
-    List<Category> categories = List<Category>();
+    List<Category> categories = List<Category>.empty(growable: true);
     dynamicList.forEach((f) {
       Category c = Category.fromJSON(f);
       categories.add(c);
@@ -125,7 +125,7 @@ class DepartmentList {
   factory DepartmentList.fromJSON(String j) {
     Map<String, dynamic> json = jsonDecode(j);
     List<dynamic> dynamicList = json['departments'] as List;
-    List<Department> departments = List<Department>();
+    List<Department> departments = List<Department>.empty(growable: true);
     dynamicList.forEach((f) {
       Department c = Department.fromJSON(f);
       departments.add(c);
@@ -220,7 +220,7 @@ class ProductList {
   factory ProductList.fromJSON(String j) {
     Map<String, dynamic> json = jsonDecode(j);
     List<dynamic> dynamicList = json['products'] as List;
-    List<ProductDetail> products = List<ProductDetail>();
+    List<ProductDetail> products = List<ProductDetail>.empty(growable: true);
     dynamicList.forEach((f) {
       ProductDetail p = ProductDetail.fromJSON(f);
       products.add(p);
@@ -293,7 +293,7 @@ class ProductEditFields {
     this.price = new TextEditingController(text: "0.00");
     this.department = new Department.empty();
     this.category = new Category.empty();
-    this.sizes = new List<dynamic>();
+    this.sizes = new List<dynamic>.empty(growable: true);
     this.sizeTag = new TextEditingController();
     this.sizeSize = new TextEditingController();
   }
@@ -315,7 +315,7 @@ class ProductEditFields {
         price: double.parse(this.price.text.substring(1)),
         taxExempt: this.taxExempt,
         root: this.root,
-        images: new List<dynamic>(),
+        images: new List<dynamic>.empty(growable: true),
         department: this.department,
         category: this.category,
         sizes: this.sizes);
@@ -332,7 +332,7 @@ class ProductEditFields {
       this.root = true;
       this.department = new Department.empty();
       this.category = new Category.empty();
-      this.sizes = new List<dynamic>();
+      this.sizes = new List<dynamic>.empty(growable: true);
     } else {
       this.tag.value = TextEditingValue(text: product.tag);
       this.name.value = TextEditingValue(text: product.name);

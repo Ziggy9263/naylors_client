@@ -52,7 +52,7 @@ class OrderSingleView extends StatelessWidget {
       }
       if (state is OrderCancelFailure) {
         BlocProvider.of<OrderBloc>(context).add(OrderReset());
-          // ignore: invalid_use_of_protected_member
+        // ignore: invalid_use_of_protected_member
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           // ignore: invalid_use_of_protected_member
           this.parent.setState(() {
@@ -181,8 +181,11 @@ class OrderSingleView extends StatelessWidget {
                                                     ),
                                                     children: <TextSpan>[
                                                       TextSpan(
-                                                        text:
-                                                            "\/${item.detail.sizes.firstWhere((element) => element['tag'] == item.product.toString())['size']}",
+                                                        text: (item.detail.sizes
+                                                                    .length >
+                                                                0)
+                                                            ? "\/${item.detail.sizes.firstWhere((element) => element['tag'] == item.product.toString())['size']}"
+                                                            : "",
                                                         style: style.copyWith(
                                                           fontWeight:
                                                               FontWeight.w300,
@@ -220,6 +223,7 @@ class OrderSingleView extends StatelessWidget {
                   Expanded(
                       child: Container(
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         MaterialButton(
                           child: Column(
@@ -247,7 +251,7 @@ class OrderSingleView extends StatelessWidget {
                                       "This order has already been cancelled.")));
                           },
                         ),
-                        MaterialButton(
+                        /*MaterialButton(
                           child: Column(
                             children: [
                               Icon(Icons.edit, color: Colors.grey[200]),
@@ -264,7 +268,7 @@ class OrderSingleView extends StatelessWidget {
                                       'This Feature Is Not Available Yet!')));
                             });
                           },
-                        ),
+                        ),*/
                         MaterialButton(
                           child: Column(
                             children: [
