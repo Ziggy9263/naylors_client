@@ -163,10 +163,9 @@ class ProductListBody extends StatelessWidget {
                                                   image: DecorationImage(
                                             fit: BoxFit.fitWidth,
                                             alignment: FractionalOffset.center,
-                                            image: AssetImage(
-                                                (item.images.isNotEmpty)
-                                                    ? item.images[0]
-                                                    : 'no-image.png'),
+                                            image: (item.images.isNotEmpty)
+                                                ? NetworkImage(item.images[0])
+                                                : AssetImage('no-image.png'),
                                           ))))
                                       : Container(),
                                   category == null

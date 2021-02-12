@@ -266,6 +266,7 @@ class ProductEditFields {
   TextEditingController sizeTag;
   TextEditingController sizeSize;
   List<dynamic> sizes;
+  List<dynamic> images;
   int sizeSelected;
 
   set size(int index) {
@@ -283,6 +284,7 @@ class ProductEditFields {
       root,
       department,
       category,
+      images,
       sizes,
       sizeSelected});
 
@@ -293,6 +295,7 @@ class ProductEditFields {
     this.price = new TextEditingController(text: "0.00");
     this.department = new Department.empty();
     this.category = new Category.empty();
+    this.images = new List<dynamic>.empty(growable: true);
     this.sizes = new List<dynamic>.empty(growable: true);
     this.sizeTag = new TextEditingController();
     this.sizeSize = new TextEditingController();
@@ -315,7 +318,7 @@ class ProductEditFields {
         price: double.parse(this.price.text.substring(1)),
         taxExempt: this.taxExempt,
         root: this.root,
-        images: new List<dynamic>.empty(growable: true),
+        images: this.images,
         department: this.department,
         category: this.category,
         sizes: this.sizes);
@@ -333,6 +336,7 @@ class ProductEditFields {
       this.department = new Department.empty();
       this.category = new Category.empty();
       this.sizes = new List<dynamic>.empty(growable: true);
+      this.images = new List<dynamic>.empty(growable: true);
     } else {
       this.tag.value = TextEditingValue(text: product.tag);
       this.name.value = TextEditingValue(text: product.name);
@@ -343,6 +347,7 @@ class ProductEditFields {
       this.department = product.department;
       this.category = product.category;
       this.sizes = product.sizes;
+      this.images = product.images;
     }
   }
 
@@ -355,10 +360,11 @@ class ProductEditFields {
     this.department = product.department;
     this.category = product.category;
     this.sizes = product.sizes;
+    this.images = product.images;
   }
 
   @override
   String toString() {
-    return 'Fields: {tag: ${tag.text}, name: \"${name.text}\", description: \"${description.text}\", price: ${price.text}, taxExempt: $taxExempt, root: $root, department: ${department.toString()}, category: ${category.toString()}, sizes: $sizes }';
+    return 'Fields: {tag: ${tag.text}, name: \"${name.text}\", description: \"${description.text}\", price: ${price.text}, taxExempt: $taxExempt, root: $root, department: ${department.toString()}, category: ${category.toString()}, sizes: $sizes, images: ${images.toString()}';
   }
 }

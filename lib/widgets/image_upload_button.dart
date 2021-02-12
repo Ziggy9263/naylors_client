@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:naylors_client/widgets/widgets.dart';
@@ -30,14 +31,29 @@ class _ImageUploadButtonState extends State<ImageUploadButton> {
 
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.getImage(source: source);
-
+    final imageRef = await uploadImageToFirebase(File(pickedFile.path), 0);
+    final String imagePath = await imageRef.getDownloadURL();
+    parent.setState(() {
+      parent.fields.images = [imagePath];
+    });
     setState(() {
       if (pickedFile != null) _imageFile = File(pickedFile.path);
     });
   }
 
-  Future<void> uploadImageToFirebase(BuildContext context) async {
-    String fileName = (_imageFile.path);
+  Future<StorageReference> uploadImageToFirebase(File image, int id) async {
+    StorageReference storageReference = FirebaseStorage.instance.ref().child(
+        'Uploads/' + parent.fields.tag.text + '_' + id.toString() + '.jpg');
+
+    StorageUploadTask uploadTask = storageReference.putFile(
+        image, new StorageMetadata(contentType: 'image/jpg'));
+
+    await uploadTask.onComplete;
+    return storageReference;
+  }
+
+  Future<void> deleteImage(StorageReference oldUpload) async {
+    await oldUpload.delete();
   }
 
   @override
@@ -108,13 +124,25 @@ class _ImageUploadButtonState extends State<ImageUploadButton> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: (_imageFile == null)
+                  child: (parent.fields.images.isEmpty)
                       ? Text(
                           "No images selected.",
                           style: style,
                           textAlign: TextAlign.center,
                         )
-                      : Image.file(_imageFile),
+                      : AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              image: DecorationImage(
+                                fit: BoxFit.fitWidth,
+                                alignment: FractionalOffset.center,
+                                image: NetworkImage(parent.fields.images[0]),
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
               ),
             ],

@@ -94,7 +94,7 @@ class ProductDetailBody extends StatelessWidget {
                               image: DecorationImage(
                                 fit: BoxFit.fitWidth,
                                 alignment: FractionalOffset.center,
-                                image: AssetImage(product.images[0]),
+                                image: NetworkImage(product.images[0]),
                               ),
                             )
                           : BoxDecoration(
