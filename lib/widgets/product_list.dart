@@ -152,35 +152,19 @@ class ProductListBody extends StatelessWidget {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 8),
                             child: LimitedBox(
-                              maxHeight: category == null ? 64 : 48,
+                              maxHeight: category == null ? 48 : 48,
                               child: Row(
                                 children: <Widget>[
-                                  category == null
-                                      ? AspectRatio(
-                                          aspectRatio: 487 / 451,
-                                          child: Container(
-                                              decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                            fit: BoxFit.fitWidth,
-                                            alignment: FractionalOffset.center,
-                                            image: (item.images.isNotEmpty)
-                                                ? NetworkImage(item.images[0])
-                                                : AssetImage('no-image.png'),
-                                          ))))
-                                      : Container(),
-                                  category == null
-                                      ? SizedBox(width: 12)
-                                      : Container(),
                                   Expanded(
-                                    child: Column(
+                                    /*child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(item.name,
-                                            style: style.copyWith(
-                                                fontWeight: FontWeight.w500)),
-                                        category == null
+                                      children: <Widget>[*/
+                                    child: Text(item.name,
+                                        style: style.copyWith(
+                                            fontWeight: FontWeight.w500)),
+                                    /*category == null
                                             ? Expanded(
                                                 child: Align(
                                                   alignment: FractionalOffset
@@ -196,7 +180,7 @@ class ProductListBody extends StatelessWidget {
                                                               15.0),
                                                     ),
                                                     child: Text(
-                                                      "> ${item.category.code.toString().padLeft(2, '0')}-${item.category.name}",
+                                                      "> ${item.category.name}",
                                                       style: style.copyWith(
                                                         color: Colors.white,
                                                         fontSize: 16,
@@ -211,12 +195,12 @@ class ProductListBody extends StatelessWidget {
                                                   ),
                                                 ),
                                               )
-                                            : Container(),
-                                      ],
-                                    ),
+                                            : Container(),*/
+                                    //],
+                                    //),
                                   ),
                                   category == null
-                                      ? Column(
+                                      ? Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: priceChildren,
