@@ -37,6 +37,7 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
   }
 
   Future<String> _loadAuthInfo() async {
+    BlocProvider.of<AuthBloc>(context).add(AuthGet());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('email') ?? 'Guest';
   }
