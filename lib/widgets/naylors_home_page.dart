@@ -142,6 +142,9 @@ class NaylorsHomePageState extends State<NaylorsHomePage> {
           if (state is NavigatorAtOrders) {
             return OrderPage(this);
           }
+          if (state is NavigatorAtOrderEdit) {
+            return OrderEditPage(this);
+          }
           if (state is NavigatorAtProfile) {
             return ProfilePage();
           }

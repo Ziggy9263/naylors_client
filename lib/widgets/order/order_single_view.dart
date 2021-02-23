@@ -103,7 +103,7 @@ class OrderSingleView extends StatelessWidget {
                                         Colors.white24, BlendMode.lighten),
                                     fit: BoxFit.fitWidth,
                                     alignment: FractionalOffset.center,
-                                    image: AssetImage(item.detail.images[0]),
+                                    image: NetworkImage(item.detail.images[0]),
                                   ),
                                 )
                               : BoxDecoration(

@@ -38,6 +38,8 @@ class NavigatorAtProductEdit extends NaylorsNavigatorState {
 
 class NavigatorAtOrders extends NaylorsNavigatorState {}
 
+class NavigatorAtOrderEdit extends NaylorsNavigatorState {}
+
 class NavigatorAtProfile extends NaylorsNavigatorState {}
 
 class NavigatorAtCart extends NaylorsNavigatorState {}

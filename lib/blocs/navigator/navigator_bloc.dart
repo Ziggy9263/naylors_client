@@ -67,6 +67,14 @@ class NavigatorBloc extends Bloc<NavigatorEvent, NaylorsNavigatorState> {
       floatingButton = null;
       yield NavigatorAtOrders();
     }
+    if (event is NavigatorToOrderEdit) {
+      yield NavigatorLoading();
+      appBarToggle = true;
+      cartToggle = false;
+      searchToggle = false;
+      floatingButton = null;
+      yield NavigatorAtOrderEdit();
+    }
     if (event is NavigatorToProfile) {
       yield NavigatorLoading();
       appBarToggle = true;

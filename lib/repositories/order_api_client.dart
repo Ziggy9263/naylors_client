@@ -17,15 +17,17 @@ class OrderApiClient {
         .map((d) => {'product': d.product, 'quantity': d.quantity})
         .toList();
     body['userComments'] = order.userComments;
-    body['paymentInfo'] = (order.paymentInfo.payOption == PayOption.withCard) ? {
-      'cardNumber': order.paymentInfo.cardNumber,
-      'expiryMonth': order.paymentInfo.expiryMonth,
-      'expiryYear': order.paymentInfo.expiryYear,
-      'cvv': order.paymentInfo.cvv,
-      'avsZip': order.paymentInfo.avsZip,
-      'avsStreet': order.paymentInfo.avsStreet,
-      'payOption': "WithCard"
-    } : {'payOption': "InStore"};
+    body['paymentInfo'] = (order.paymentInfo.payOption == PayOption.withCard)
+        ? {
+            'cardNumber': order.paymentInfo.cardNumber,
+            'expiryMonth': order.paymentInfo.expiryMonth,
+            'expiryYear': order.paymentInfo.expiryYear,
+            'cvv': order.paymentInfo.cvv,
+            'avsZip': order.paymentInfo.avsZip,
+            'avsStreet': order.paymentInfo.avsStreet,
+            'payOption': "WithCard"
+          }
+        : {'payOption': "InStore"};
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     final response = await this.httpClient.post(
@@ -50,8 +52,8 @@ class OrderApiClient {
     }
   }
 
-  Future<OrderListRes> fetchOrders() async {
-    final ordersUrl = "$baseUrl/api/orders/";
+  Future<OrderListRes> fetchOrders(bool admin) async {
+    final ordersUrl = "$baseUrl/api/orders/${admin ? '?admin=true' : ''}";
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     final response = await this.httpClient.get(ordersUrl, headers: {

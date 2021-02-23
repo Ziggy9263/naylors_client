@@ -69,7 +69,8 @@ class OrderListBloc extends Bloc<OrderListEvent, OrderListState> {
     if (event is OrderListRequested) {
       yield OrderListLoadInProgress();
       try {
-        final OrderListRes orderList = await orderRepository.getOrders();
+        final OrderListRes orderList =
+            await orderRepository.getOrders(event.admin);
         if (orderList.list.length < 1)
           yield OrderListEmpty();
         else {

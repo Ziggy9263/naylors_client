@@ -10,8 +10,8 @@ class OrderRepository {
       {@required this.orderApiClient, @required this.productApiClient})
       : assert(orderApiClient != null);
 
-  Future<OrderListRes> getOrders() async {
-    OrderListRes listRes = await orderApiClient.fetchOrders();
+  Future<OrderListRes> getOrders(bool admin) async {
+    OrderListRes listRes = await orderApiClient.fetchOrders(admin);
     listRes.list.forEach((element) async {
       element.cartDetail = await productApiClient.populate(element.cartDetail);
     });

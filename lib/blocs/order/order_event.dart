@@ -47,8 +47,9 @@ abstract class OrderListEvent extends Equatable {
 
 class OrderListRequested extends OrderListEvent {
   final int choice;
-  const OrderListRequested({this.choice = 0});
+  final bool admin;
+  const OrderListRequested({this.choice = 0, this.admin = false});
 
   @override
-  List<Object> get props => [choice];
+  List<Object> get props => [choice, admin];
 }

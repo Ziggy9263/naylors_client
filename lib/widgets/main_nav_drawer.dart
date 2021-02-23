@@ -127,7 +127,7 @@ class MainNavDrawer extends StatelessWidget {
                           child: Text('Edit Orders'),
                           onPressed: () {
                             BlocProvider.of<NavigatorBloc>(context)
-                                .add(NavigatorToProductEdit());
+                                .add(NavigatorToOrderEdit());
                             // ignore: invalid_use_of_protected_member
                             parent.setState(() {
                               parent.headerTitle =

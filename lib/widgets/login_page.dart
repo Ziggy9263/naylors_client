@@ -16,8 +16,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   initState() {
     super.initState();
-    _loadAuthInfo().then((value) =>
-        {if (value != null) Navigator.pushReplacementNamed(context, '/')});
+    _loadAuthInfo().then((value) => {
+          if (value != null)
+            BlocProvider.of<AuthBloc>(context).add(AuthGoogle())
+        });
   }
 
   @override

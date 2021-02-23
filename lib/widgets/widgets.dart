@@ -24,6 +24,8 @@ export 'profile_page.dart';
 export 'order/order_page.dart';
 export 'order/order_single_view.dart';
 export 'order/order_status_icon.dart';
+export 'order/edit/order_edit.dart';
+export 'order/edit/order_edit_single_view.dart';
 
 /// Search
 export 'search/search_page.dart';

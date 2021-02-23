@@ -39,7 +39,7 @@ class PayHistoryRef extends Equatable {
 
 class PayHistory extends Equatable {
   final String status;
-  final String ts;
+  final DateTime ts;
   final PayHistoryRef ref;
 
   PayHistory({this.status, this.ts, this.ref}) : assert(status != null);
@@ -47,7 +47,7 @@ class PayHistory extends Equatable {
   factory PayHistory.fromMap(Map<String, dynamic> payHistory) {
     return PayHistory(
       status: payHistory['status'],
-      ts: payHistory['ts'],
+      ts: DateTime.parse(payHistory['ts']),
       ref: (payHistory['ref'] == null)
           ? null
           : PayHistoryRef.fromMap(payHistory['_ref']),
@@ -61,11 +61,21 @@ class PayHistory extends Equatable {
 // ignore: must_be_immutable
 class OrderRes extends Equatable {
   List<CartItem> cartDetail;
+  final String userId;
   final String userComments;
   final List<PayHistory> payHistory;
   final String uuid;
+  final DateTime createdAt;
+  final DateTime updatedLast;
 
-  OrderRes({this.cartDetail, this.userComments, this.payHistory, this.uuid});
+  OrderRes(
+      {this.cartDetail,
+      this.userId,
+      this.userComments,
+      this.payHistory,
+      this.uuid,
+      this.createdAt,
+      this.updatedLast});
 
   factory OrderRes.fromJSON(Map<String, dynamic> json) {
     List<CartItem> cart = new List<CartItem>.empty(growable: true);
@@ -77,11 +87,13 @@ class OrderRes extends Equatable {
       cart.add(CartItem.fromMap(value));
     });
     return OrderRes(
-      cartDetail: cart,
-      userComments: json['userComments'],
-      payHistory: payments,
-      uuid: json['uuid'],
-    );
+        cartDetail: cart,
+        userId: json['user'],
+        userComments: json['userComments'],
+        payHistory: payments,
+        uuid: json['uuid'],
+        createdAt: DateTime.parse(json['createdAt']),
+        updatedLast: DateTime.parse(json['updatedLast']));
   }
 
   List<String> get itemList {

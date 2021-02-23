@@ -34,6 +34,8 @@ class NavigatorToProductEdit extends NavigatorEvent {
 
 class NavigatorToOrders extends NavigatorEvent {}
 
+class NavigatorToOrderEdit extends NavigatorEvent {}
+
 class NavigatorToProfile extends NavigatorEvent {}
 
 class NavigatorToCart extends NavigatorEvent {}
